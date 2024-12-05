@@ -6,6 +6,7 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
+import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -39,6 +40,7 @@ public abstract class BasicTextWidget extends ModWidget {
     private int textY = 0;
     private int padding = 0;
     private TextRenderer renderer = null;
+    private boolean textShadow = true;
 
     private static ObjectArrayList<WidgetSettingOption> getCustomSettings(List<WidgetSettingOption> otherCustomOptions) {
         final ObjectArrayList<WidgetSettingOption> list = new ObjectArrayList<>(otherCustomOptions);
@@ -47,6 +49,7 @@ public abstract class BasicTextWidget extends ModWidget {
         list.add(new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, DEFAULT_WIDTH, 80*3));
         list.add(new IntSliderWidgetSetting("height", Text.translatable("widgets.widgets.basictext.height"), 9, DEFAULT_HEIGHT, 80));
         list.add(new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400));
+        list.add(new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true));
         list.add(new EnumWidgetSetting<>("alignment", Text.translatable("widgets.widgets.basictext.alignment"), TextAlignment.class, TextAlignment.CENTER, TextAlignment::text));
         list.add(new IntSliderWidgetSetting("padding", Text.translatable("widgets.widgets.basictext.padding"), 0, 5, 20));
         return list;
@@ -87,7 +90,7 @@ public abstract class BasicTextWidget extends ModWidget {
         }
         renderer = textRenderer;
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
-        context.drawText(textRenderer, renderText, posX + textX, posY + textY, this.textColor, true);
+        context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1 /* offset 1 without text shadow so that it looks more aligned */), this.textColor, textShadow);
         if (size != 1f) matrices.pop();
     }
 
@@ -121,5 +124,6 @@ public abstract class BasicTextWidget extends ModWidget {
         this.textAlignment = (TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
         this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
         this.size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
+        this.textShadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
     }
 }
