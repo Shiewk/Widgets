@@ -81,5 +81,6 @@
   "widgets.widgets.keystrokes.colorKeyUnpressed": "Key color (not pressed)",
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Shows which keys you are currently pressing.",
-  "widgets.widgets.basictext.textshadow": "Text shadow"
+  "widgets.widgets.basictext.textshadow": "Text shadow",
+  "widgets.widgets.playerCount.showLabel": "Show label"
 }

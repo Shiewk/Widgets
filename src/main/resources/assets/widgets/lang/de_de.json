@@ -81,5 +81,6 @@
   "widgets.widgets.keystrokes.colorKeyUnpressed": "Farbe der Taste (nicht gedrückt)",
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Zeigt an, welche Tasten du momentan drückst.",
-  "widgets.widgets.basictext.textshadow": "Textschatten"
+  "widgets.widgets.basictext.textshadow": "Textschatten",
+  "widgets.widgets.playerCount.showLabel": "Beschriftung anzeigen"
 }
