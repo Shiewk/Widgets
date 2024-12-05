@@ -27,13 +27,15 @@ public class CoordinatesWidget extends ModWidget {
                 new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, WIDTH, 80*3),
                 new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400),
                 new IntSliderWidgetSetting("paddingX", Text.translatable("widgets.widgets.basictext.paddingX"), 0, 5, 20),
-                new IntSliderWidgetSetting("paddingY", Text.translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20)
+                new IntSliderWidgetSetting("paddingY", Text.translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
+                new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true)
         ));
     }
 
     private float size = 1f;
     private String textX = "X", textY = "Y", textZ = "Z";
     private int txc = 0, tyc = 0, tzc = 0;
+    private boolean shadow = true;
 
     @Override
     public void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
@@ -47,20 +49,20 @@ public class CoordinatesWidget extends ModWidget {
         int y = this.paddingY;
         if (showX){
             y++;
-            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor, true);
-            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor, true);
+            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor, shadow);
+            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor, shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showY){
             y++;
-            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor, true);
-            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor, true);
+            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor, shadow);
+            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor, shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showZ){
             y++;
-            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor, true);
-            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor, true);
+            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor, shadow);
+            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor, shadow);
         }
         if (size != 1f) matrices.pop();
     }
@@ -114,6 +116,7 @@ public class CoordinatesWidget extends ModWidget {
         this.paddingY = ((IntSliderWidgetSetting) settings.optionById("paddingY")).getValue();
         this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
         this.size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
+        this.shadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
     }
 
     @Override
