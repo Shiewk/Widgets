@@ -130,11 +130,11 @@ public class KeyStrokesWidget extends ModWidget {
     }
 
     private int fadeColor(int color1, int color2, double delta) {
+        int alpha = (int) MathHelper.lerp(delta, (color1 >> 24) & 0xff, (color2 >> 24) & 0xff);
         int red = (int) MathHelper.lerp(delta, (color1 >> 16) & 0xff, (color2 >> 16) & 0xff);
         int green = (int) MathHelper.lerp(delta, (color1 >> 8) & 0xff, (color2 >> 8) & 0xff);
         int blue = (int) MathHelper.lerp(delta, color1 & 0xff, color2 & 0xff);
-        int alpha = (int) MathHelper.lerp(delta, color1 >> 24, color2 >> 24);
-        return ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff) | (alpha << 24);
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
     @Override
