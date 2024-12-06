@@ -84,6 +84,8 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                     onChange.run();
                     return true;
                 }
+            } else {
+                customSetting.setFocused(false);
             }
         }
         return super.mouseClicked(mouseX, mouseY - getScrollY(), button);
