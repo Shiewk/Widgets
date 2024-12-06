@@ -19,12 +19,21 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     private int contentsHeight = 10;
     public WidgetSettingsEditWidget(int x, int y, int width, int height, TextRenderer textRenderer, ModWidget widget, Runnable onChange) {
         super(x, y, width, height, Text.empty());
-        this.textRenderer = textRenderer;
         this.widget = widget;
+        this.textRenderer = textRenderer;
         this.onChange = onChange;
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             customSetting.setFocused(false);
         }
+        setWidth(width);
+    }
+
+    @Override
+    public void setWidth(int width) {
+        for (WidgetSettingOption setting : widget.getSettings().getCustomSettings()) {
+            setting.setMaxRenderWidth(width - 10);
+        }
+        super.setWidth(width);
     }
 
     @Override

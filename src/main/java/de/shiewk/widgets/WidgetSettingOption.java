@@ -14,12 +14,21 @@ public abstract class WidgetSettingOption implements Drawable, Widget {
     private final Text name;
     private int x = 0;
     private int y = 0;
+    private int maxRenderWidth = 200; // this will always be changed before rendering
     private boolean focused = false;
     private BooleanSupplier shouldShow = WidgetUtils.TRUE_SUPPLIER;
 
     protected WidgetSettingOption(String id, Text name) {
         this.id = id;
         this.name = name;
+    }
+
+    public void setMaxRenderWidth(int maxRenderWidth) {
+        this.maxRenderWidth = maxRenderWidth;
+    }
+
+    public int getMaxRenderWidth() {
+        return maxRenderWidth;
     }
 
     public final String getId() {
