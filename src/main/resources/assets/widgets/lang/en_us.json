@@ -82,5 +82,10 @@
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Shows which keys you are currently pressing.",
   "widgets.widgets.basictext.textshadow": "Text shadow",
-  "widgets.widgets.playerCount.showLabel": "Show label"
+  "widgets.widgets.playerCount.showLabel": "Show label",
+  "widgets.widgets.plaintext": "Text",
+  "widgets.widgets.plaintext.description": "Input a text to display on screen",
+  "widgets.widgets.plaintext.text": "Text",
+  "widgets.widgets.plaintext.initial": "Change this in the widget settings",
+  "widgets.widgets.plaintext.placeholder": "Type your text here..."
 }

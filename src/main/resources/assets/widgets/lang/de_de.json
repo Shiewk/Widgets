@@ -82,5 +82,10 @@
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Zeigt an, welche Tasten du momentan drückst.",
   "widgets.widgets.basictext.textshadow": "Textschatten",
-  "widgets.widgets.playerCount.showLabel": "Beschriftung anzeigen"
+  "widgets.widgets.playerCount.showLabel": "Beschriftung anzeigen",
+  "widgets.widgets.plaintext": "Text",
+  "widgets.widgets.plaintext.description": "Zeigt einen festgelegten Text an",
+  "widgets.widgets.plaintext.text": "Text",
+  "widgets.widgets.plaintext.initial": "Ändere dies in den Widget-Einstellungen",
+  "widgets.widgets.plaintext.placeholder": "Gib hier deinen Text ein..."
 }

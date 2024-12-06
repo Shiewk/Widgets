@@ -57,5 +57,6 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new PlayTimeWidget(Identifier.of(WidgetsMod.MOD_ID, "playtime")));
         WidgetManager.register(new MemoryUsageWidget(Identifier.of(WidgetsMod.MOD_ID, "memory")));
         WidgetManager.register(new KeyStrokesWidget(Identifier.of(WidgetsMod.MOD_ID, "keystrokes")));
+        WidgetManager.register(new PlainTextWidget(Identifier.of(WidgetsMod.MOD_ID, "plaintext")));
     }
 }
