@@ -93,27 +93,27 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return textField.mouseClicked(mouseX, mouseY, button);
+        return isFocused() && textField.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return textField.mouseReleased(mouseX, mouseY, button);
+        return isFocused() && textField.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean charTyped(char chr, int modifiers) {
-        return textField.charTyped(chr, modifiers);
+        return isFocused() && textField.charTyped(chr, modifiers);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return textField.keyPressed(keyCode, scanCode, modifiers);
+        return isFocused() && textField.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return textField.keyReleased(keyCode, scanCode, modifiers);
+        return isFocused() && textField.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override
