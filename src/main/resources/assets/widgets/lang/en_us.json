@@ -87,5 +87,9 @@
   "widgets.widgets.plaintext.description": "Input a text to display on screen",
   "widgets.widgets.plaintext.text": "Text",
   "widgets.widgets.plaintext.initial": "Change this in the widget settings",
-  "widgets.widgets.plaintext.placeholder": "Type your text here..."
+  "widgets.widgets.plaintext.placeholder": "Type your text here...",
+  "widgets.widgets.tps.tps": "%s TPS",
+  "widgets.widgets.tps.dynamicColor": "Dynamic Color",
+  "widgets.widgets.tps": "TPS",
+  "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer or estimates server TPS when in multiplayer"
 }

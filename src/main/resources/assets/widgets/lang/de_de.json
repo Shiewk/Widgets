@@ -87,5 +87,9 @@
   "widgets.widgets.plaintext.description": "Zeigt einen festgelegten Text an",
   "widgets.widgets.plaintext.text": "Text",
   "widgets.widgets.plaintext.initial": "Ändere dies in den Widget-Einstellungen",
-  "widgets.widgets.plaintext.placeholder": "Gib hier deinen Text ein..."
+  "widgets.widgets.plaintext.placeholder": "Gib hier deinen Text ein...",
+  "widgets.widgets.tps.tps": "%s TPS",
+  "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
+  "widgets.widgets.tps": "TPS",
+  "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus"
 }
