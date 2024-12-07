@@ -23,8 +23,13 @@ public class TPSWidget extends BasicTextWidget {
 
     private static final long[] lastUpdates = new long[5];
     private static int updatePointer = 0;
+    private static int updatesSinceWorldChange = 0;
 
     private boolean dynamicColor = true;
+
+    public static void worldChanged(){
+        updatesSinceWorldChange = 0;
+    }
 
     public static void worldTimeUpdated(long nanoTime) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -35,12 +40,13 @@ public class TPSWidget extends BasicTextWidget {
                 float tps = 1000f / server.getAverageTickTime();
                 float targetTickRate = tickManager.getTickRate();
                 if (tickManager.isSprinting()){
-                    INSTANCE.updateTPS(tps, targetTickRate);
+                    INSTANCE.updateTPS(tps, targetTickRate, true);
                 } else {
-                    INSTANCE.updateTPS(Math.min(tps, targetTickRate), targetTickRate);
+                    INSTANCE.updateTPS(Math.min(tps, targetTickRate), targetTickRate, true);
                 }
             }
         } else {
+            updatesSinceWorldChange++;
             lastUpdates[updatePointer] = nanoTime;
             updatePointer++;
             if (updatePointer >= lastUpdates.length) updatePointer = 0;
@@ -55,24 +61,30 @@ public class TPSWidget extends BasicTextWidget {
             float mspt = avgDifference / 20000000f;
             float ticksPerSecond = 1000f / mspt;
 
+            boolean loadingFinished = updatesSinceWorldChange > 5;
             if (client.world != null) {
-                INSTANCE.updateTPS(ticksPerSecond, client.world.getTickManager().getTickRate());
+                INSTANCE.updateTPS(ticksPerSecond, client.world.getTickManager().getTickRate(), loadingFinished);
             } else {
-                INSTANCE.updateTPS(ticksPerSecond, 20);
+                INSTANCE.updateTPS(ticksPerSecond, 20, loadingFinished);
             }
         }
     }
 
-    private void updateTPS(float tps, float targetTickRate) {
-        tps = Math.round(tps * 10f) / 10f;
-        this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", tps).getString());
-        if (dynamicColor){
-            if (tps >= targetTickRate * 0.995){
-                this.textColor = 0x00ff00;
-            } else if (tps >= targetTickRate * 0.745){
-                this.textColor = 0xffff00;
-            } else {
-                this.textColor = 0xff0000;
+    private void updateTPS(float tps, float targetTickRate, boolean loadingFinished) {
+        if (!loadingFinished){
+            this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", "???").getString());
+            if (dynamicColor) this.textColor = 0x00ff00;
+        } else {
+            tps = Math.round(tps * 10f) / 10f;
+            this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", tps).getString());
+            if (dynamicColor){
+                if (tps >= targetTickRate * 0.990){
+                    this.textColor = 0x00ff00;
+                } else if (tps >= targetTickRate * 0.740){
+                    this.textColor = 0xffff00;
+                } else {
+                    this.textColor = 0xff0000;
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ import de.shiewk.widgets.widgets.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -45,6 +46,13 @@ public class WidgetsModClient implements ClientModInitializer {
                 })
             )
         );
+
+        ClientEntityEvents.ENTITY_LOAD.register((entity, clientWorld) -> {
+            if (entity == MinecraftClient.getInstance().player){
+                // player switched world
+                TPSWidget.worldChanged();
+            }
+        });
 
         WidgetManager.register(new FPSWidget(Identifier.of(WidgetsMod.MOD_ID, "fps")));
         WidgetManager.register(new ClockWidget(Identifier.of(WidgetsMod.MOD_ID, "clock")));
