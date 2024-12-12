@@ -91,5 +91,6 @@
   "widgets.widgets.tps.tps": "%s TPS",
   "widgets.widgets.tps.dynamicColor": "Dynamic Color",
   "widgets.widgets.tps": "TPS",
-  "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer or estimates server TPS when in multiplayer"
+  "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer or estimates server TPS when in multiplayer",
+  "widgets.widgets.tps.showLabel": "Show label"
 }

@@ -13,6 +13,7 @@ import java.util.List;
 public class TPSWidget extends BasicTextWidget {
     public TPSWidget(Identifier id) {
         super(id, List.of(
+                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.tps.showLabel"), true),
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.tps.dynamicColor"), true)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
@@ -26,6 +27,7 @@ public class TPSWidget extends BasicTextWidget {
     private static int updatesSinceWorldChange = 0;
 
     private boolean dynamicColor = true;
+    private boolean showLabel = true;
 
     public static void worldChanged(){
         updatesSinceWorldChange = 0;
@@ -72,11 +74,19 @@ public class TPSWidget extends BasicTextWidget {
 
     private void updateTPS(float tps, float targetTickRate, boolean loadingFinished) {
         if (!loadingFinished){
-            this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", "???").getString());
+            if (showLabel){
+                this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", "???").getString());
+            } else {
+                this.renderText = Text.literal("???");
+            }
             if (dynamicColor) this.textColor = 0x00ff00;
         } else {
             tps = Math.round(tps * 10f) / 10f;
-            this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", tps).getString());
+            if (showLabel){
+                this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", tps).getString());
+            } else {
+                this.renderText = Text.literal(String.valueOf(tps));
+            }
             if (dynamicColor){
                 if (tps >= targetTickRate * 0.990){
                     this.textColor = 0x00ff00;
@@ -108,5 +118,6 @@ public class TPSWidget extends BasicTextWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
+        this.showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
     }
 }
