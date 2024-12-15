@@ -71,7 +71,6 @@
   "widgets.widgets.memory.description": "Shows the current memory usage of the game.",
   "widgets.widgets.memory.withLabel": "Memory: %s",
   "widgets.widgets.memory.showPercentage": "Show percentage",
-  "widgets.widgets.memory.showLabel": "Show label",
   "widgets.widgets.serverIP.dynamicWidth": "Dynamically set widget width",
   "widgets.widgets.keystrokes.showJumpKey": "Show Jump Key",
   "widgets.widgets.common.sizePercent": "Widget size (%)",
@@ -82,7 +81,6 @@
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Shows which keys you are currently pressing.",
   "widgets.widgets.basictext.textshadow": "Text shadow",
-  "widgets.widgets.playerCount.showLabel": "Show label",
   "widgets.widgets.plaintext": "Text",
   "widgets.widgets.plaintext.description": "Input a text to display on screen",
   "widgets.widgets.plaintext.text": "Text",
@@ -92,9 +90,8 @@
   "widgets.widgets.tps.dynamicColor": "Dynamic Color",
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer or estimates server TPS when in multiplayer",
-  "widgets.widgets.tps.showLabel": "Show label",
-  "widgets.widgets.biome.showLabel": "Show label",
   "widgets.widgets.biome.label": "Biome: %s",
   "widgets.widgets.biome": "Biome",
-  "widgets.widgets.biome.description": "Shows the biome you're currently in."
+  "widgets.widgets.biome.description": "Shows the biome you're currently in.",
+  "widgets.widgets.common.showLabel": "Show label"
 }

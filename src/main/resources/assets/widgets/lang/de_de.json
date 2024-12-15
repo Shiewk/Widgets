@@ -71,7 +71,6 @@
   "widgets.widgets.memory.description": "Zeigt die momentane Arbeitsspeicherauslastung des Spiels an.",
   "widgets.widgets.memory.withLabel": "Arbeitsspeicher: %s",
   "widgets.widgets.memory.showPercentage": "Prozentsatz anzeigen",
-  "widgets.widgets.memory.showLabel": "Beschriftung anzeigen",
   "widgets.widgets.serverIP.dynamicWidth": "Widget-Breite dynamisch festlegen",
   "widgets.widgets.keystrokes.showJumpKey": "Sprungtaste anzeigen",
   "widgets.widgets.common.sizePercent": "Widgetgröße (%)",
@@ -82,7 +81,6 @@
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.description": "Zeigt an, welche Tasten du momentan drückst.",
   "widgets.widgets.basictext.textshadow": "Textschatten",
-  "widgets.widgets.playerCount.showLabel": "Beschriftung anzeigen",
   "widgets.widgets.plaintext": "Text",
   "widgets.widgets.plaintext.description": "Zeigt einen festgelegten Text an",
   "widgets.widgets.plaintext.text": "Text",
@@ -92,9 +90,8 @@
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
-  "widgets.widgets.tps.showLabel": "Beschriftung anzeigen",
-  "widgets.widgets.biome.showLabel": "Beschriftung anzeigen",
   "widgets.widgets.biome.label": "Biom: %s",
   "widgets.widgets.biome": "Biom",
-  "widgets.widgets.biome.description": "Zeigt das Biom an, in dem du dich befindest."
+  "widgets.widgets.biome.description": "Zeigt das Biom an, in dem du dich befindest.",
+  "widgets.widgets.common.showLabel": "Beschriftung anzeigen"
 }

@@ -16,7 +16,7 @@ public class BiomeWidget extends BasicTextWidget {
 
     public BiomeWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.biome.showLabel"), true)
+                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.common.showLabel"), true)
         ));
     }
 

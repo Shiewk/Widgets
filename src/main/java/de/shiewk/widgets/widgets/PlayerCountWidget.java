@@ -12,7 +12,7 @@ import java.util.List;
 public class PlayerCountWidget extends BasicTextWidget{
     public PlayerCountWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("showlabel", Text.translatable("widgets.widgets.playerCount.showLabel"), true)
+                new ToggleWidgetSetting("showlabel", Text.translatable("widgets.widgets.common.showLabel"), true)
         ));
     }
 

@@ -15,7 +15,7 @@ public class MemoryUsageWidget extends BasicTextWidget {
     public MemoryUsageWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("percentage", Text.translatable("widgets.widgets.memory.showPercentage"), true),
-                new ToggleWidgetSetting("label", Text.translatable("widgets.widgets.memory.showLabel"), true)
+                new ToggleWidgetSetting("label", Text.translatable("widgets.widgets.common.showLabel"), true)
         ));
     }
 

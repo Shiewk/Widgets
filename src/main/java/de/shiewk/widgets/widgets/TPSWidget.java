@@ -13,7 +13,7 @@ import java.util.List;
 public class TPSWidget extends BasicTextWidget {
     public TPSWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.tps.showLabel"), true),
+                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.common.showLabel"), true),
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.tps.dynamicColor"), true)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
