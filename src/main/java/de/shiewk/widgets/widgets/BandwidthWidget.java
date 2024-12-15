@@ -58,8 +58,8 @@ public class BandwidthWidget extends BasicTextWidget {
 
     private String formatByteSize(long bytes) {
         if (bytes > 1000) {
-            double mb = bytes / 100 / 10d;
-            return mb + " KB/s";
+            double kB = bytes / 100 / 10d;
+            return kB + " kB/s";
         } else {
             return bytes + " B/s";
         }
