@@ -92,5 +92,9 @@
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
-  "widgets.widgets.tps.showLabel": "Beschriftung anzeigen"
+  "widgets.widgets.tps.showLabel": "Beschriftung anzeigen",
+  "widgets.widgets.biome.showLabel": "Beschriftung anzeigen",
+  "widgets.widgets.biome.label": "Biom: %s",
+  "widgets.widgets.biome": "Biom",
+  "widgets.widgets.biome.description": "Zeigt das Biom an, in dem du dich befindest."
 }

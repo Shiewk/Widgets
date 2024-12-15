@@ -92,5 +92,9 @@
   "widgets.widgets.tps.dynamicColor": "Dynamic Color",
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer or estimates server TPS when in multiplayer",
-  "widgets.widgets.tps.showLabel": "Show label"
+  "widgets.widgets.tps.showLabel": "Show label",
+  "widgets.widgets.biome.showLabel": "Show label",
+  "widgets.widgets.biome.label": "Biome: %s",
+  "widgets.widgets.biome": "Biome",
+  "widgets.widgets.biome.description": "Shows the biome you're currently in."
 }

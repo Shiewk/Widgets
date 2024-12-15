@@ -67,5 +67,6 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new KeyStrokesWidget(Identifier.of(WidgetsMod.MOD_ID, "keystrokes")));
         WidgetManager.register(new PlainTextWidget(Identifier.of(WidgetsMod.MOD_ID, "plaintext")));
         WidgetManager.register(new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps")));
+        WidgetManager.register(new BiomeWidget(Identifier.of(WidgetsMod.MOD_ID, "biome")));
     }
 }
