@@ -23,11 +23,11 @@ There are three ways to open the widget settings:
 
 Once you've opened the settings, you will see something like this:
 
-![Widget Settings menu](https://github.com/user-attachments/assets/d35782e3-75fc-4053-bac0-af8519a05548)
+![Widget Settings Menu](https://github.com/user-attachments/assets/e3d7b337-fc56-4fa6-8f31-72f438a4a9f3)
 
 You can now enable the widgets you want to enable, or click on them to view their additional settings, as you can see here:
 
-![FPS Widget Settings](https://github.com/user-attachments/assets/21610e28-0cce-4498-99a3-8f207cb9229b)
+![FPS Widget Settings](https://github.com/user-attachments/assets/d5c74510-2eab-4922-ad7b-99272513a591)
 
 When you're done with configuring which widgets you want to enable and their settings, click the "Edit Layout" button in the bottom right corner.
 
