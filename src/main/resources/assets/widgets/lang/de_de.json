@@ -93,5 +93,6 @@
   "widgets.widgets.biome.label": "Biom: %s",
   "widgets.widgets.biome": "Biom",
   "widgets.widgets.biome.description": "Zeigt das Biom an, in dem du dich befindest.",
-  "widgets.widgets.common.showLabel": "Beschriftung anzeigen"
+  "widgets.widgets.common.showLabel": "Beschriftung anzeigen",
+  "widgets.widgets.bandwidth.unit": "Einheit"
 }

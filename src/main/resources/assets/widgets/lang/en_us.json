@@ -93,5 +93,6 @@
   "widgets.widgets.biome.label": "Biome: %s",
   "widgets.widgets.biome": "Biome",
   "widgets.widgets.biome.description": "Shows the biome you're currently in.",
-  "widgets.widgets.common.showLabel": "Show label"
+  "widgets.widgets.common.showLabel": "Show label",
+  "widgets.widgets.bandwidth.unit": "Unit"
 }
