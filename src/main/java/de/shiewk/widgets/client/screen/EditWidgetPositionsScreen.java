@@ -62,8 +62,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
         int factor = alignX ? 2 : 0;
         for (Dimensionable rect : this.getAlignments(widget)) {
             if (rect == widget) continue;
-            final double nwx = rect.getX(this.width);
-            final double nww = rect.width() * rect.getScaleFactor();
+            final int rectWidth = rect.width();
+            final double nwx = Math.min(rect.getX(this.width), this.width - rectWidth);
+            final double nww = rectWidth * rect.getScaleFactor();
             if (endX < nwx + factor && endX > nwx - factor){
                 return new AlignResult(nwx - width, true);
             } else if (x < nwx + factor && x > nwx - factor){
@@ -96,8 +97,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
         int factor = alignY ? 2 : 0;
         for (Dimensionable rect : this.getAlignments(widget)) {
             if (rect == widget) continue;
-            final double nwy = rect.getY(this.height);
-            final double nwh = rect.height() * rect.getScaleFactor();
+            final int rectHeight = rect.height();
+            final double nwy = Math.min(rect.getY(this.height), this.height - rectHeight);
+            final double nwh = rectHeight * rect.getScaleFactor();
             if (endY < nwy + factor && endY > nwy - factor){
                 return new AlignResult(nwy - height, true);
             } else if (y < nwy + factor && y > nwy - factor){
