@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
+import net.minecraft.world.tick.TickManager;
 
 import java.util.List;
 import java.util.function.LongFunction;
@@ -57,7 +58,10 @@ public class BandwidthWidget extends BasicTextWidget {
         float tickRate = 20f;
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null) {
-            tickRate = client.world.getTickManager().getTickRate();
+            TickManager tickManager = client.world.getTickManager();
+            if (!tickManager.isFrozen()){
+                tickRate = Math.min(tickManager.getTickRate(), 20);
+            }
         }
         t++;
         if (t >= tickRate){
