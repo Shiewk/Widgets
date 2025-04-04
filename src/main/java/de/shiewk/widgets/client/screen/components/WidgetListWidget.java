@@ -10,6 +10,9 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class WidgetListWidget extends ScrollableWidget {
             adder.add(new WidgetWidget(0, 0, 200, 100, client, widget, textRenderer, onEdit));
         }
         gw.refreshPositions();
-        SimplePositioningWidget.setPos(gw, 0, 0, this.width, this.getContentsHeight(), 0.5F, 0.5F);
+        SimplePositioningWidget.setPos(gw, 0, 0, this.width, this.getContentsHeightWithPadding(), 0.5F, 0.5F);
         gw.forEachChild(w -> this.addWidget((WidgetWidget) w));
     }
 
@@ -51,7 +54,7 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     @Override
-    protected int getContentsHeight() {
+    protected int getContentsHeightWithPadding() {
         final int rowSize = this.width / 208;
         final int rows = widgets.size() % rowSize == 0 ? widgets.size() / rowSize : widgets.size() / rowSize + 1;
         return 10 + (rows * 108);
@@ -63,10 +66,14 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     @Override
-    protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(0, -getScrollY(), 0);
         for (WidgetWidget element : elements) {
             element.render(context, mouseX, (int) (mouseY + getScrollY()), delta);
         }
+        matrices.pop();
     }
 
     @Override
@@ -74,10 +81,12 @@ public class WidgetListWidget extends ScrollableWidget {
         mouseY += getScrollY();
         for (Element element : elements) {
             if (element.mouseClicked(mouseX, mouseY, 0)){
+                client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 return true;
             }
         }
-        return false;
+        if (super.checkScrollbarDragged(mouseX, mouseY - getScrollY(), button)) return true;
+        return super.mouseClicked(mouseX, mouseY - getScrollY(), button);
     }
 
     @Override
@@ -86,7 +95,4 @@ public class WidgetListWidget extends ScrollableWidget {
             builder.put(NarrationPart.HINT, widget.getName());
         }
     }
-
-    @Override
-    protected void drawBox(DrawContext context, int x, int y, int width, int height) {}
 }

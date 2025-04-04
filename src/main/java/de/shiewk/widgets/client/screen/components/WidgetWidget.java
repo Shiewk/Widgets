@@ -63,20 +63,19 @@ public class WidgetWidget extends ClickableWidget {
             OrderedText t = it.next();
             context.drawText(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.getWidth(t) / 2), y, COLOR_FG, false);
         }
-        this.renderToggleButton(context, mouseX, mouseY, delta, widgetEnabled);
+        this.renderToggleButton(context, mouseX, mouseY, widgetEnabled);
     }
 
     @Override
-    protected boolean clicked(double mouseX, double mouseY) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (isMouseOver(mouseX, mouseY)){
             client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget));
             return true;
         } else if (isMouseOverToggle(mouseX, mouseY)){
             this.toggleWidget();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void toggleWidget() {
@@ -85,7 +84,7 @@ public class WidgetWidget extends ClickableWidget {
         onEdit.accept(widget);
     }
 
-    private void renderToggleButton(DrawContext context, int mouseX, int mouseY, float delta, boolean widgetEnabled){
+    private void renderToggleButton(DrawContext context, int mouseX, int mouseY, boolean widgetEnabled){
         boolean hoverToggle = this.isMouseOverToggle(mouseX, mouseY);
         final int toggleColor;
         final int toggleColorInvert;

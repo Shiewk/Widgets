@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.8.11'
+    id 'fabric-loom' version '1.10.1'
     id 'maven-publish'
 }
 
@@ -42,7 +42,7 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "maven.modrinth:modmenu:12.0.0"
+    modImplementation "maven.modrinth:modmenu:14.0.0-rc.2"
 }
 
 processResources {

@@ -141,7 +141,7 @@ public class CPSWidget extends BasicTextWidget {
     @Override
     public Text getName() {
         return Text.translatable("widgets.widgets.cps");
-    }
+}
 
     @Override
     public Text getDescription() {

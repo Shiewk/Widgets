@@ -6,6 +6,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected int getContentsHeight() {
+    protected int getContentsHeightWithPadding() {
         return this.contentsHeight;
     }
 
@@ -47,11 +48,16 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.getMatrices().push();
-        context.getMatrices().scale(2, 2, 2);
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(0, -getScrollY(), 0);
+        matrices.push();
+        matrices.scale(2, 2, 2);
+        matrices.translate(0, -getScrollY(), 0);
         context.drawText(textRenderer, widget.getName(), this.width / 4 - textRenderer.getWidth(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
-        context.getMatrices().pop();
+        matrices.pop();
         int y = textRenderer.fontHeight * 2 + this.height / 50 + 5;
         for (WidgetSettingOption setting : widget.getSettings().getCustomSettings()) {
             if (!setting.shouldShow()) continue;
@@ -70,6 +76,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             y += 5;
         }
         this.contentsHeight = y;
+        matrices.pop();
     }
 
     @Override
@@ -88,6 +95,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
+        if (checkScrollbarDragged(mouseX, mouseY - getScrollY(), button)) return true;
         return super.mouseClicked(mouseX, mouseY - getScrollY(), button);
     }
 
@@ -138,10 +146,5 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 
-    }
-
-    @Override
-    protected void drawBox(DrawContext context, int x, int y, int width, int height) {
-        context.fill(x, y, x+width, y+height, COLOR_BG);
     }
 }
