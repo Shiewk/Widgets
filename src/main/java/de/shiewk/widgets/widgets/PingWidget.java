@@ -34,12 +34,19 @@ public class PingWidget extends BasicTextWidget {
             final int logLength = pingLog.getLength();
             final int avgCompileLength = 3;
             long ping = 0;
-            for (int i = logLength-1; i > logLength-avgCompileLength; i--) {
+            int valuesRead = 0;
+            for (int i = logLength-1; i > logLength-avgCompileLength-1; i--) {
                 if (i < 0) break;
                 ping += pingLog.get(i);
+                valuesRead++;
             }
-            long avgPing = ping / avgCompileLength;
-            this.renderText = Text.of(avgPing + " ms");
+            if (valuesRead == 0){
+                this.renderText = Text.literal("??? ms");
+                this.textColor = 0x00ff00;
+                return;
+            }
+            long avgPing = ping / valuesRead;
+            this.renderText = Text.literal(avgPing + " ms");
             if (this.dynamicColor){
                 if (avgPing < 50){
                     this.textColor = 0x00ff00;
