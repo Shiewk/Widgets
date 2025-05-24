@@ -42,7 +42,7 @@ public class PingWidget extends BasicTextWidget {
             }
             if (valuesRead == 0){
                 this.renderText = Text.literal("??? ms");
-                this.textColor = 0x00ff00;
+                if (this.dynamicColor) this.textColor = 0x00ff00;
                 return;
             }
             long avgPing = ping / valuesRead;
