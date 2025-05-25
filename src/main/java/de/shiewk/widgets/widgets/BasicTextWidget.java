@@ -36,6 +36,7 @@ public abstract class BasicTextWidget extends ModWidget {
     }
 
     protected Text renderText = Text.empty();
+    protected boolean shouldRender = true;
     private int textX = 0;
     private int textY = 0;
     private int padding = 0;
@@ -82,6 +83,7 @@ public abstract class BasicTextWidget extends ModWidget {
 
     @Override
     public void render(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+        if (!shouldRender) return;
         MatrixStack matrices = context.getMatrices();
         if (size != 1f){
             matrices.push();

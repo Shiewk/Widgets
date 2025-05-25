@@ -1,5 +1,7 @@
 package de.shiewk.widgets;
 
+import net.minecraft.client.MinecraftClient;
+
 import java.util.function.BooleanSupplier;
 
 public class WidgetUtils {
@@ -18,5 +20,8 @@ public class WidgetUtils {
         return 1d - Math.pow(1d - x, 3.5d);
     }
 
+    public static boolean isInSingleplayer(){
+        return MinecraftClient.getInstance().isInSingleplayer();
+    }
 
 }

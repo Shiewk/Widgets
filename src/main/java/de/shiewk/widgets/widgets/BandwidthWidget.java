@@ -1,6 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
@@ -44,6 +45,7 @@ public class BandwidthWidget extends BasicTextWidget {
     public BandwidthWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
                 new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> Text.literal(unit.name))
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
@@ -51,10 +53,13 @@ public class BandwidthWidget extends BasicTextWidget {
 
     private int t = 0;
     private boolean dynamicColor = false;
+    private boolean hideInSingleplayer = false;
     private Unit unit = Unit.KB;
 
     @Override
     public void tickWidget() {
+        shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
+        if (!shouldRender) return;
         float tickRate = 20f;
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null) {
@@ -96,6 +101,7 @@ public class BandwidthWidget extends BasicTextWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
+        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
         this.unit = (Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue();
     }
 

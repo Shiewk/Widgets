@@ -1,6 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -13,17 +14,23 @@ import java.util.List;
 
 public class PingWidget extends BasicTextWidget {
 
-    long lastPingQuery = 0;
     public PingWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.ping.dynamicColor"), true)
+                new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.ping.dynamicColor"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
+
     private boolean dynamicColor = false;
+    private boolean hideInSingleplayer = false;
+
+    long lastPingQuery = 0;
 
     @Override
     public void tickWidget() {
+        shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
+        if (!shouldRender) return;
         final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler != null){
             if (lastPingQuery < Util.getMeasuringTimeMs() - 5000){
@@ -63,6 +70,7 @@ public class PingWidget extends BasicTextWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
+        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
     }
 
     @Override
