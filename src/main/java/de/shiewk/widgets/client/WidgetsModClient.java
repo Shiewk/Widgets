@@ -68,5 +68,6 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new PlainTextWidget(Identifier.of(WidgetsMod.MOD_ID, "plaintext")));
         WidgetManager.register(new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps")));
         WidgetManager.register(new BiomeWidget(Identifier.of(WidgetsMod.MOD_ID, "biome")));
+        WidgetManager.register(new SpeedWidget(Identifier.of(WidgetsMod.MOD_ID, "speed")));
     }
 }

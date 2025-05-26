@@ -95,5 +95,13 @@
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
-  "widgets.widgets.tps.tps": "%s TPS"
+  "widgets.widgets.tps.tps": "%s TPS",
+  "widgets.widgets.speed": "Geschwindigkeit",
+  "widgets.widgets.speed.description": "Zeigt, wie schnell du dich bewegst.",
+  "widgets.widgets.speed.digits": "Nachkommastellen",
+  "widgets.widgets.speed.unit": "Einheit",
+  "widgets.widgets.speed.windowSize": "Durchschnittsfenstergröße",
+  "widgets.widgets.speed.withX": "Mit Geschwindigkeit auf der X-Achse",
+  "widgets.widgets.speed.withY": "Mit Geschwindigkeit auf der Y-Achse",
+  "widgets.widgets.speed.withZ": "Mit Geschwindigkeit auf der Z-Achse"
 }
