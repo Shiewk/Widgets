@@ -2,28 +2,41 @@ package de.shiewk.widgets.client;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.client.screen.EditWidgetPositionsScreen;
 import de.shiewk.widgets.client.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
 import static de.shiewk.widgets.WidgetUtils.translateToScreen;
 
-public class WidgetRenderer implements HudRenderCallback, ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
+public class WidgetRenderer implements HudLayerRegistrationCallback, ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
 
+    public static final Identifier LAYER_ID = Identifier.of(WidgetsMod.MOD_ID, "widgets-hud-layer");
     private static MinecraftClient client;
 
+
     @Override
-    public void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
+    public void register(LayeredDrawerWrapper layeredDrawer) {
+        layeredDrawer.addLayer(IdentifiedLayer.of(
+                LAYER_ID,
+                this::renderWidgets
+        ));
+    }
+
+    public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (client.options.hudHidden) return;
         if (client.currentScreen instanceof EditWidgetPositionsScreen) return;
         final Profiler profiler = Profilers.get();
