@@ -67,6 +67,7 @@ public class WidgetListWidget extends ScrollableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.enableScissor(getX(), getY(), getX()+width, getY()+height);
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(0, -getScrollY(), 0);
@@ -74,6 +75,7 @@ public class WidgetListWidget extends ScrollableWidget {
             element.render(context, mouseX, (int) (mouseY + getScrollY()), delta);
         }
         matrices.pop();
+        context.disableScissor();
     }
 
     @Override
