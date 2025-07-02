@@ -26,7 +26,7 @@ public class PlayerCountWidget extends BasicTextWidget{
         shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
         if (!shouldRender) return;
         final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        String online = networkHandler == null ? "?" : String.valueOf(networkHandler.getPlayerUuids().size());
+        String online = networkHandler == null ? "?" : String.valueOf(networkHandler.getListedPlayerListEntries().size());
         this.renderText = showLabel ? Text.literal(Text.translatable("widgets.widgets.playerCount.online", online).getString()) : Text.literal(online);
     }
 
