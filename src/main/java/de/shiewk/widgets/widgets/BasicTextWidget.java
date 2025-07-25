@@ -10,9 +10,9 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 import java.util.List;
@@ -84,16 +84,16 @@ public abstract class BasicTextWidget extends ModWidget {
     @Override
     public void render(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
         if (!shouldRender) return;
-        MatrixStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.getMatrices();
         if (size != 1f){
-            matrices.push();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, 0);
-            matrices.scale(size, size, 1);
+            matrices.pushMatrix();
+            matrices.translate(-(size-1) * posX, -(size-1) * posY, matrices);
+            matrices.scale(size, size, matrices);
         }
         renderer = textRenderer;
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
         context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1 /* offset 1 without text shadow so that it looks more aligned */), this.textColor, textShadow);
-        if (size != 1f) matrices.pop();
+        if (size != 1f) matrices.popMatrix();
     }
 
     @Override

@@ -6,8 +6,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 
@@ -50,14 +50,13 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
-        MatrixStack matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(0, -getScrollY(), 0);
-        matrices.push();
-        matrices.scale(2, 2, 2);
-        matrices.translate(0, -getScrollY(), 0);
+        Matrix3x2fStack matrices = context.getMatrices().pushMatrix();
+        matrices.translate(0, (float) -getScrollY(), matrices);
+        matrices.pushMatrix();
+        matrices.scale(2, 2, matrices);
+        matrices.translate(0, (float) -getScrollY(), matrices);
         context.drawText(textRenderer, widget.getName(), this.width / 4 - textRenderer.getWidth(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
-        matrices.pop();
+        matrices.popMatrix();
         int y = textRenderer.fontHeight * 2 + this.height / 50 + 5;
         for (WidgetSettingOption setting : widget.getSettings().getCustomSettings()) {
             if (!setting.shouldShow()) continue;
@@ -76,7 +75,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             y += 5;
         }
         this.contentsHeight = y;
-        matrices.pop();
+        matrices.popMatrix();
     }
 
     @Override

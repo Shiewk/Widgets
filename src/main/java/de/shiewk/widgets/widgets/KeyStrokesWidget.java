@@ -9,11 +9,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 import java.util.List;
@@ -76,11 +76,11 @@ public class KeyStrokesWidget extends ModWidget {
     @Override
     public void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
         if (KEY_JUMP == null) return;
-        MatrixStack matrices = context.getMatrices();
+        Matrix3x2fStack matrices = context.getMatrices();
         if (size != 1) {
-            matrices.push();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, 0);
-            matrices.scale(size, size, 1);
+            matrices.pushMatrix();
+            matrices.translate(-(size-1) * posX, -(size-1) * posY, matrices);
+            matrices.scale(size, size, matrices);
         }
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 22, posY, KEY_FWD);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX, posY + 22, KEY_LEFT);
@@ -88,7 +88,7 @@ public class KeyStrokesWidget extends ModWidget {
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 44, posY + 22, KEY_RIGHT);
         if (showJumpKey) renderSpaceBar(context, measuringTimeNano, posX, posY + 44, KEY_JUMP);
         if (size != 1){
-            matrices.pop();
+            matrices.popMatrix();
         }
     }
 

@@ -49,18 +49,18 @@ public class PingWidget extends BasicTextWidget {
             }
             if (valuesRead == 0){
                 this.renderText = Text.literal("??? ms");
-                if (this.dynamicColor) this.textColor = 0x00ff00;
+                if (this.dynamicColor) this.textColor = 0xff00ff00;
                 return;
             }
             long avgPing = ping / valuesRead;
             this.renderText = Text.literal(avgPing + " ms");
             if (this.dynamicColor){
                 if (avgPing < 50){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (avgPing < 120) {
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff3030;
+                    this.textColor = 0xffff3030;
                 }
             }
         }

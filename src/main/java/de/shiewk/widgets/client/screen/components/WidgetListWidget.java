@@ -11,9 +11,9 @@ import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,13 +68,12 @@ public class WidgetListWidget extends ScrollableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(), getY(), getX()+width, getY()+height);
-        MatrixStack matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(0, -getScrollY(), 0);
+        Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+        stack.translate(0, (float) -getScrollY(), stack);
         for (WidgetWidget element : elements) {
             element.render(context, mouseX, (int) (mouseY + getScrollY()), delta);
         }
-        matrices.pop();
+        stack.popMatrix();
         context.disableScissor();
     }
 

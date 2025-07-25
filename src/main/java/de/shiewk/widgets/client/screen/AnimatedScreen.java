@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import org.joml.Matrix3x2fStack;
 
 public abstract class AnimatedScreen extends Screen {
     protected final Screen parent;
@@ -22,16 +23,17 @@ public abstract class AnimatedScreen extends Screen {
         final boolean shouldAnimate = timeMs < animationDurationMs;
         if (shouldAnimate){
             double translation = WidgetUtils.computeEasing(timeMs / animationDurationMs) * this.width;
-            context.getMatrices().push();
-            context.getMatrices().translate(-translation, 0, 0);
+            Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+
+            stack.translate((float) -translation, 0, stack);
             parent.render(context, (int) (mouseX + translation), mouseY, delta);
-            context.getMatrices().translate(this.width, 0, 0);
+            stack.translate(this.width, 0, stack);
             mouseX -= (int) translation;
         }
         super.render(context, mouseX, mouseY, delta);
         this.renderScreenContents(context, mouseX, mouseY, delta);
         if (shouldAnimate){
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
         }
     }
 

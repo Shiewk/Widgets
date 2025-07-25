@@ -11,6 +11,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -53,11 +54,11 @@ public class WidgetWidget extends ClickableWidget {
         boolean hover = this.isMouseOver(mouseX, mouseY);
         boolean widgetEnabled = widget.getSettings().isEnabled();
         context.fill(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), hover ? COLOR_BG_HOVER : COLOR_BG);
-        context.getMatrices().push();
-        context.getMatrices().scale(2, 2, 1);
+        Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+        stack.scale(2, 2, stack);
         int titleSize = textRenderer.getWidth(widget.getName());
         context.drawText(textRenderer, widget.getName(), getX() / 2 + getWidth() / 4 - titleSize / 2, getY() / 2 + 4, COLOR_FG, false);
-        context.getMatrices().pop();
+        stack.popMatrix();
         int y = this.getY() + 12 + textRenderer.fontHeight * 2;
         for (Iterator<OrderedText> it = textRenderer.wrapLines(widget.getDescription(), this.getWidth() - 10).iterator(); it.hasNext(); y += 9) {
             OrderedText t = it.next();

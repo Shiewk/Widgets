@@ -15,6 +15,7 @@ import java.util.function.LongFunction;
 public class BandwidthWidget extends BasicTextWidget {
 
     public enum Unit {
+        @SuppressWarnings("IntegerDivisionInFloatingPointContext")
         KB("kB", bytes -> {
             if (bytes > 1000) {
                 double kB = bytes / 100 / 10d;
@@ -67,11 +68,11 @@ public class BandwidthWidget extends BasicTextWidget {
             this.renderText = Text.of(unit.sizeFormatter.apply(avgBytesPerSecond));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (avgBytesPerSecond < 750000) {
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff3030;
+                    this.textColor = 0xffff3030;
                 }
             }
         }

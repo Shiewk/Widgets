@@ -79,7 +79,7 @@ public class TPSWidget extends BasicTextWidget {
             } else {
                 this.renderText = Text.literal("???");
             }
-            if (dynamicColor) this.textColor = 0x00ff00;
+            if (dynamicColor) this.textColor = 0xff00ff00;
         } else {
             tps = Math.round(tps * 10f) / 10f;
             if (showLabel){
@@ -89,11 +89,11 @@ public class TPSWidget extends BasicTextWidget {
             }
             if (dynamicColor){
                 if (tps >= targetTickRate * 0.990){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (tps >= targetTickRate * 0.740){
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff0000;
+                    this.textColor = 0xffff0000;
                 }
             }
         }

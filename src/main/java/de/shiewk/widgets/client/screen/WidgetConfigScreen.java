@@ -11,6 +11,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -103,17 +104,17 @@ public class WidgetConfigScreen extends Screen {
         assert client != null;
         final double time = getScreenTimeMs();
         if (time < 400){
-            context.getMatrices().push();
+            Matrix3x2fStack stack = context.getMatrices().pushMatrix();
             final float v = (float) WidgetUtils.computeEasing(time / 400d);
-            context.getMatrices().translate(width / 2d - (width * v / 2d), height / 2d - (height * v / 2d), 0);
-            context.getMatrices().scale(v, v, 1);
+            stack.translate((float) (width / 2d - (width * v / 2d)), (float) (height / 2d - (height * v / 2d)), stack);
+            stack.scale(v, v, stack);
         }
         super.render(context, mouseX, mouseY, delta);
         if (widgetList != null){
             widgetList.render(context, mouseX, mouseY, delta);
         }
         if (time < 400){
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
         }
     }
 
