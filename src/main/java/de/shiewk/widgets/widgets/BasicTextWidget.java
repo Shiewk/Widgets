@@ -1,6 +1,5 @@
 package de.shiewk.widgets.widgets;
 
-import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
@@ -12,12 +11,11 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 import java.util.List;
 
-public abstract class BasicTextWidget extends ModWidget {
+public abstract class BasicTextWidget extends ResizableWidget {
 
     public enum TextAlignment {
         RIGHT("right"),
@@ -49,7 +47,6 @@ public abstract class BasicTextWidget extends ModWidget {
         list.add(new RGBAColorWidgetSetting("textcolor", Text.translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255));
         list.add(new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, DEFAULT_WIDTH, 80*3));
         list.add(new IntSliderWidgetSetting("height", Text.translatable("widgets.widgets.basictext.height"), 9, DEFAULT_HEIGHT, 80));
-        list.add(new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400));
         list.add(new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true));
         list.add(new EnumWidgetSetting<>("alignment", Text.translatable("widgets.widgets.basictext.alignment"), TextAlignment.class, TextAlignment.CENTER, TextAlignment::text));
         list.add(new IntSliderWidgetSetting("padding", Text.translatable("widgets.widgets.basictext.padding"), 0, 5, 20));
@@ -66,8 +63,6 @@ public abstract class BasicTextWidget extends ModWidget {
             DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 80).getRGB(),
             DEFAULT_TEXT_COLOR = new Color(255, 255 ,255, 255).getRGB();
 
-    protected float size = 2f;
-
     protected int backgroundColor = DEFAULT_BACKGROUND_COLOR, textColor = DEFAULT_TEXT_COLOR, width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT;
     protected TextAlignment textAlignment = TextAlignment.CENTER;
 
@@ -82,23 +77,11 @@ public abstract class BasicTextWidget extends ModWidget {
     }
 
     @Override
-    public void render(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
         if (!shouldRender) return;
-        Matrix3x2fStack matrices = context.getMatrices();
-        if (size != 1f){
-            matrices.pushMatrix();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, matrices);
-            matrices.scale(size, size, matrices);
-        }
         renderer = textRenderer;
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
         context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1 /* offset 1 without text shadow so that it looks more aligned */), this.textColor, textShadow);
-        if (size != 1f) matrices.popMatrix();
-    }
-
-    @Override
-    public float getScaleFactor() {
-        return size;
     }
 
     @Override
@@ -119,13 +102,13 @@ public abstract class BasicTextWidget extends ModWidget {
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
+        super.onSettingsChanged(settings);
         this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
         this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
         this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
         this.height = ((IntSliderWidgetSetting) settings.optionById("height")).getValue();
         this.textAlignment = (TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
         this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
-        this.size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
         this.textShadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
     }
 }
