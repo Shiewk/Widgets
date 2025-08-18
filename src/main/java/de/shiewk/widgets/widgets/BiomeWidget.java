@@ -12,11 +12,14 @@ import net.minecraft.world.biome.Biome;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class BiomeWidget extends BasicTextWidget {
 
     public BiomeWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.common.showLabel"), true)
+                new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true)
         ));
     }
 
@@ -34,19 +37,19 @@ public class BiomeWidget extends BasicTextWidget {
                 String text = biome.getKeyOrValue().map(
                         (biomeKey) -> {
                             if (showLabel){
-                                return Text.translatable("widgets.widgets.biome.label", Text.translatable(biomeKey.getValue().toTranslationKey("biome"))).getString();
+                                return translatable("widgets.widgets.biome.label", translatable(biomeKey.getValue().toTranslationKey("biome"))).getString();
                             } else {
-                                return Text.translatable(biomeKey.getValue().toTranslationKey("biome")).getString();
+                                return translatable(biomeKey.getValue().toTranslationKey("biome")).getString();
                             }
                         },
                         (b) -> "[unregistered " + b + "]"
                 );
-                this.renderText = Text.literal(text);
+                formatAndSetRenderText(literal(text));
             } else {
                 if (showLabel){
-                    this.renderText = Text.translatable("widgets.widgets.biome.label", "?");
+                    formatAndSetRenderText(translatable("widgets.widgets.biome.label", "?"));
                 } else {
-                    this.renderText = Text.literal("?");
+                    formatAndSetRenderText(literal("?"));
                 }
             }
         }
@@ -54,12 +57,12 @@ public class BiomeWidget extends BasicTextWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.biome");
+        return translatable("widgets.widgets.biome");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.biome.description");
+        return translatable("widgets.widgets.biome.description");
     }
 
     @Override

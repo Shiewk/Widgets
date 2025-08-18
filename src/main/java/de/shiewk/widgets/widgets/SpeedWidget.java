@@ -13,6 +13,8 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+
 public class SpeedWidget extends BasicTextWidget {
 
     public enum Unit {
@@ -80,7 +82,7 @@ public class SpeedWidget extends BasicTextWidget {
             avg += v;
         }
         avg /= averagingWindow.length;
-        renderText = Text.of(reduceDigits(avg) + unit.displayName);
+        formatAndSetRenderText(literal(reduceDigits(avg) + unit.displayName));
     }
 
     private String reduceDigits(double v) {

@@ -12,6 +12,8 @@ import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+
 public class PingWidget extends BasicTextWidget {
 
     public PingWidget(Identifier id) {
@@ -48,12 +50,12 @@ public class PingWidget extends BasicTextWidget {
                 valuesRead++;
             }
             if (valuesRead == 0){
-                this.renderText = Text.literal("??? ms");
+                formatAndSetRenderText(literal("??? ms"));
                 if (this.dynamicColor) this.textColor = 0xff00ff00;
                 return;
             }
             long avgPing = ping / valuesRead;
-            this.renderText = Text.literal(avgPing + " ms");
+            formatAndSetRenderText(literal(avgPing + " ms"));
             if (this.dynamicColor){
                 if (avgPing < 50){
                     this.textColor = 0xff00ff00;

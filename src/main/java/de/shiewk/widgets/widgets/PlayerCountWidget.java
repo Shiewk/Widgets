@@ -10,11 +10,14 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class PlayerCountWidget extends BasicTextWidget{
     public PlayerCountWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("showlabel", Text.translatable("widgets.widgets.common.showLabel"), true),
-                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false)
+                new ToggleWidgetSetting("showlabel", translatable("widgets.widgets.common.showLabel"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", translatable("widgets.widgets.common.hideInSingleplayer"), false)
         ));
     }
 
@@ -27,17 +30,17 @@ public class PlayerCountWidget extends BasicTextWidget{
         if (!shouldRender) return;
         final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
         String online = networkHandler == null ? "?" : String.valueOf(networkHandler.getListedPlayerListEntries().size());
-        this.renderText = showLabel ? Text.literal(Text.translatable("widgets.widgets.playerCount.online", online).getString()) : Text.literal(online);
+        formatAndSetRenderText(showLabel ? literal(translatable("widgets.widgets.playerCount.online", online).getString()) : literal(online));
     }
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.playerCount");
+        return translatable("widgets.widgets.playerCount");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.playerCount.description");
+        return translatable("widgets.widgets.playerCount.description");
     }
 
     @Override

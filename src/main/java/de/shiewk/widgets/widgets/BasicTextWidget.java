@@ -14,6 +14,9 @@ import net.minecraft.util.Identifier;
 
 import java.awt.*;
 import java.util.List;
+import java.util.function.UnaryOperator;
+
+import static net.minecraft.text.Text.*;
 
 public abstract class BasicTextWidget extends ResizableWidget {
 
@@ -28,12 +31,34 @@ public abstract class BasicTextWidget extends ResizableWidget {
             this.key = key;
         }
 
-        public Text text(){
-            return Text.translatable("widgets.widgets.basictext.alignment." + key);
+        public Text displayText(){
+            return translatable("widgets.widgets.basictext.alignment." + key);
         }
     }
 
-    protected Text renderText = Text.empty();
+    public enum TextStyle {
+        PLAIN("plain", UnaryOperator.identity()),
+        SQUARE_BRACKETS("squareBrackets", t -> surround("[", t, "]")),
+        PARENTHESES("parentheses", t -> surround("(", t, ")"));
+
+        public final String key;
+        public final UnaryOperator<Text> operator;
+
+        TextStyle(String key, UnaryOperator<Text> operator) {
+            this.key = key;
+            this.operator = operator;
+        }
+
+        public Text displayText(){
+            return translatable("widgets.widgets.basictext.style." + key);
+        }
+
+        public static Text surround(String prefix, Text subject, String suffix){
+            return literal(prefix).append(subject).append(literal(suffix));
+        }
+    }
+
+    protected Text renderText = empty();
     protected boolean shouldRender = true;
     private int textX = 0;
     private int textY = 0;
@@ -43,13 +68,14 @@ public abstract class BasicTextWidget extends ResizableWidget {
 
     private static ObjectArrayList<WidgetSettingOption> getCustomSettings(List<WidgetSettingOption> otherCustomOptions) {
         final ObjectArrayList<WidgetSettingOption> list = new ObjectArrayList<>(otherCustomOptions);
-        list.add(new RGBAColorWidgetSetting("backgroundcolor", Text.translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80));
-        list.add(new RGBAColorWidgetSetting("textcolor", Text.translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255));
-        list.add(new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, DEFAULT_WIDTH, 80*3));
-        list.add(new IntSliderWidgetSetting("height", Text.translatable("widgets.widgets.basictext.height"), 9, DEFAULT_HEIGHT, 80));
-        list.add(new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true));
-        list.add(new EnumWidgetSetting<>("alignment", Text.translatable("widgets.widgets.basictext.alignment"), TextAlignment.class, TextAlignment.CENTER, TextAlignment::text));
-        list.add(new IntSliderWidgetSetting("padding", Text.translatable("widgets.widgets.basictext.padding"), 0, 5, 20));
+        list.add(new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80));
+        list.add(new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255));
+        list.add(new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 10, DEFAULT_WIDTH, 80*3));
+        list.add(new IntSliderWidgetSetting("height", translatable("widgets.widgets.basictext.height"), 9, DEFAULT_HEIGHT, 80));
+        list.add(new ToggleWidgetSetting("shadow", translatable("widgets.widgets.basictext.textshadow"), true));
+        list.add(new EnumWidgetSetting<>("alignment", translatable("widgets.widgets.basictext.alignment"), TextAlignment.class, TextAlignment.CENTER, TextAlignment::displayText));
+        list.add(new IntSliderWidgetSetting("padding", translatable("widgets.widgets.basictext.padding"), 0, 5, 20));
+        list.add(new EnumWidgetSetting<>("text_style", translatable("widgets.widgets.basictext.textstyle"), TextStyle.class, TextStyle.PLAIN, TextStyle::displayText));
         return list;
     }
     protected BasicTextWidget(Identifier id, List<WidgetSettingOption> otherCustomOptions) {
@@ -65,6 +91,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
 
     protected int backgroundColor = DEFAULT_BACKGROUND_COLOR, textColor = DEFAULT_TEXT_COLOR, width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT;
     protected TextAlignment textAlignment = TextAlignment.CENTER;
+    protected TextStyle textStyle = TextStyle.PLAIN;
 
     @Override
     public int width() {
@@ -98,6 +125,14 @@ public abstract class BasicTextWidget extends ResizableWidget {
         textY = (height-9) / 2;
     }
 
+    protected void formatAndSetRenderText(Text renderText) {
+        if (textStyle != TextStyle.PLAIN){
+            this.renderText = textStyle.operator.apply(renderText);
+        } else {
+            this.renderText = renderText;
+        }
+    }
+
     public abstract void tickWidget();
 
     @Override
@@ -110,5 +145,6 @@ public abstract class BasicTextWidget extends ResizableWidget {
         this.textAlignment = (TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
         this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
         this.textShadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
+        this.textStyle = (TextStyle) ((EnumWidgetSetting<?>) settings.optionById("text_style")).getValue();
     }
 }

@@ -6,6 +6,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+
 public class FPSWidget extends BasicTextWidget {
     public FPSWidget(Identifier id) {
         super(id, List.of());
@@ -13,7 +15,7 @@ public class FPSWidget extends BasicTextWidget {
 
     @Override
     public void tickWidget() {
-        this.renderText = Text.literal(MinecraftClient.getInstance().getCurrentFps() + " FPS");
+        formatAndSetRenderText(literal(MinecraftClient.getInstance().getCurrentFps() + " FPS"));
     }
 
     @Override

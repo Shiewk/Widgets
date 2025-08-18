@@ -12,6 +12,8 @@ import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
 import java.util.List;
 import java.util.function.LongFunction;
 
+import static net.minecraft.text.Text.literal;
+
 public class BandwidthWidget extends BasicTextWidget {
 
     public enum Unit {
@@ -46,7 +48,7 @@ public class BandwidthWidget extends BasicTextWidget {
         super(id, List.of(
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
                 new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
-                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> Text.literal(unit.name))
+                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name))
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
@@ -65,7 +67,7 @@ public class BandwidthWidget extends BasicTextWidget {
         if (t >= tickRate){
             t = 0;
             long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
-            this.renderText = Text.of(unit.sizeFormatter.apply(avgBytesPerSecond));
+            formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
                     this.textColor = 0xff00ff00;
