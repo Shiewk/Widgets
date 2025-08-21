@@ -3,6 +3,7 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
+import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -22,14 +23,17 @@ public class ArmorHudWidget extends ResizableWidget {
 
     public ArmorHudWidget(Identifier id) {
         super(id, List.of(
-                new IntSliderWidgetSetting("padding", Text.translatable("widgets.widgets.armorHud.padding"), 0, 2, 5),
-                new ToggleWidgetSetting("show_durability", Text.translatable("widgets.widgets.armorHud.showDurability"), true),
-                new EnumWidgetSetting<>("durability_style", Text.translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
+                new IntSliderWidgetSetting("padding", translatable("widgets.widgets.armorHud.padding"), 0, 2, 5),
+                new ToggleWidgetSetting("show_durability", translatable("widgets.widgets.armorHud.showDurability"), true),
+                new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80),
+                new EnumWidgetSetting<>("durability_style", translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
                 new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
-                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10)
+                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
+                new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255)
         ));
         getSettings().optionById("durability_style").setShowCondition(() -> this.showDurability);
         getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
     }
 
     public enum DurabilityStyle {
@@ -37,7 +41,7 @@ public class ArmorHudWidget extends ResizableWidget {
         PERCENT;
 
         public Text getDisplayName() {
-            return Text.translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase());
+            return translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase());
         }
     }
 
@@ -50,9 +54,11 @@ public class ArmorHudWidget extends ResizableWidget {
     protected ItemStack boots;
     protected boolean rainbow = false;
     protected int rainbowSpeed = 3;
+    protected int backgroundColor = 0x50_00_00_00, textColor = 0xff_ff_ff_ff;
 
     @Override
     public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+        context.fill(posX, posY, posX+width(), posY+height(), backgroundColor);
         if (helmet != null){
             renderItem(context, measuringTimeNano, textRenderer, helmet, posX + padding, posY + padding);
         }
@@ -83,7 +89,7 @@ public class ArmorHudWidget extends ResizableWidget {
                 case NUMBER -> String.valueOf(maxDamage - damage);
                 case PERCENT -> ((maxDamage - damage) * 100 / maxDamage) + "%";
             };
-            context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : 0xffffffff, true);
+            context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
         }
     }
 
@@ -103,12 +109,12 @@ public class ArmorHudWidget extends ResizableWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.armorHud");
+        return translatable("widgets.widgets.armorHud");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.armorHud.description");
+        return translatable("widgets.widgets.armorHud.description");
     }
 
     @Override
@@ -133,5 +139,7 @@ public class ArmorHudWidget extends ResizableWidget {
         this.durabilityStyle = (DurabilityStyle) ((EnumWidgetSetting<?>) settings.optionById("durability_style")).getValue();
         this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
         this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
+        this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
+        this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
     }
 }
