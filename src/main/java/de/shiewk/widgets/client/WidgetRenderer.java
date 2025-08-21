@@ -18,7 +18,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
-import static de.shiewk.widgets.WidgetUtils.translateToScreen;
+import static de.shiewk.widgets.utils.WidgetUtils.translateToScreen;
 
 public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
 

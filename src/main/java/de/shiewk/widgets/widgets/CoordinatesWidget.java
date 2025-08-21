@@ -14,6 +14,8 @@ import net.minecraft.util.Identifier;
 import java.awt.*;
 import java.util.List;
 
+import static net.minecraft.text.Text.translatable;
+
 public class CoordinatesWidget extends ResizableWidget {
     public CoordinatesWidget(Identifier id) {
         super(id, List.of(
@@ -21,39 +23,47 @@ public class CoordinatesWidget extends ResizableWidget {
                 new ToggleWidgetSetting("y", Text.translatable("widgets.widgets.coordinates.showY"), true),
                 new ToggleWidgetSetting("z", Text.translatable("widgets.widgets.coordinates.showZ"), true),
                 new RGBAColorWidgetSetting("backgroundcolor", Text.translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80),
+                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
                 new RGBAColorWidgetSetting("textcolor", Text.translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255),
+                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
                 new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, WIDTH, 80*3),
                 new IntSliderWidgetSetting("paddingX", Text.translatable("widgets.widgets.basictext.paddingX"), 0, 5, 20),
                 new IntSliderWidgetSetting("paddingY", Text.translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
                 new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true)
         ));
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
     private String textX = "X", textY = "Y", textZ = "Z";
-    private int txc = 0, tyc = 0, tzc = 0;
-    private boolean shadow = true;
+    private int txc = 0, tyc = 0, tzc = 0, rainbowSpeed = 3;
+    private boolean shadow = true, rainbow = false;
 
     @Override
-    public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(DrawContext context, long mt, TextRenderer textRenderer, int posX, int posY) {
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
         int y = this.paddingY;
         if (showX){
             y++;
-            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor(mt), shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showY){
             y++;
-            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor(mt), shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showZ){
             y++;
-            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor(mt), shadow);
         }
+    }
+
+    private int textColor(long n) {
+        return rainbow ? BasicTextWidget.rainbowColor(n, rainbowSpeed) : textColor;
     }
 
     @Override
@@ -106,6 +116,8 @@ public class CoordinatesWidget extends ResizableWidget {
         this.paddingY = ((IntSliderWidgetSetting) settings.optionById("paddingY")).getValue();
         this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
         this.shadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
+        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
+        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
     }
 
     @Override

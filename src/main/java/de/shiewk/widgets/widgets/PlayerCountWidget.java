@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.WidgetUtils;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;

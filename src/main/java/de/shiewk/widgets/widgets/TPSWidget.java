@@ -19,7 +19,9 @@ public class TPSWidget extends BasicTextWidget {
                 new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true),
                 new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true)
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
+        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
         INSTANCE = this;
     }
 

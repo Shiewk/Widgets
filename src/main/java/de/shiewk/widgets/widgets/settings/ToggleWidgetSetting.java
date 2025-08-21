@@ -3,7 +3,7 @@ package de.shiewk.widgets.widgets.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
-import de.shiewk.widgets.WidgetUtils;
+import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;

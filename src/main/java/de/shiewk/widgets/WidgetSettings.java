@@ -9,8 +9,8 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
-import static de.shiewk.widgets.WidgetUtils.translateToWidgetSettingsValue;
 import static de.shiewk.widgets.WidgetsMod.LOGGER;
+import static de.shiewk.widgets.utils.WidgetUtils.translateToWidgetSettingsValue;
 
 public class WidgetSettings {
     public double posX = 0; // posx * 100 = screen width

@@ -16,15 +16,20 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.translatable;
+
 public class ArmorHudWidget extends ResizableWidget {
 
     public ArmorHudWidget(Identifier id) {
         super(id, List.of(
                 new IntSliderWidgetSetting("padding", Text.translatable("widgets.widgets.armorHud.padding"), 0, 2, 5),
                 new ToggleWidgetSetting("show_durability", Text.translatable("widgets.widgets.armorHud.showDurability"), true),
-                new EnumWidgetSetting<>("durability_style", Text.translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName)
+                new EnumWidgetSetting<>("durability_style", Text.translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
+                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
+                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10)
         ));
         getSettings().optionById("durability_style").setShowCondition(() -> this.showDurability);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
     public enum DurabilityStyle {
@@ -39,36 +44,38 @@ public class ArmorHudWidget extends ResizableWidget {
     private int padding = 1;
     private boolean showDurability = true;
     private DurabilityStyle durabilityStyle;
-    private ItemStack helmet;
-    private ItemStack chestplate;
-    private ItemStack leggings;
-    private ItemStack boots;
+    protected ItemStack helmet;
+    protected ItemStack chestplate;
+    protected ItemStack leggings;
+    protected ItemStack boots;
+    protected boolean rainbow = false;
+    protected int rainbowSpeed = 3;
 
     @Override
     public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
         if (helmet != null){
-            renderItem(context, textRenderer, helmet, posX + padding, posY + padding);
+            renderItem(context, measuringTimeNano, textRenderer, helmet, posX + padding, posY + padding);
         }
         if (chestplate != null){
-            renderItem(context, textRenderer, chestplate, posX + padding, posY + 16 + padding);
+            renderItem(context, measuringTimeNano, textRenderer, chestplate, posX + padding, posY + 16 + padding);
         }
         if (leggings != null){
-            renderItem(context, textRenderer, leggings, posX + padding, posY + 32 + padding);
+            renderItem(context, measuringTimeNano, textRenderer, leggings, posX + padding, posY + 32 + padding);
         }
         if (boots != null){
-            renderItem(context, textRenderer, boots, posX + padding, posY + 48 + padding);
+            renderItem(context, measuringTimeNano, textRenderer, boots, posX + padding, posY + 48 + padding);
         }
     }
 
-    private void renderItem(DrawContext context, TextRenderer textRenderer, ItemStack stack, int posX, int posY){
+    private void renderItem(DrawContext context, long mt, TextRenderer textRenderer, ItemStack stack, int posX, int posY){
         context.drawItemWithoutEntity(stack, posX, posY);
         context.drawStackOverlay(textRenderer, stack, posX, posY);
         if (showDurability){
-            renderDurability(context, textRenderer, stack, posX, posY);
+            renderDurability(context, mt, textRenderer, stack, posX, posY);
         }
     }
 
-    private void renderDurability(DrawContext context, TextRenderer textRenderer, ItemStack stack, int posX, int posY) {
+    private void renderDurability(DrawContext context, long mt, TextRenderer textRenderer, ItemStack stack, int posX, int posY) {
         Integer maxDamage = stack.get(DataComponentTypes.MAX_DAMAGE);
         if (maxDamage != null) {
             int damage = stack.getOrDefault(DataComponentTypes.DAMAGE, 0);
@@ -76,7 +83,7 @@ public class ArmorHudWidget extends ResizableWidget {
                 case NUMBER -> String.valueOf(maxDamage - damage);
                 case PERCENT -> ((maxDamage - damage) * 100 / maxDamage) + "%";
             };
-            context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, 0xffffffff, true);
+            context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : 0xffffffff, true);
         }
     }
 
@@ -124,5 +131,7 @@ public class ArmorHudWidget extends ResizableWidget {
         this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
         this.showDurability = ((ToggleWidgetSetting) settings.optionById("show_durability")).getValue();
         this.durabilityStyle = (DurabilityStyle) ((EnumWidgetSetting<?>) settings.optionById("durability_style")).getValue();
+        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
+        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
     }
 }

@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.WidgetUtils;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
@@ -50,7 +50,9 @@ public class BandwidthWidget extends BasicTextWidget {
                 new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
                 new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name))
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
+        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
     }
 
     private int t = 0;

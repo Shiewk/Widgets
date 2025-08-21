@@ -30,6 +30,9 @@
   "widgets.widgets.basictext.padding": "Textabstand",
   "widgets.widgets.basictext.paddingX": "Textabstand X",
   "widgets.widgets.basictext.paddingY": "Textabstand Y",
+  "widgets.widgets.basictext.style.parentheses": "Mit runden Klammern",
+  "widgets.widgets.basictext.style.plain": "Normal",
+  "widgets.widgets.basictext.style.squareBrackets": "Mit eckigen Klammern",
   "widgets.widgets.basictext.textcolor": "Textfarbe",
   "widgets.widgets.basictext.textshadow": "Textschatten",
   "widgets.widgets.basictext.textstyle": "Textstil",
@@ -49,6 +52,8 @@
   "widgets.widgets.clock.weekFormat": "Wochentagformat",
   "widgets.widgets.clock.weekFormat.none": "Nicht anzeigen",
   "widgets.widgets.common.hideInSingleplayer": "In Einzelspielerwelten verbergen",
+  "widgets.widgets.common.rainbow": "Regenbogen-Text",
+  "widgets.widgets.common.rainbow.speed": "Regenbogengeschwindigkeit",
   "widgets.widgets.common.showLabel": "Beschriftung anzeigen",
   "widgets.widgets.common.sizePercent": "Widgetgröße (%)",
   "widgets.widgets.coordinates": "Koordinaten",
@@ -111,8 +116,5 @@
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
-  "widgets.widgets.tps.tps": "%s TPS",
-  "widgets.widgets.basictext.style.parentheses": "Mit runden Klammern",
-  "widgets.widgets.basictext.style.plain": "Normal",
-  "widgets.widgets.basictext.style.squareBrackets": "Mit eckigen Klammern"
+  "widgets.widgets.tps.tps": "%s TPS"
 }

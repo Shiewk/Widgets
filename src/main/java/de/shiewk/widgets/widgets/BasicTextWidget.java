@@ -65,11 +65,15 @@ public abstract class BasicTextWidget extends ResizableWidget {
     private int padding = 0;
     private TextRenderer renderer = null;
     private boolean textShadow = true;
+    protected boolean rainbow = false;
+    private int rainbowSpeed = 3;
 
     private static ObjectArrayList<WidgetSettingOption> getCustomSettings(List<WidgetSettingOption> otherCustomOptions) {
         final ObjectArrayList<WidgetSettingOption> list = new ObjectArrayList<>(otherCustomOptions);
         list.add(new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80));
+        list.add(new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false));
         list.add(new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255));
+        list.add(new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10));
         list.add(new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 10, DEFAULT_WIDTH, 80*3));
         list.add(new IntSliderWidgetSetting("height", translatable("widgets.widgets.basictext.height"), 9, DEFAULT_HEIGHT, 80));
         list.add(new ToggleWidgetSetting("shadow", translatable("widgets.widgets.basictext.textshadow"), true));
@@ -81,6 +85,8 @@ public abstract class BasicTextWidget extends ResizableWidget {
     protected BasicTextWidget(Identifier id, List<WidgetSettingOption> otherCustomOptions) {
         super(id, getCustomSettings(otherCustomOptions));
         getSettings().optionById("padding").setShowCondition(() -> this.textAlignment != TextAlignment.CENTER);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
     protected static final int
@@ -108,7 +114,11 @@ public abstract class BasicTextWidget extends ResizableWidget {
         if (!shouldRender) return;
         renderer = textRenderer;
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
-        context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1 /* offset 1 without text shadow so that it looks more aligned */), this.textColor, textShadow);
+        context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1), rainbow ? rainbowColor(n, rainbowSpeed) : this.textColor, textShadow);
+    }
+
+    public static int rainbowColor(long n, float speed) {
+        return Color.HSBtoRGB(n / 10_000_000_000f * speed, 1, 1);
     }
 
     @Override
@@ -146,5 +156,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
         this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
         this.textShadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
         this.textStyle = (TextStyle) ((EnumWidgetSetting<?>) settings.optionById("text_style")).getValue();
+        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
+        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
     }
 }

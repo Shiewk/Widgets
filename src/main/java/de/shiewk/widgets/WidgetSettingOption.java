@@ -1,6 +1,7 @@
 package de.shiewk.widgets;
 
 import com.google.gson.JsonElement;
+import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;

@@ -1,8 +1,8 @@
 package de.shiewk.widgets.client.screen.components;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetUtils;
 import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
+import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
