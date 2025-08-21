@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -69,5 +70,9 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new BiomeWidget(Identifier.of(WidgetsMod.MOD_ID, "biome")));
         WidgetManager.register(new SpeedWidget(Identifier.of(WidgetsMod.MOD_ID, "speed")));
         WidgetManager.register(new ArmorHudWidget(Identifier.of(WidgetsMod.MOD_ID, "armor")));
+
+        ComboWidget comboWidget = new ComboWidget(Identifier.of(WidgetsMod.MOD_ID, "combo"));
+        WidgetManager.register(comboWidget);
+        AttackEntityCallback.EVENT.register(comboWidget);
     }
 }

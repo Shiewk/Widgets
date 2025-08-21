@@ -22,6 +22,7 @@ public class TPSWidget extends BasicTextWidget {
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
         getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
         getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
+        if (INSTANCE != null) throw new IllegalStateException("Instance already initialized");
         INSTANCE = this;
     }
 

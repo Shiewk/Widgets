@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
+version = "${project.mod_version}-${project.minecraft_version}"
 group = project.maven_group
 
 base {
@@ -13,7 +13,6 @@ base {
 loom {
     accessWidenerPath = file("src/main/resources/widgets.accesswidener")
 }
-
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -84,23 +83,5 @@ java {
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
     }
 }

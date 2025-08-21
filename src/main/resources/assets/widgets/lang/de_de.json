@@ -116,5 +116,9 @@
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
-  "widgets.widgets.tps.tps": "%s TPS"
+  "widgets.widgets.tps.tps": "%s TPS",
+  "widgets.widgets.combo": "Combo",
+  "widgets.widgets.combo.description": "Zeigt deine momentane Combo an",
+  "widgets.widgets.combo.combo": "Combo: %s",
+  "widgets.widgets.combo.displayThreshold": "Minimum sichtbar"
 }
