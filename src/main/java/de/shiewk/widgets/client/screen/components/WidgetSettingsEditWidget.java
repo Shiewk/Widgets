@@ -82,6 +82,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         mouseY += getScrollY();
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
+            if (!customSetting.shouldShow()) continue;
             if (mouseX >= customSetting.getX() && mouseX <= customSetting.getX() + customSetting.getWidth()
                     && mouseY >= customSetting.getY() && mouseY <= customSetting.getY() + customSetting.getHeight()){
                 focus = customSetting;
@@ -101,6 +102,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
+            if (!customSetting.shouldShow()) continue;
             if (customSetting.mouseReleased(mouseX, mouseY + getScrollY(), button)){
                 onChange.run();
                 return true;
