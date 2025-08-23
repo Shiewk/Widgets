@@ -1,20 +1,23 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
-import net.minecraft.world.tick.TickManager;
 
 import java.util.List;
 import java.util.function.LongFunction;
 
+import static net.minecraft.text.Text.literal;
+
 public class BandwidthWidget extends BasicTextWidget {
 
     public enum Unit {
+        @SuppressWarnings("IntegerDivisionInFloatingPointContext")
         KB("kB", bytes -> {
             if (bytes > 1000) {
                 double kB = bytes / 100 / 10d;
@@ -44,37 +47,36 @@ public class BandwidthWidget extends BasicTextWidget {
     public BandwidthWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
-                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> Text.literal(unit.name))
+                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
+                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name))
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
+        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
     }
 
     private int t = 0;
     private boolean dynamicColor = false;
+    private boolean hideInSingleplayer = false;
     private Unit unit = Unit.KB;
 
     @Override
     public void tickWidget() {
-        float tickRate = 20f;
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null) {
-            TickManager tickManager = client.world.getTickManager();
-            if (!tickManager.isFrozen()){
-                tickRate = Math.min(tickManager.getTickRate(), 20);
-            }
-        }
+        shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
+        if (!shouldRender) return;
+        float tickRate = WidgetUtils.getClientTickRate();
         t++;
         if (t >= tickRate){
             t = 0;
-            long avgBytesPerSecond = getAvgBytesPerSecond(client, tickRate);
-            this.renderText = Text.of(unit.sizeFormatter.apply(avgBytesPerSecond));
+            long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
+            formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (avgBytesPerSecond < 750000) {
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff3030;
+                    this.textColor = 0xffff3030;
                 }
             }
         }
@@ -96,6 +98,7 @@ public class BandwidthWidget extends BasicTextWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
+        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
         this.unit = (Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue();
     }
 

@@ -10,13 +10,19 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class TPSWidget extends BasicTextWidget {
     public TPSWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("show_label", Text.translatable("widgets.widgets.common.showLabel"), true),
-                new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.tps.dynamicColor"), true)
+                new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true),
+                new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true)
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
+        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
+        if (INSTANCE != null) throw new IllegalStateException("Instance already initialized");
         INSTANCE = this;
     }
 
@@ -75,25 +81,25 @@ public class TPSWidget extends BasicTextWidget {
     private void updateTPS(float tps, float targetTickRate, boolean loadingFinished) {
         if (!loadingFinished){
             if (showLabel){
-                this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", "???").getString());
+                formatAndSetRenderText(literal(translatable("widgets.widgets.tps.tps", "???").getString()));
             } else {
-                this.renderText = Text.literal("???");
+                formatAndSetRenderText(literal("???"));
             }
-            if (dynamicColor) this.textColor = 0x00ff00;
+            if (dynamicColor) this.textColor = 0xff00ff00;
         } else {
             tps = Math.round(tps * 10f) / 10f;
             if (showLabel){
-                this.renderText = Text.literal(Text.translatable("widgets.widgets.tps.tps", tps).getString());
+                formatAndSetRenderText(literal(translatable("widgets.widgets.tps.tps", tps).getString()));
             } else {
-                this.renderText = Text.literal(String.valueOf(tps));
+                formatAndSetRenderText(literal(String.valueOf(tps)));
             }
             if (dynamicColor){
                 if (tps >= targetTickRate * 0.990){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (tps >= targetTickRate * 0.740){
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff0000;
+                    this.textColor = 0xffff0000;
                 }
             }
         }
@@ -106,12 +112,12 @@ public class TPSWidget extends BasicTextWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.tps");
+        return translatable("widgets.widgets.tps");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.tps.description");
+        return translatable("widgets.widgets.tps.description");
     }
 
     @Override

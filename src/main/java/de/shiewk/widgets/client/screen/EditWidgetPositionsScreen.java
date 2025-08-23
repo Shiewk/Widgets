@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.function.Consumer;
 
-import static de.shiewk.widgets.WidgetUtils.translateToScreen;
-import static de.shiewk.widgets.WidgetUtils.translateToWidgetSettingsValue;
+import static de.shiewk.widgets.utils.WidgetUtils.translateToScreen;
+import static de.shiewk.widgets.utils.WidgetUtils.translateToWidgetSettingsValue;
 
 public class EditWidgetPositionsScreen extends AnimatedScreen {
 

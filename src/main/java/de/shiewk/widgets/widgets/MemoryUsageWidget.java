@@ -7,6 +7,9 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class MemoryUsageWidget extends BasicTextWidget {
 
     private boolean showPercentage = true;
@@ -14,8 +17,8 @@ public class MemoryUsageWidget extends BasicTextWidget {
 
     public MemoryUsageWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("percentage", Text.translatable("widgets.widgets.memory.showPercentage"), true),
-                new ToggleWidgetSetting("label", Text.translatable("widgets.widgets.common.showLabel"), true)
+                new ToggleWidgetSetting("percentage", translatable("widgets.widgets.memory.showPercentage"), true),
+                new ToggleWidgetSetting("label", translatable("widgets.widgets.common.showLabel"), true)
         ));
     }
 
@@ -31,9 +34,9 @@ public class MemoryUsageWidget extends BasicTextWidget {
                 mib(memUsed) + "MiB / " + mib(memTotal) + "MiB (" + memUsagePercent + "%)" :
                 mib(memUsed) + "MiB / " + mib(memTotal) + "MiB";
         if (showLabel){
-            renderText = Text.literal(Text.translatable("widgets.widgets.memory.withLabel", memUsageString).getString());
+            formatAndSetRenderText(literal(translatable("widgets.widgets.memory.withLabel", memUsageString).getString()));
         } else {
-            renderText = Text.literal(memUsageString);
+            formatAndSetRenderText(literal(memUsageString));
         }
 
     }
@@ -44,12 +47,12 @@ public class MemoryUsageWidget extends BasicTextWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.memory");
+        return translatable("widgets.widgets.memory");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.memory.description");
+        return translatable("widgets.widgets.memory.description");
     }
 
     @Override

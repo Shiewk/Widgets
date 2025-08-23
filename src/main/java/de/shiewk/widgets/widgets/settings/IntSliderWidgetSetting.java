@@ -8,6 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 public class IntSliderWidgetSetting extends WidgetSettingOption {
 
@@ -26,10 +27,10 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (maxValue > value && keyCode == 262) { // right arrow key
+        if (maxValue > value && keyCode == GLFW.GLFW_KEY_RIGHT) {
             value++;
             return true;
-        } else if (minValue < value && keyCode == 263){ // left arrow key
+        } else if (minValue < value && keyCode == GLFW.GLFW_KEY_LEFT){
             value--;
             return true;
         }

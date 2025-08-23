@@ -1,6 +1,5 @@
 package de.shiewk.widgets.widgets;
 
-import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
@@ -9,62 +8,62 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.awt.*;
 import java.util.List;
 
-public class CoordinatesWidget extends ModWidget {
+import static net.minecraft.text.Text.translatable;
+
+public class CoordinatesWidget extends ResizableWidget {
     public CoordinatesWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("x", Text.translatable("widgets.widgets.coordinates.showX"), true),
                 new ToggleWidgetSetting("y", Text.translatable("widgets.widgets.coordinates.showY"), true),
                 new ToggleWidgetSetting("z", Text.translatable("widgets.widgets.coordinates.showZ"), true),
                 new RGBAColorWidgetSetting("backgroundcolor", Text.translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80),
+                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
                 new RGBAColorWidgetSetting("textcolor", Text.translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255),
+                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
                 new IntSliderWidgetSetting("width", Text.translatable("widgets.widgets.basictext.width"), 10, WIDTH, 80*3),
-                new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400),
                 new IntSliderWidgetSetting("paddingX", Text.translatable("widgets.widgets.basictext.paddingX"), 0, 5, 20),
                 new IntSliderWidgetSetting("paddingY", Text.translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
                 new ToggleWidgetSetting("shadow", Text.translatable("widgets.widgets.basictext.textshadow"), true)
         ));
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
-    private float size = 1f;
     private String textX = "X", textY = "Y", textZ = "Z";
-    private int txc = 0, tyc = 0, tzc = 0;
-    private boolean shadow = true;
+    private int txc = 0, tyc = 0, tzc = 0, rainbowSpeed = 3;
+    private boolean shadow = true, rainbow = false;
 
     @Override
-    public void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
-        MatrixStack matrices = context.getMatrices();
-        if (size != 1f){
-            matrices.push();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, 0);
-            matrices.scale(size, size, 1);
-        }
+    public void renderScaled(DrawContext context, long mt, TextRenderer textRenderer, int posX, int posY) {
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
         int y = this.paddingY;
         if (showX){
             y++;
-            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "X: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textX, posX + txc, posY + y, textColor(mt), shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showY){
             y++;
-            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "Y: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textY, posX + tyc, posY + y, textColor(mt), shadow);
             y += textRenderer.fontHeight + 1;
         }
         if (showZ){
             y++;
-            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor, shadow);
-            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor, shadow);
+            context.drawText(textRenderer, "Z: ", posX + paddingX, posY + y, textColor(mt), shadow);
+            context.drawText(textRenderer, textZ, posX + tzc, posY + y, textColor(mt), shadow);
         }
-        if (size != 1f) matrices.pop();
+    }
+
+    private int textColor(long n) {
+        return rainbow ? BasicTextWidget.rainbowColor(n, rainbowSpeed) : textColor;
     }
 
     @Override
@@ -107,6 +106,7 @@ public class CoordinatesWidget extends ModWidget {
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
+        super.onSettingsChanged(settings);
         this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
         this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
         this.showX = ((ToggleWidgetSetting) settings.optionById("x")).getValue();
@@ -115,13 +115,9 @@ public class CoordinatesWidget extends ModWidget {
         this.paddingX = ((IntSliderWidgetSetting) settings.optionById("paddingX")).getValue();
         this.paddingY = ((IntSliderWidgetSetting) settings.optionById("paddingY")).getValue();
         this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
-        this.size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
         this.shadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
-    }
-
-    @Override
-    public float getScaleFactor() {
-        return this.size;
+        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
+        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
     }
 
     @Override

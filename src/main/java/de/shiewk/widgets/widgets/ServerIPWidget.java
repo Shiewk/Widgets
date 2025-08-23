@@ -1,6 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
@@ -9,10 +10,14 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class ServerIPWidget extends BasicTextWidget {
     public ServerIPWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("dynamicwidth", Text.translatable("widgets.widgets.serverIP.dynamicWidth"), true)
+                new ToggleWidgetSetting("dynamicwidth", translatable("widgets.widgets.serverIP.dynamicWidth"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", translatable("widgets.widgets.common.hideInSingleplayer"), false)
         ));
         getSettings().optionById("width").setShowCondition(() -> !this.dynamicWidth);
     }
@@ -21,17 +26,20 @@ public class ServerIPWidget extends BasicTextWidget {
     private int t = 0;
 
     private boolean dynamicWidth = true;
+    private boolean hideInSingleplayer = false;
 
     @Override
     public void tickWidget() {
+        shouldRender = !(this.hideInSingleplayer && WidgetUtils.isInSingleplayer());
+        if (!shouldRender) return;
         final ServerInfo serverEntry = MinecraftClient.getInstance().getCurrentServerEntry();
         if (serverEntry != null){
-            this.renderText = Text.of(serverEntry.address);
+            formatAndSetRenderText(literal(serverEntry.address));
         } else {
-            this.renderText = Text.translatable("menu.singleplayer");
+            formatAndSetRenderText(translatable("menu.singleplayer"));
         }
         t++;
-        if (t >= 20){
+        if (dynamicWidth && t >= 20){
             t = 0;
             this.width = MinecraftClient.getInstance().textRenderer.getWidth(this.renderText) + 20;
         }
@@ -44,17 +52,18 @@ public class ServerIPWidget extends BasicTextWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.serverIP");
+        return translatable("widgets.widgets.serverIP");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.serverIP.description");
+        return translatable("widgets.widgets.serverIP.description");
     }
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.dynamicWidth = ((ToggleWidgetSetting) settings.optionById("dynamicwidth")).getValue();
+        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
     }
 }
