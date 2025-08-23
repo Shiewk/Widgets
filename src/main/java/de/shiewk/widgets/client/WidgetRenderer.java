@@ -14,7 +14,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
 
 import static de.shiewk.widgets.utils.WidgetUtils.translateToScreen;
 
@@ -26,7 +25,7 @@ public class WidgetRenderer implements HudRenderCallback, ClientTickEvents.Start
     public void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (client.options.hudHidden) return;
         if (client.currentScreen instanceof EditWidgetPositionsScreen) return;
-        final Profiler profiler = Profilers.get();
+        final Profiler profiler = client.getProfiler();
         profiler.push("widgets");
         final TextRenderer textRenderer = client.textRenderer;
         final long timeNano = Util.getMeasuringTimeNano();
@@ -53,7 +52,7 @@ public class WidgetRenderer implements HudRenderCallback, ClientTickEvents.Start
     @Override
     public void onStartTick(MinecraftClient client) {
         WidgetRenderer.client = client;
-        final Profiler profiler = Profilers.get();
+        final Profiler profiler = client.getProfiler();
         profiler.push("widgets");
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;

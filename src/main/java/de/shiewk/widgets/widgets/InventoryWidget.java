@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -98,13 +97,13 @@ public class InventoryWidget extends ResizableWidget {
 
     private void drawBackground(DrawContext context, long mt, int posX, int posY) {
         switch (mode){
-            case VANILLA -> context.drawTexture(RenderLayer::getGuiTextured, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
+            case VANILLA -> context.drawTexture(VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
             case TEXTURE_PACK -> {
                 context.enableScissor(posX, posY, posX + width(), posY + 6);
-                context.drawTexture(RenderLayer::getGuiTextured, TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
+                context.drawTexture(TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
                 context.enableScissor(posX, posY + 6, posX + width(), posY + height());
-                context.drawTexture(RenderLayer::getGuiTextured, TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
+                context.drawTexture(TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
             }
             case GRID -> {
@@ -159,7 +158,7 @@ public class InventoryWidget extends ResizableWidget {
                 int itemX = posX + rx * 18;
 
                 context.drawItem(stack, itemX, itemY);
-                context.drawStackOverlay(textRenderer, stack, itemX, itemY);
+                context.drawItemInSlot(textRenderer, stack, itemX, itemY);
             }
         }
     }
