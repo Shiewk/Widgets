@@ -69,15 +69,15 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
             o++;
         }
 
-        context.drawText(textRenderer, "R", this.getX() + 7 - textRenderer.getWidth("R"), this.getY() + 5  + 4, 0xffffff, true);
-        context.drawText(textRenderer, "G", this.getX() + 7 - textRenderer.getWidth("G"), this.getY() + 25 + 4, 0xffffff, true);
-        context.drawText(textRenderer, "B", this.getX() + 7 - textRenderer.getWidth("B"), this.getY() + 45 + 4, 0xffffff, true);
-        context.drawText(textRenderer, "A", this.getX() + 7 - textRenderer.getWidth("A"), this.getY() + 65 + 4, 0xffffff, true);
+        context.drawText(textRenderer, "R", this.getX() + 7 - textRenderer.getWidth("R"), this.getY() + 5  + 4, 0xffffffff, true);
+        context.drawText(textRenderer, "G", this.getX() + 7 - textRenderer.getWidth("G"), this.getY() + 25 + 4, 0xffffffff, true);
+        context.drawText(textRenderer, "B", this.getX() + 7 - textRenderer.getWidth("B"), this.getY() + 45 + 4, 0xffffffff, true);
+        context.drawText(textRenderer, "A", this.getX() + 7 - textRenderer.getWidth("A"), this.getY() + 65 + 4, 0xffffffff, true);
 
-        context.drawText(textRenderer, String.valueOf(r), this.getX() + this.getWidth() - 19, this.getY() +  5 + 4, 0xffffff, true);
-        context.drawText(textRenderer, String.valueOf(g), this.getX() + this.getWidth() - 19, this.getY() + 25 + 4, 0xffffff, true);
-        context.drawText(textRenderer, String.valueOf(b), this.getX() + this.getWidth() - 19, this.getY() + 45 + 4, 0xffffff, true);
-        context.drawText(textRenderer, String.valueOf(a), this.getX() + this.getWidth() - 19, this.getY() + 65 + 4, 0xffffff, true);
+        context.drawText(textRenderer, String.valueOf(r), this.getX() + this.getWidth() - 19, this.getY() +  5 + 4, 0xffffffff, true);
+        context.drawText(textRenderer, String.valueOf(g), this.getX() + this.getWidth() - 19, this.getY() + 25 + 4, 0xffffffff, true);
+        context.drawText(textRenderer, String.valueOf(b), this.getX() + this.getWidth() - 19, this.getY() + 45 + 4, 0xffffffff, true);
+        context.drawText(textRenderer, String.valueOf(a), this.getX() + this.getWidth() - 19, this.getY() + 65 + 4, 0xffffffff, true);
 
         context.drawVerticalLine(this.getX() + 5 + 7 + r/2, this.getY() + 4,  this.getY() + 21, 0xffffffff);
         context.drawVerticalLine(this.getX() + 5 + 7 + g/2, this.getY() + 24, this.getY() + 41, 0xffffffff);

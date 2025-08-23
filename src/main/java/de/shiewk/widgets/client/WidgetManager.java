@@ -46,7 +46,7 @@ public class WidgetManager {
         enabled.remove(widget);
     }
 
-    static Function<Identifier, File> saveFileFactory = id -> new File(MinecraftClient.getInstance().runDirectory.getPath() + "/config/widgets/" + id.getNamespace() + "/" + id.getPath() + ".json");;
+    static Function<Identifier, File> saveFileFactory = id -> new File(MinecraftClient.getInstance().runDirectory.getPath() + "/config/widgets/" + id.getNamespace() + "/" + id.getPath() + ".json");
     private static final Gson gson = new Gson();
 
     public static void saveWidgets(List<ModWidget> widgets) {

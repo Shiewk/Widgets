@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.WidgetUtils;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
@@ -12,6 +12,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
+
+import static net.minecraft.text.Text.literal;
 
 public class SpeedWidget extends BasicTextWidget {
 
@@ -80,7 +82,7 @@ public class SpeedWidget extends BasicTextWidget {
             avg += v;
         }
         avg /= averagingWindow.length;
-        renderText = Text.of(reduceDigits(avg) + unit.displayName);
+        formatAndSetRenderText(literal(reduceDigits(avg) + unit.displayName));
     }
 
     private String reduceDigits(double v) {

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+
 public class CPSWidget extends BasicTextWidget {
 
     public static class Click {
@@ -100,13 +102,10 @@ public class CPSWidget extends BasicTextWidget {
             middleClicks.removeIf(click -> click.expiresAt <= mtime);
             middle = middleClicks.size();
         }
-        switch (appearance){
-            case UNIFIED -> renderText = Text.literal((left + right + middle) + " CPS");
-            case SPLIT_PIPE, SPLIT_SLASH -> {
-                final StringBuilder sb = getClickText(left, middle, right);
-                renderText = Text.literal(sb + " CPS");
-            }
-        }
+        formatAndSetRenderText(switch (appearance){
+            case UNIFIED -> literal((left + right + middle) + " CPS");
+            case SPLIT_PIPE, SPLIT_SLASH -> literal(getClickText(left, middle, right) + " CPS");
+        });
     }
 
     private @NotNull StringBuilder getClickText(int left, int middle, int right) {

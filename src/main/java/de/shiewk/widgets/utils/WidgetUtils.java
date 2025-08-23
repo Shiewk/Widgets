@@ -1,4 +1,4 @@
-package de.shiewk.widgets;
+package de.shiewk.widgets.utils;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.tick.TickManager;

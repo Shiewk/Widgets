@@ -1,6 +1,5 @@
 package de.shiewk.widgets.widgets;
 
-import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
@@ -9,7 +8,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -19,26 +17,34 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-public class KeyStrokesWidget extends ModWidget {
+import static net.minecraft.text.Text.translatable;
+
+public class KeyStrokesWidget extends ResizableWidget {
     public KeyStrokesWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("showjump", Text.translatable("widgets.widgets.keystrokes.showJumpKey"), true),
-                new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 150, 400),
                 new RGBAColorWidgetSetting("bgpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundPressed"), 255, 255, 255, 80),
                 new RGBAColorWidgetSetting("bgunpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundUnpressed"), 0, 0, 0, 80),
+                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
+                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
                 new RGBAColorWidgetSetting("keypressed", Text.translatable("widgets.widgets.keystrokes.colorKeyPressed"), 255, 255, 255, 255),
                 new RGBAColorWidgetSetting("keyunpressed", Text.translatable("widgets.widgets.keystrokes.colorKeyUnpressed"), 255, 255, 255, 255)
         ));
+        getSettings().optionById("keypressed").setShowCondition(() -> !this.rainbow);
+        getSettings().optionById("keyunpressed").setShowCondition(() -> !this.rainbow);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
-        showJumpKey = ((ToggleWidgetSetting) settings.optionById("showjump")).getValue();
-        colorBackgroundPressed = ((RGBAColorWidgetSetting) settings.optionById("bgpressed")).getColor();
-        colorBackgroundUnpressed = ((RGBAColorWidgetSetting) settings.optionById("bgunpressed")).getColor();
-        colorKeyPressed = ((RGBAColorWidgetSetting) settings.optionById("keypressed")).getColor();
-        colorKeyUnpressed = ((RGBAColorWidgetSetting) settings.optionById("keyunpressed")).getColor();
-        size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
+        super.onSettingsChanged(settings);
+        this.showJumpKey = ((ToggleWidgetSetting) settings.optionById("showjump")).getValue();
+        this.colorBackgroundPressed = ((RGBAColorWidgetSetting) settings.optionById("bgpressed")).getColor();
+        this.colorBackgroundUnpressed = ((RGBAColorWidgetSetting) settings.optionById("bgunpressed")).getColor();
+        this.colorKeyPressed = ((RGBAColorWidgetSetting) settings.optionById("keypressed")).getColor();
+        this.colorKeyUnpressed = ((RGBAColorWidgetSetting) settings.optionById("keyunpressed")).getColor();
+        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
+        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
     }
 
     private boolean showJumpKey = true;
@@ -48,7 +54,8 @@ public class KeyStrokesWidget extends ModWidget {
             colorKeyUnpressed = 0xffffffff,
             colorKeyPressed = 0xffffffff;
 
-    protected float size = 2;
+    protected boolean rainbow = false;
+    protected int rainbowSpeed = 3;
 
     protected static class Key {
         protected final KeyBinding binding;
@@ -74,22 +81,13 @@ public class KeyStrokesWidget extends ModWidget {
     private Key KEY_JUMP;
 
     @Override
-    public void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
         if (KEY_JUMP == null) return;
-        MatrixStack matrices = context.getMatrices();
-        if (size != 1) {
-            matrices.push();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, 0);
-            matrices.scale(size, size, 1);
-        }
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 22, posY, KEY_FWD);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX, posY + 22, KEY_LEFT);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 22, posY + 22, KEY_BWD);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 44, posY + 22, KEY_RIGHT);
         if (showJumpKey) renderSpaceBar(context, measuringTimeNano, posX, posY + 44, KEY_JUMP);
-        if (size != 1){
-            matrices.pop();
-        }
     }
 
     protected void renderSpaceBar(final DrawContext context,
@@ -107,7 +105,7 @@ public class KeyStrokesWidget extends ModWidget {
         } else {
             context.fill(posX, posY, posX + 64, posY + 10, key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed);
         }
-        context.fill(posX + 5, posY + 4, posX + 59, posY + 5, key.isPressed ? colorKeyPressed : colorKeyUnpressed);
+        context.fill(posX + 5, posY + 4, posX + 59, posY + 5, rainbow ? BasicTextWidget.rainbowColor(measuringTimeNano, rainbowSpeed) : (key.isPressed ? colorKeyPressed : colorKeyUnpressed));
     }
 
     protected void renderKeyStroke(final DrawContext context,
@@ -126,7 +124,7 @@ public class KeyStrokesWidget extends ModWidget {
         } else {
             context.fill(posX, posY, posX+20, posY+20, key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed);
         }
-        context.drawText(textRenderer, key.boundToKey, posX+10-(key.boundToLength/2), posY + 6, key.isPressed ? colorKeyPressed : colorKeyUnpressed, true);
+        context.drawText(textRenderer, key.boundToKey, posX+10-(key.boundToLength/2), posY + 6, rainbow ? BasicTextWidget.rainbowColor(measuringTimeNano, rainbowSpeed) : (key.isPressed ? colorKeyPressed : colorKeyUnpressed), true);
     }
 
     private int fadeColor(int color1, int color2, double delta) {
@@ -170,11 +168,11 @@ public class KeyStrokesWidget extends ModWidget {
 
     @Override
     public int width() {
-        return (int) (64 * size);
+        return 64;
     }
 
     @Override
     public int height() {
-        return (int) ((showJumpKey ? 56 : 44) * size);
+        return showJumpKey ? 56 : 44;
     }
 }

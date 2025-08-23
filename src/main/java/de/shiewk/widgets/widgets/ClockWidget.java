@@ -12,6 +12,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+
 public class ClockWidget extends BasicTextWidget {
 
     public enum TimeOption {
@@ -95,7 +97,7 @@ public class ClockWidget extends BasicTextWidget {
 
     @Override
     public void tickWidget() {
-        renderText = Text.literal(dateFormat.format(Date.from(Instant.now())));
+        formatAndSetRenderText(literal(dateFormat.format(Date.from(Instant.now()))));
     }
 
     @Override

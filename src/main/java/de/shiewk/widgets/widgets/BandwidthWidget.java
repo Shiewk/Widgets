@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.WidgetUtils;
+import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
@@ -12,9 +12,12 @@ import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
 import java.util.List;
 import java.util.function.LongFunction;
 
+import static net.minecraft.text.Text.literal;
+
 public class BandwidthWidget extends BasicTextWidget {
 
     public enum Unit {
+        @SuppressWarnings("IntegerDivisionInFloatingPointContext")
         KB("kB", bytes -> {
             if (bytes > 1000) {
                 double kB = bytes / 100 / 10d;
@@ -45,9 +48,11 @@ public class BandwidthWidget extends BasicTextWidget {
         super(id, List.of(
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
                 new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
-                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> Text.literal(unit.name))
+                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name))
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
+        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
+        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
     }
 
     private int t = 0;
@@ -64,14 +69,14 @@ public class BandwidthWidget extends BasicTextWidget {
         if (t >= tickRate){
             t = 0;
             long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
-            this.renderText = Text.of(unit.sizeFormatter.apply(avgBytesPerSecond));
+            formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
-                    this.textColor = 0x00ff00;
+                    this.textColor = 0xff00ff00;
                 } else if (avgBytesPerSecond < 750000) {
-                    this.textColor = 0xffff00;
+                    this.textColor = 0xffffff00;
                 } else {
-                    this.textColor = 0xff3030;
+                    this.textColor = 0xffff3030;
                 }
             }
         }

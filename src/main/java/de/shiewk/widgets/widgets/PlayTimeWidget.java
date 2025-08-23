@@ -7,6 +7,9 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
+
 public class PlayTimeWidget extends BasicTextWidget {
 
     private static final long startTime = System.nanoTime();
@@ -27,18 +30,18 @@ public class PlayTimeWidget extends BasicTextWidget {
 
     public PlayTimeWidget(Identifier id) {
         super(id, List.of(
-                new EnumWidgetSetting<>("labelstyle", Text.translatable("widgets.widgets.playtime.labelStyle"), LabelStyle.class, LabelStyle.NO_LABEL, labelStyle -> Text.translatable("widgets.widgets.playtime.labelStyle."+labelStyle.key))
+                new EnumWidgetSetting<>("labelstyle", translatable("widgets.widgets.playtime.labelStyle"), LabelStyle.class, LabelStyle.NO_LABEL, labelStyle -> translatable("widgets.widgets.playtime.labelStyle."+labelStyle.key))
         ));
     }
 
     @Override
     public void tickWidget() {
         long timePlayedMs = getPlayedMs();
-        switch (labelStyle){
-            case NO_LABEL -> renderText = Text.literal(msToTimeStr(timePlayedMs));
-            case PLAYTIME -> renderText = Text.literal(Text.translatable("widgets.widgets.playtime.playtime", msToTimeStr(timePlayedMs)).getString());
-            case PLAYED -> renderText = Text.literal(Text.translatable("widgets.widgets.playtime.played", msToTimeStr(timePlayedMs)).getString());
-        }
+        formatAndSetRenderText(switch (labelStyle){
+            case NO_LABEL -> literal(msToTimeStr(timePlayedMs));
+            case PLAYTIME -> literal(translatable("widgets.widgets.playtime.playtime", msToTimeStr(timePlayedMs)).getString());
+            case PLAYED -> literal(translatable("widgets.widgets.playtime.played", msToTimeStr(timePlayedMs)).getString());
+        });
     }
 
     private static long getPlayedMs() {
@@ -59,12 +62,12 @@ public class PlayTimeWidget extends BasicTextWidget {
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.playtime");
+        return translatable("widgets.widgets.playtime");
     }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.playtime.description");
+        return translatable("widgets.widgets.playtime.description");
     }
 
     @Override
