@@ -2,9 +2,12 @@ package de.shiewk.widgets;
 
 import com.google.gson.JsonElement;
 import de.shiewk.widgets.utils.WidgetUtils;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 import java.util.function.BooleanSupplier;
@@ -43,23 +46,23 @@ public abstract class WidgetSettingOption implements Drawable, Widget {
     public abstract JsonElement saveState();
     public abstract void loadState(JsonElement state);
 
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         return false;
     }
 
-    public boolean mouseReleased(double mouseX, double mouseY, int button){
+    public boolean mouseReleased(Click click){
         return false;
     }
 
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         return false;
     }
 
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         return false;
     }
 
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
         return false;
     }
 

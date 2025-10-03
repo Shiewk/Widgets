@@ -4,6 +4,7 @@ import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.client.WidgetManager;
 import de.shiewk.widgets.client.screen.components.WidgetListWidget;
 import de.shiewk.widgets.utils.WidgetUtils;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AxisGridWidget;
@@ -86,10 +87,10 @@ public class WidgetConfigScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)){
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (super.mouseClicked(click, doubled)){
             return true;
-        } else return widgetList.mouseClicked(mouseX, mouseY, button);
+        } else return widgetList.mouseClicked(click, doubled);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -107,14 +108,14 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         this.mouseClicked = true;
         sv = 0;
         return false;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         this.mouseClicked = false;
         final boolean c = this.sv != 0;
         this.sv = 0;

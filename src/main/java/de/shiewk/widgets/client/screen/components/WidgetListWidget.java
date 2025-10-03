@@ -3,6 +3,7 @@ package de.shiewk.widgets.client.screen.components;
 import de.shiewk.widgets.ModWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -78,16 +79,19 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        double mouseY = click.y();
+        double mouseX = click.x();
         mouseY += getScrollY();
+        Click newClick = new Click(mouseX, mouseY, click.buttonInfo());
         for (Element element : elements) {
-            if (element.mouseClicked(mouseX, mouseY, 0)){
+            if (element.mouseClicked(newClick, doubled)){
                 client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 return true;
             }
         }
-        if (super.checkScrollbarDragged(mouseX, mouseY - getScrollY(), button)) return true;
-        return super.mouseClicked(mouseX, mouseY - getScrollY(), button);
+        if (super.checkScrollbarDragged(newClick)) return true;
+        return super.mouseClicked(newClick, doubled);
     }
 
     @Override

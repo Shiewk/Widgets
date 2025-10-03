@@ -5,10 +5,11 @@ import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
 
 public class IntSliderWidgetSetting extends WidgetSettingOption {
 
@@ -26,11 +27,11 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (maxValue > value && keyCode == GLFW.GLFW_KEY_RIGHT) {
+    public boolean keyPressed(KeyInput input) {
+        if (maxValue > value && input.isRight()) {
             value++;
             return true;
-        } else if (minValue < value && keyCode == GLFW.GLFW_KEY_LEFT){
+        } else if (minValue < value && input.isLeft()){
             value--;
             return true;
         }
@@ -73,13 +74,13 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         this.clicked = true;
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         this.clicked = false;
         boolean t = this.changed;
         this.changed = false;

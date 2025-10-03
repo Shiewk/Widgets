@@ -5,6 +5,7 @@ import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -148,16 +149,16 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 }
             }
             if (selectedWidget == null ? hoveredWidget == widget : selectedWidget == widget){
-                context.drawBorder((int) Math.round(wx-1), (int) Math.round(wy-1), ww+2, wh+2, SELECT_COLOR);
-                context.drawBorder((int) Math.round(wx), (int) Math.round(wy), ww, wh, SELECT_COLOR);
+                context.drawStrokedRectangle((int) Math.round(wx-1), (int) Math.round(wy-1), ww+2, wh+2, SELECT_COLOR);
+                context.drawStrokedRectangle((int) Math.round(wx), (int) Math.round(wy), ww, wh, SELECT_COLOR);
             }
             widget.render(context, Util.getMeasuringTimeNano(), textRenderer, (int) Math.round(wx), (int) Math.round(wy));
         }
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0 && selectedWidget != null){
+    public boolean mouseReleased(Click click) {
+        if (click.button() == 0 && selectedWidget != null){
             final AlignResult alignedX = alignX(translateToScreen(selectedWidget.getSettings().posX, this.width), (int) (selectedWidget.width() * selectedWidget.getScaleFactor()), selectedWidget);
             if (alignedX != null){
                 selectedWidget.getSettings().setPosX(translateToWidgetSettingsValue(alignedX.result(), this.width), (int) (selectedWidget.width() * selectedWidget.getScaleFactor()), this.width);
@@ -169,20 +170,20 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             onEdit.accept(selectedWidget);
             selectedWidget = null;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && hoveredWidget != null){
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (click.button() == 0 && hoveredWidget != null){
             selectedWidget = hoveredWidget;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (button == 0){
+    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+        if (click.button() == 0){
             assert client != null;
             final ModWidget widget = selectedWidget;
             if (widget != null){
@@ -191,8 +192,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 final int wx = (int) Math.min(translateToScreen(settings.posX, this.width), this.width - ww);
                 final int wh = (int) (widget.height() * widget.getScaleFactor());
                 final int wy = (int) Math.min(translateToScreen(settings.posY, this.height), this.height - wh);
-                if (mouseX <= wx + ww + deltaX && mouseX >= wx + deltaX){
-                    if (mouseY <= wy + wh + deltaY && mouseY >= wy + deltaY){
+                if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
+                    if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
                         double newPosX = settings.posX + translateToWidgetSettingsValue(deltaX, this.width);
                         double newPosY = settings.posY + translateToWidgetSettingsValue(deltaY, this.height);
                         settings.setPosX(newPosX, ww, this.width);
@@ -202,7 +203,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 }
             }
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(click, deltaX, deltaY);
     }
 
     @Override

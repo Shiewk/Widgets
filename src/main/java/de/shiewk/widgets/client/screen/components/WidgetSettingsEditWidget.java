@@ -3,9 +3,12 @@ package de.shiewk.widgets.client.screen.components;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
 
@@ -79,7 +82,9 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        double mouseY = click.y();
+        double mouseX = click.x();
         mouseY += getScrollY();
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
@@ -87,7 +92,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                     && mouseY >= customSetting.getY() && mouseY <= customSetting.getY() + customSetting.getHeight()){
                 focus = customSetting;
                 customSetting.setFocused(true);
-                if (customSetting.mouseClicked(mouseX, mouseY + getScrollY(), button)){
+                if (customSetting.mouseClicked(new Click(mouseX, mouseY + getScrollY(), click.buttonInfo()), doubled)){
                     onChange.run();
                     return true;
                 }
@@ -95,53 +100,53 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
-        if (checkScrollbarDragged(mouseX, mouseY - getScrollY(), button)) return true;
-        return super.mouseClicked(mouseX, mouseY - getScrollY(), button);
+        if (checkScrollbarDragged(click)) return true;
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
-            if (customSetting.mouseReleased(mouseX, mouseY + getScrollY(), button)){
+            if (customSetting.mouseReleased(new Click(click.x(), click.y() + getScrollY(), click.buttonInfo()))){
                 onChange.run();
                 return true;
             }
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         if (this.focus != null){
-            if (this.focus.charTyped(chr, modifiers)){
+            if (this.focus.charTyped(input)){
                 onChange.run();
                 return true;
             }
         }
-        return super.charTyped(chr, modifiers);
+        return super.charTyped(input);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         if (this.focus != null){
-            if (this.focus.keyPressed(keyCode, scanCode, modifiers)){
+            if (this.focus.keyPressed(input)){
                 onChange.run();
                 return true;
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
         if (this.focus != null){
-            if (this.focus.keyReleased(keyCode, scanCode, modifiers)){
+            if (this.focus.keyReleased(input)){
                 onChange.run();
                 return true;
             }
         }
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(input);
     }
 
     @Override

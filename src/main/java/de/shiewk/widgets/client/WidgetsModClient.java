@@ -21,7 +21,6 @@ public class WidgetsModClient implements ClientModInitializer {
 
     static KeyBinding configKeyBinding;
 
-
     @Override
     public void onInitializeClient() {
         WidgetRenderer widgetRenderer = new WidgetRenderer();
@@ -33,7 +32,7 @@ public class WidgetsModClient implements ClientModInitializer {
                 "widgets.key.config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                "widgets.key.category"
+                KeyBinding.Category.create(Identifier.of(WidgetsMod.MOD_ID, "main"))
         ));
 
         // in-game /widgetsmod command

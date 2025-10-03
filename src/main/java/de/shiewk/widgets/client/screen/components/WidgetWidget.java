@@ -5,6 +5,7 @@ import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -68,11 +69,11 @@ public class WidgetWidget extends ClickableWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isMouseOver(mouseX, mouseY)){
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (isMouseOver(click.x(), click.y())){
             client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget));
             return true;
-        } else if (isMouseOverToggle(mouseX, mouseY)){
+        } else if (isMouseOverToggle(click.x(), click.y())){
             this.toggleWidget();
             return true;
         }
