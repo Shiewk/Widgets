@@ -1,10 +1,9 @@
 package de.shiewk.widgets.client.screen;
 
-import de.shiewk.widgets.Dimensionable;
+import de.shiewk.widgets.Anchor;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,38 +11,16 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 
 import java.awt.*;
 import java.util.function.Consumer;
 
-import static de.shiewk.widgets.utils.WidgetUtils.translateToScreen;
-import static de.shiewk.widgets.utils.WidgetUtils.translateToWidgetSettingsValue;
-
 public class EditWidgetPositionsScreen extends AnimatedScreen {
-
-    private record Alignment(int x, int y, int width, int height) implements Dimensionable {
-
-            @Override
-            public double getX(int mx) {
-                return x;
-            }
-
-            @Override
-            public double getY(int my) {
-                return y;
-            }
-
-        @Override
-        public float getScaleFactor() {
-            return 1f;
-        }
-    }
 
     private final Screen parent;
     private final Consumer<ModWidget> onEdit;
-    private boolean alignX = true;
-    private boolean alignY = true;
+
     public EditWidgetPositionsScreen(Screen parent, Consumer<ModWidget> onEdit) {
         super(Text.translatable("widgets.ui.editPositions"), parent, 500);
         this.parent = parent;
@@ -58,85 +35,46 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
 
     private record AlignResult(double result, boolean isEnd){}
 
-    private @Nullable AlignResult alignX(double x, int width, ModWidget widget){
-        double endX = x + width;
-        int factor = alignX ? 2 : 0;
-        for (Dimensionable rect : this.getAlignments(widget)) {
-            if (rect == widget) continue;
-            final int rectWidth = rect.width();
-            final double nwx = Math.min(rect.getX(this.width), this.width - rectWidth);
-            final double nww = rectWidth * rect.getScaleFactor();
-            if (endX < nwx + factor && endX > nwx - factor){
-                return new AlignResult(nwx - width, true);
-            } else if (x < nwx + factor && x > nwx - factor){
-                return new AlignResult(nwx, false);
-            } else if (endX < nwx+nww + factor && endX > nwx + nww - factor){
-                return new AlignResult(nwx + nww - width, true);
-            } else if (x < nwx+nww + factor && x > nwx + nww - factor){
-                return new AlignResult(nwx + nww, false);
-            }
-        }
-        return null;
-    }
-
-    private Iterable<? extends Dimensionable> getAlignments(Dimensionable rel) {
-        ObjectArrayList<Dimensionable> alignments = new ObjectArrayList<>();
-        for (ModWidget widget : WidgetManager.getEnabledWidgets()) {
-            alignments.add(widget);
-        }
-        alignments.add(new Alignment(2, 2, this.width / 2 - 2, this.height / 2 - 2));
-        alignments.add(new Alignment(this.width / 2, this.height / 2, this.width / 2 - 2, this.height / 2 - 2));
-        alignments.add(new Alignment(2, this.height / 2, this.width / 2 - 2, this.height / 2 - 2));
-        alignments.add(new Alignment(this.width / 2, 2, this.width / 2 - 2, this.height / 2 - 2));
-        alignments.add(new Alignment((int) ((float) this.width / 2 - (rel.width() * rel.getScaleFactor()) / 2), (int) ((float) this.height / 2 - (rel.height() * rel.getScaleFactor()) / 2), (int) (rel.width() * rel.getScaleFactor()), (int) (rel.height() * rel.getScaleFactor())));
-        return alignments;
-    }
-
-
-    private @Nullable AlignResult alignY(double y, int height, ModWidget widget){
-        double endY = y + height;
-        int factor = alignY ? 2 : 0;
-        for (Dimensionable rect : this.getAlignments(widget)) {
-            if (rect == widget) continue;
-            final int rectHeight = rect.height();
-            final double nwy = Math.min(rect.getY(this.height), this.height - rectHeight);
-            final double nwh = rectHeight * rect.getScaleFactor();
-            if (endY < nwy + factor && endY > nwy - factor){
-                return new AlignResult(nwy - height, true);
-            } else if (y < nwy + factor && y > nwy - factor){
-                return new AlignResult(nwy, false);
-            } else if (endY < nwy+nwh + factor && endY > nwy + nwh - factor){
-                return new AlignResult(nwy + nwh - height, true);
-            } else if (y < nwy+nwh + factor && y > nwy + nwh - factor){
-                return new AlignResult(nwy + nwh, false);
-            }
-        }
-        return null;
-    }
-
     private static final int SELECT_COLOR = Color.GREEN.getRGB(), ALIGN_COLOR = Color.ORANGE.getRGB(), ALIGN_DISABLED_COLOR = Color.GRAY.getRGB();
     private ModWidget selectedWidget = null;
     private ModWidget hoveredWidget = null;
+    private int focusedExtraX = 0;
+    private int focusedExtraY = 0;
+    private boolean align = true;
+
+    private int scaledWindowWidth = 1920;
+    private int scaledWindowHeight = 1080;
 
     @Override
     public void renderScreenContents(DrawContext context, int mouseX, int mouseY, float delta) {
-        assert client != null;
+        this.scaledWindowWidth = context.getScaledWindowWidth();
+        this.scaledWindowHeight = context.getScaledWindowHeight();
+        long mt = Util.getMeasuringTimeNano();
+        renderAnchorArea(context, mouseX, mouseY);
+
         for (ModWidget widget : WidgetManager.getEnabledWidgets()) {
-            final WidgetSettings settings = widget.getSettings();
             final int ww = (int) (widget.width() * widget.getScaleFactor());
-            double wx = Math.min(translateToScreen(settings.posX, this.width), this.width - ww);
+            int wx = Math.min(widget.getX(scaledWindowWidth), this.width - ww);
             final int wh = (int) (widget.height() * widget.getScaleFactor());
-            double wy = Math.min(translateToScreen(settings.posY, this.height), this.height - wh);
+            int wy = Math.min(widget.getY(scaledWindowHeight), this.height - wh);
             if (selectedWidget == widget){
-                final AlignResult alignedX = alignX(wx, ww, widget);
+                AlignResult alignedX = alignX(widget);
                 if (alignedX != null){
-                    context.drawVerticalLine((int) (!alignedX.isEnd() ? alignedX.result() : alignedX.result() + ww), 0, this.height, alignX ? ALIGN_COLOR : ALIGN_DISABLED_COLOR);
-                    wx = alignedX.result();
+                    context.drawVerticalLine(
+                            (int) Math.round(alignedX.result),
+                            0,
+                            scaledWindowHeight,
+                            align ? ALIGN_COLOR : ALIGN_DISABLED_COLOR
+                    );
                 }
-                final AlignResult alignedY = alignY(wy, wh, widget);
+                AlignResult alignedY = alignY(widget);
                 if (alignedY != null){
-                    context.drawHorizontalLine(0, this.width, (int) (!alignedY.isEnd() ? alignedY.result() : alignedY.result() + wh), alignY ? ALIGN_COLOR : ALIGN_DISABLED_COLOR);
-                    wy = alignedY.result();
+                    context.drawHorizontalLine(
+                            0,
+                            scaledWindowWidth,
+                            (int) Math.round(alignedY.result),
+                            align ? ALIGN_COLOR : ALIGN_DISABLED_COLOR
+                    );
                 }
             }
             if (hoveredWidget == null || hoveredWidget == widget){
@@ -149,23 +87,96 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 }
             }
             if (selectedWidget == null ? hoveredWidget == widget : selectedWidget == widget){
-                context.drawStrokedRectangle((int) Math.round(wx-1), (int) Math.round(wy-1), ww+2, wh+2, SELECT_COLOR);
-                context.drawStrokedRectangle((int) Math.round(wx), (int) Math.round(wy), ww, wh, SELECT_COLOR);
+                context.drawStrokedRectangle(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
+                context.drawStrokedRectangle(wx, wy, ww, wh, SELECT_COLOR);
             }
-            widget.render(context, Util.getMeasuringTimeNano(), textRenderer, (int) Math.round(wx), (int) Math.round(wy));
+            widget.render(context, mt, textRenderer, wx, wy);
         }
+    }
+
+    private boolean canAlign(int val1, int val2){
+        return ((val2 - val1) * (val2 - val1)) < 9;
+    }
+
+    private AlignResult alignX(ModWidget widget) {
+        // Align with other widgets
+        for (ModWidget other : WidgetManager.getEnabledWidgets()) {
+            if (other == widget) continue;
+            if (canAlign(widget.getX(scaledWindowWidth), other.getX(scaledWindowWidth))){
+                return new AlignResult(other.getX(scaledWindowWidth), false);
+
+            } else if (canAlign(widget.getX(scaledWindowWidth) + (int) widget.scaledWidth(), other.getX(scaledWindowWidth) + (int) other.scaledWidth())) {
+                return new AlignResult(other.getX(scaledWindowWidth) + other.scaledWidth(), true);
+
+            } else if (canAlign(widget.getX(scaledWindowWidth), other.getX(scaledWindowWidth) + (int) other.scaledWidth())){
+                return new AlignResult(other.getX(scaledWindowWidth) + other.scaledWidth(), false);
+
+            } else if (canAlign(widget.getX(scaledWindowWidth) + (int) widget.scaledWidth(), other.getX(scaledWindowWidth))){
+                return new AlignResult(other.getX(scaledWindowWidth), true);
+
+            }
+        }
+        return null;
+    }
+
+    private AlignResult alignY(ModWidget widget) {
+        // Align with other widgets
+        for (ModWidget other : WidgetManager.getEnabledWidgets()) {
+            if (other == widget) continue;
+            if (canAlign(widget.getY(scaledWindowHeight), other.getY(scaledWindowHeight))){
+                return new AlignResult(other.getY(scaledWindowHeight), false);
+
+            } else if (canAlign(widget.getY(scaledWindowHeight) + (int) widget.scaledHeight(), other.getY(scaledWindowHeight) + (int) other.scaledHeight())) {
+                return new AlignResult(other.getY(scaledWindowHeight) + other.scaledHeight(), true);
+
+            } else if (canAlign(widget.getY(scaledWindowHeight), other.getY(scaledWindowHeight) + (int) other.scaledHeight())){
+                return new AlignResult(other.getY(scaledWindowHeight) + other.scaledHeight(), false);
+
+            } else if (canAlign(widget.getY(scaledWindowHeight) + (int) widget.scaledHeight(), other.getY(scaledWindowHeight))){
+                return new AlignResult(other.getY(scaledWindowHeight), true);
+
+            }
+        }
+        return null;
+    }
+
+    private void renderAnchorArea(DrawContext context, int mouseX, int mouseY) {
+        Anchor anchor = Anchor.getAnchor(
+                scaledWindowWidth,
+                scaledWindowHeight,
+                mouseX,
+                mouseY
+        );
+        Vector2i topLeft = anchor.getTopLeft(scaledWindowWidth, scaledWindowHeight);
+        context.fill(
+                topLeft.x,
+                topLeft.y,
+                topLeft.x + scaledWindowWidth / 3,
+                topLeft.y + scaledWindowHeight / 3,
+                0x08ffffff
+        );
     }
 
     @Override
     public boolean mouseReleased(Click click) {
         if (click.button() == 0 && selectedWidget != null){
-            final AlignResult alignedX = alignX(translateToScreen(selectedWidget.getSettings().posX, this.width), (int) (selectedWidget.width() * selectedWidget.getScaleFactor()), selectedWidget);
-            if (alignedX != null){
-                selectedWidget.getSettings().setPosX(translateToWidgetSettingsValue(alignedX.result(), this.width), (int) (selectedWidget.width() * selectedWidget.getScaleFactor()), this.width);
-            }
-            final AlignResult alignedY = alignY(translateToScreen(selectedWidget.getSettings().posY, this.height), (int) (selectedWidget.height() * selectedWidget.getScaleFactor()), selectedWidget);
-            if (alignedY != null){
-                selectedWidget.getSettings().setPosY(translateToWidgetSettingsValue(alignedY.result(), this.height), (int) (selectedWidget.height() * selectedWidget.getScaleFactor()), this.height);
+            if (align){
+                AlignResult alignedX = alignX(selectedWidget);
+                if (alignedX != null){
+                    double diff = Math.round(alignedX.result - selectedWidget.getX(scaledWindowWidth));
+                    if (alignedX.isEnd){
+                        diff -= selectedWidget.scaledWidth();
+                    }
+                    selectedWidget.move((int) diff, 0);
+                }
+                AlignResult alignedY = alignY(selectedWidget);
+                if (alignedY != null){
+                    double diff = Math.round(alignedY.result - selectedWidget.getY(scaledWindowHeight));
+                    if (alignedY.isEnd){
+                        diff -= selectedWidget.scaledHeight();
+                    }
+                    selectedWidget.move(0, (int) diff);
+                }
             }
             onEdit.accept(selectedWidget);
             selectedWidget = null;
@@ -177,6 +188,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0 && hoveredWidget != null){
             selectedWidget = hoveredWidget;
+            focusedExtraX = (int) (click.x() - hoveredWidget.getX(scaledWindowWidth));
+            focusedExtraY = (int) (click.y() - hoveredWidget.getY(scaledWindowHeight));
         }
         return super.mouseClicked(click, doubled);
     }
@@ -189,15 +202,35 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             if (widget != null){
                 final WidgetSettings settings = widget.getSettings();
                 final int ww = (int) (widget.width() * widget.getScaleFactor());
-                final int wx = (int) Math.min(translateToScreen(settings.posX, this.width), this.width - ww);
+                int wx = Math.min(widget.getX(scaledWindowWidth), this.width - ww);
                 final int wh = (int) (widget.height() * widget.getScaleFactor());
-                final int wy = (int) Math.min(translateToScreen(settings.posY, this.height), this.height - wh);
+                int wy = Math.min(widget.getY(scaledWindowHeight), this.height - wh);
                 if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
                     if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
-                        double newPosX = settings.posX + translateToWidgetSettingsValue(deltaX, this.width);
-                        double newPosY = settings.posY + translateToWidgetSettingsValue(deltaY, this.height);
-                        settings.setPosX(newPosX, ww, this.width);
-                        settings.setPosY(newPosY, wh, this.height);
+                        Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) click.x(), (int) click.y());
+                        int newOffX = (int) (click.x() - anchor.getAlignStartPosX(scaledWindowWidth)) - focusedExtraX;
+                        int newOffY = (int) (click.y() - anchor.getAlignStartPosY(scaledWindowHeight)) - focusedExtraY;
+
+                        // Ensure the thing does not go out of bounds
+                        settings.setPos(anchor, newOffX, newOffY);
+
+                        if (widget.getX(scaledWindowWidth) + ww > scaledWindowWidth){
+                            newOffX -= widget.getX(scaledWindowWidth) - scaledWindowWidth + ww;
+                            settings.setPos(anchor, newOffX, newOffY);
+                        }
+                        if (widget.getX(scaledWindowWidth) < 0){
+                            newOffX -= widget.getX(scaledWindowWidth);
+                            settings.setPos(anchor, newOffX, newOffY);
+                        }
+                        if (widget.getY(scaledWindowHeight) + wh > scaledWindowHeight){
+                            newOffY -= widget.getY(scaledWindowHeight) - scaledWindowHeight + wh;
+                            settings.setPos(anchor, newOffX, newOffY);
+                        }
+                        if (widget.getY(scaledWindowHeight) < 0){
+                            newOffY -= widget.getY(scaledWindowHeight);
+                            settings.setPos(anchor, newOffX, newOffY);
+                        }
+
                         return true;
                     }
                 }
@@ -209,10 +242,29 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
     @Override
     protected void init() {
         super.init();
-        this.addDrawableChild(new ButtonWidget.Builder(Text.translatable("widgets.ui.editPositions.snap", alignX ? Text.translatable("gui.yes") : Text.translatable("gui.no")), button -> {
-            alignX = !alignX;
-            alignY = !alignY;
-            button.setMessage(Text.translatable("widgets.ui.editPositions.snap", alignX ? Text.translatable("gui.yes") : Text.translatable("gui.no")));
-        }).position(this.width / 2 - 75, this.height / 2 - 10).tooltip(Tooltip.of(Text.translatable("widgets.ui.editPositions.snap.help"))).build());
+        this.addDrawableChild(
+                new ButtonWidget.Builder(
+                        Text.translatable(
+                                "widgets.ui.editPositions.snap",
+                                align ?
+                                        Text.translatable("gui.yes") :
+                                        Text.translatable("gui.no")
+                        ), button -> {
+                            align = !align;
+                            button.setMessage(
+                                    Text.translatable(
+                                            "widgets.ui.editPositions.snap",
+                                            align ?
+                                                    Text.translatable("gui.yes")
+                                                    : Text.translatable("gui.no")
+                                    )
+                            );
+                        }).position(
+                                this.width / 2 - 75,
+                                this.height / 2 - 10
+                        ).tooltip(
+                                Tooltip.of(Text.translatable("widgets.ui.editPositions.snap.help"))
+                ).build()
+        );
     }
 }

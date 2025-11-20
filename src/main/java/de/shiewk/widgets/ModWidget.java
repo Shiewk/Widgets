@@ -1,6 +1,5 @@
 package de.shiewk.widgets;
 
-import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -9,7 +8,7 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class ModWidget implements Dimensionable {
+public abstract class ModWidget {
 
     private final Identifier id;
     private final WidgetSettings settings;
@@ -37,14 +36,27 @@ public abstract class ModWidget implements Dimensionable {
     public abstract Text getDescription();
     public abstract void onSettingsChanged(WidgetSettings settings);
 
-    @Override
-    public double getX(int mx) {
-        return (int) WidgetUtils.translateToScreen(settings.posX, mx);
+    public int getX(int scaledScreenWidth){
+        return settings.anchor.getAlignStartPosX(scaledScreenWidth) + settings.offsetX;
     }
 
-    @Override
-    public double getY(int my) {
-        return (int) WidgetUtils.translateToScreen(settings.posY, my);
+    public int getY(int scaledScreenHeight){
+        return settings.anchor.getAlignStartPosY(scaledScreenHeight) + settings.offsetY;
     }
 
+    public abstract int width();
+    public abstract int height();
+
+    public float scaledWidth() {
+        return width() * getScaleFactor();
+    }
+
+    public float scaledHeight() {
+        return height() * getScaleFactor();
+    }
+
+    public void move(int dx, int dy) {
+        settings.offsetX += dx;
+        settings.offsetY += dy;
+    }
 }

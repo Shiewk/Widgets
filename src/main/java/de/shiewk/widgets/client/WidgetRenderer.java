@@ -1,7 +1,6 @@
 package de.shiewk.widgets.client;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.client.screen.EditWidgetPositionsScreen;
 import de.shiewk.widgets.client.screen.WidgetConfigScreen;
@@ -17,8 +16,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
-
-import static de.shiewk.widgets.utils.WidgetUtils.translateToScreen;
 
 public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
 
@@ -46,13 +43,12 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
             final ModWidget widget = enabled.get(i);
             profiler.push(widget.getId().toString());
-            final WidgetSettings settings = widget.getSettings();
             widget.render(
                     drawContext,
                     timeNano,
                     textRenderer,
-                    (int) Math.round(Math.min(translateToScreen(settings.posX, windowWidth), windowWidth - (widget.width() * widget.getScaleFactor()))),
-                    (int) Math.round(Math.min(translateToScreen(settings.posY, windowHeight), windowHeight - (widget.height() * widget.getScaleFactor())))
+                    widget.getX(windowWidth),
+                    widget.getY(windowHeight)
             );
             profiler.pop();
         }

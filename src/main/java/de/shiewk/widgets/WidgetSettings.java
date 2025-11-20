@@ -2,31 +2,40 @@ package de.shiewk.widgets;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import de.shiewk.widgets.client.WidgetManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
+import java.util.Objects;
 
 import static de.shiewk.widgets.WidgetsMod.LOGGER;
-import static de.shiewk.widgets.utils.WidgetUtils.translateToWidgetSettingsValue;
+import static de.shiewk.widgets.client.WidgetManager.gson;
 
 public class WidgetSettings {
-    public double posX = 0; // posx * 100 = screen width
-    public double posY = 0; // posy * 100 = screen height
+    public Anchor anchor = Anchor.TOP_LEFT;
+    public int offsetX = 0;
+    public int offsetY = 0;
     private boolean enabled = false;
     private final ObjectArrayList<WidgetSettingOption> customSettings;
 
     private WidgetSettings(JsonObject data, List<WidgetSettingOption> settings){
         customSettings = new ObjectArrayList<>(settings);
         if (data != null){
-            final JsonElement enabled = data.get("enabled");
-            this.enabled = enabled.isJsonPrimitive() && enabled.getAsJsonPrimitive().isBoolean() && enabled.getAsBoolean();
-            final JsonElement x = data.get("x");
-            this.posX = x.isJsonPrimitive() ? x.getAsJsonPrimitive().isNumber() ? x.getAsDouble() : 0 : 0;
-            final JsonElement y = data.get("y");
-            this.posY = y.isJsonPrimitive() ? y.getAsJsonPrimitive().isNumber() ? y.getAsDouble() : 0 : 0;
+            try {
+                this.enabled = Objects.requireNonNullElse(gson.fromJson(data.get("enabled"), Boolean.class), false);
+                this.anchor = gson.fromJson(data.get("anchor"), Anchor.class);
+                this.offsetX = Objects.requireNonNullElse(gson.fromJson(data.get("ox"), Integer.class), 0);
+                this.offsetY = Objects.requireNonNullElse(gson.fromJson(data.get("oy"), Integer.class), 0);
+            } catch (JsonSyntaxException | NullPointerException e) {
+                LOGGER.info("Failed to load widget positioning:", e);
+            } finally {
+                if (anchor == null){
+                    anchor = Anchor.TOP_LEFT;
+                }
+            }
+
             final JsonElement s = data.get("settings");
             if (s != null && s.isJsonObject()){
                 final JsonObject savedSettings = s.getAsJsonObject();
@@ -52,11 +61,10 @@ public class WidgetSettings {
         return new WidgetSettings(data, customSettings);
     }
 
-    public void setPosX(double v, int widgetWidth, int maxWidth) {
-        posX = MathHelper.clamp(v, 0, 100 - translateToWidgetSettingsValue(widgetWidth, maxWidth));
-    }
-    public void setPosY(double v, int widgetHeight, int maxHeight) {
-        posY = MathHelper.clamp(v, 0, 100 - translateToWidgetSettingsValue(widgetHeight, maxHeight));
+    public void setPos(Anchor anchor, int offsetX, int offsetY){
+        this.anchor = anchor;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public boolean isEnabled(){
@@ -78,14 +86,17 @@ public class WidgetSettings {
 
     public final JsonObject saveState(){
         JsonObject object = new JsonObject();
-        object.addProperty("x", posX);
-        object.addProperty("y", posY);
-        object.addProperty("enabled", enabled);
+        object.add("anchor", gson.toJsonTree(this.anchor));
+        object.add("enabled", gson.toJsonTree(this.enabled));
+        object.add("ox", gson.toJsonTree(this.offsetX));
+        object.add("oy", gson.toJsonTree(this.offsetY));
+
         JsonObject customSettings = new JsonObject();
         for (WidgetSettingOption customSetting : this.customSettings) {
             customSettings.add(customSetting.getId(), customSetting.saveState());
         }
         object.add("settings", customSettings);
+
         return object;
     }
 
