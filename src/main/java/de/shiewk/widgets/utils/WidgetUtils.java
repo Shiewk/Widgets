@@ -1,6 +1,8 @@
 package de.shiewk.widgets.utils;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.tick.TickManager;
 
 import java.util.function.BooleanSupplier;
@@ -27,6 +29,10 @@ public class WidgetUtils {
             }
         }
         return tickRate;
+    }
+
+    public static void playSound(SoundEvent ev){
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(ev, 1f, 1f));
     }
 
 }

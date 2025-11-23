@@ -7,6 +7,7 @@ import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.StandardCursors;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -56,16 +57,9 @@ public class ToggleWidgetSetting extends WidgetSettingOption {
         context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, col);
         context.fill(thumbLoc, getY() + 4, thumbLoc + 12, getY() + getHeight() - 4, thumb);
 
-        if (isHovering(mouseX, mouseY)){
+        if (this.isHovered(mouseX, mouseY)){
             context.setCursor(StandardCursors.POINTING_HAND);
         }
-    }
-
-    private boolean isHovering(int mouseX, int mouseY) {
-        return mouseX >= this.getX()
-                && mouseY >= this.getY()
-                && getY() + getHeight() > mouseY
-                && getX() + getWidth() > mouseX;
     }
 
     @Override
@@ -76,6 +70,7 @@ public class ToggleWidgetSetting extends WidgetSettingOption {
 
     public void toggle(){
         this.value = !value;
+        WidgetUtils.playSound(value ? SoundEvents.BLOCK_COPPER_BULB_TURN_ON : SoundEvents.BLOCK_COPPER_BULB_TURN_OFF);
         this.toggleTime = Util.getMeasuringTimeNano();
     }
 

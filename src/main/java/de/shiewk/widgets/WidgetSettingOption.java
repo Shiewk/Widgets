@@ -86,6 +86,11 @@ public abstract class WidgetSettingOption implements Drawable, Widget {
         return y;
     }
 
+    public boolean isHovered(double mouseX, double mouseY){
+        return mouseX >= getX() && mouseX <= getX() + getWidth()
+                && mouseY >= getY() && mouseY <= getY() + getHeight();
+    }
+
     @Override
     public final void forEachChild(Consumer<ClickableWidget> consumer) {
         throw new UnsupportedOperationException();

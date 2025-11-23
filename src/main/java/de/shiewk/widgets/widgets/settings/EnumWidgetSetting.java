@@ -3,11 +3,13 @@ package de.shiewk.widgets.widgets.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.StandardCursors;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -74,6 +76,7 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
             if (hover && mouseClick){
                 this.value = constant;
                 this.changed = true;
+                WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
             }
             if (hover){
                 context.setCursor(StandardCursors.POINTING_HAND);

@@ -3,11 +3,16 @@ package de.shiewk.widgets.widgets.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.StandardCursors;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -26,8 +31,6 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
     private int g;
     private int b;
     private int a;
-    private boolean mouseClicked = false;
-    private int sv = 0;
 
     @Override
     public JsonElement saveState() {
@@ -35,7 +38,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
     }
 
     public int getColor(){
-        return new Color(r, g, b, a).getRGB();
+        return a << 24 | r << 16 | g << 8 | b;
     }
 
     @Override
@@ -51,86 +54,267 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
 
     @Override
     public int getWidth() {
-        return 28 + 127 + 7;
+        return 72;
     }
 
     @Override
     public int getHeight() {
-        return 95;
+        return 24;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int o = 0;
-        for (int i = 0; i <= 255; i+=2) {
-            context.drawVerticalLine(this.getX() + 5 + 7 + o, this.getY() + 5,  this.getY() + 20, new Color(i, g, b, a).getRGB());
-            context.drawVerticalLine(this.getX() + 5 + 7 + o, this.getY() + 25, this.getY() + 40, new Color(r, i, b, a).getRGB());
-            context.drawVerticalLine(this.getX() + 5 + 7 + o, this.getY() + 45, this.getY() + 60, new Color(r, g, i, a).getRGB());
-            context.drawVerticalLine(this.getX() + 5 + 7 + o, this.getY() + 65, this.getY() + 80, new Color(r, g, b, i).getRGB());
-            o++;
+        context.fill(
+                getX(),
+                getY(),
+                getX() + getWidth(),
+                getY() + getHeight(),
+                getColor()
+        );
+        context.drawHorizontalLine(getX(), getX()+getWidth(), getY(), getColor() | 0xff_00_00_00);
+        context.drawHorizontalLine(getX(), getX()+getWidth(), getY()+getHeight(), getColor() | 0xff_00_00_00);
+        context.drawVerticalLine(getX(), getY(), getY() + getHeight(), getColor() | 0xff_00_00_00);
+        context.drawVerticalLine(getX() + getWidth(), getY(), getY() + getHeight(), getColor() | 0xff_00_00_00);
+
+        String colorText = "#" + toHexString();
+        int width = textRenderer.getWidth(colorText);
+        context.drawText(
+                textRenderer,
+                colorText,
+                getX() + (getWidth() / 2 - (width / 2)),
+                getY() + (getHeight() / 2 - 4),
+                0xff_ff_ff_ff,
+                true
+        );
+
+        if (this.isHovered(mouseX, mouseY)){
+            context.setCursor(StandardCursors.POINTING_HAND);
         }
+    }
 
-        context.drawText(textRenderer, "R", this.getX() + 7 - textRenderer.getWidth("R"), this.getY() + 5  + 4, 0xffffffff, true);
-        context.drawText(textRenderer, "G", this.getX() + 7 - textRenderer.getWidth("G"), this.getY() + 25 + 4, 0xffffffff, true);
-        context.drawText(textRenderer, "B", this.getX() + 7 - textRenderer.getWidth("B"), this.getY() + 45 + 4, 0xffffffff, true);
-        context.drawText(textRenderer, "A", this.getX() + 7 - textRenderer.getWidth("A"), this.getY() + 65 + 4, 0xffffffff, true);
+    private String toHexSingle(int comp){
+        String s = Integer.toHexString(comp);
+        return "0".repeat(2 - s.length()) + s;
+    }
 
-        context.drawText(textRenderer, String.valueOf(r), this.getX() + this.getWidth() - 19, this.getY() +  5 + 4, 0xffffffff, true);
-        context.drawText(textRenderer, String.valueOf(g), this.getX() + this.getWidth() - 19, this.getY() + 25 + 4, 0xffffffff, true);
-        context.drawText(textRenderer, String.valueOf(b), this.getX() + this.getWidth() - 19, this.getY() + 45 + 4, 0xffffffff, true);
-        context.drawText(textRenderer, String.valueOf(a), this.getX() + this.getWidth() - 19, this.getY() + 65 + 4, 0xffffffff, true);
-
-        context.drawVerticalLine(this.getX() + 5 + 7 + r/2, this.getY() + 4,  this.getY() + 21, 0xffffffff);
-        context.drawVerticalLine(this.getX() + 5 + 7 + g/2, this.getY() + 24, this.getY() + 41, 0xffffffff);
-        context.drawVerticalLine(this.getX() + 5 + 7 + b/2, this.getY() + 44, this.getY() + 61, 0xffffffff);
-        context.drawVerticalLine(this.getX() + 5 + 7 + a/2, this.getY() + 64, this.getY() + 81, 0xffffffff);
-
-        if (mouseClicked){
-            int col = MathHelper.clamp((mouseX - this.getX() - 5 - 7) * 2, 0, 255);
-            if (sv == 0){
-                if (mouseY > this.getY() + 5 && mouseY < this.getY() + 20){
-                    sv = 1;
-                } else if (mouseY > this.getY() + 25 && mouseY < this.getY() + 40){
-                    sv = 2;
-                } else if (mouseY > this.getY() + 45 && mouseY < this.getY() + 60){
-                    sv = 3;
-                } else if (mouseY > this.getY() + 65 && mouseY < this.getY() + 80){
-                    sv = 4;
-                }
-            }
-            switch (sv){
-                case 1 -> r = col;
-                case 2 -> g = col;
-                case 3 -> b = col;
-                case 4 -> a = col;
-            }
-        }
-
-
-        if (
-                (mouseY > this.getY() + 5 && mouseY < this.getY() + 20)
-                || (mouseY > this.getY() + 25 && mouseY < this.getY() + 40)
-                || (mouseY > this.getY() + 45 && mouseY < this.getY() + 60)
-                || (mouseY > this.getY() + 65 && mouseY < this.getY() + 80)
-                && mouseX > getX() + 5 + 7 && mouseX < getX() + getWidth()
-        ) {
-            context.setCursor(StandardCursors.RESIZE_EW);
-        }
+    public String toHexString() {
+        return toHexSingle(r) + toHexSingle(g) + toHexSingle(b) + toHexSingle(a);
     }
 
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
-        this.mouseClicked = true;
-        sv = 0;
-        return false;
+        MinecraftClient client = MinecraftClient.getInstance();
+        WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
+        client.setScreen(
+                new ChangeScreen(client.currentScreen, (int) client.mouse.getScaledX(client.getWindow()), (int) client.mouse.getScaledY(client.getWindow()))
+        );
+        return true;
     }
 
-    @Override
-    public boolean mouseReleased(Click click) {
-        this.mouseClicked = false;
-        final boolean c = this.sv != 0;
-        this.sv = 0;
-        return c;
+    public class ChangeScreen extends Screen {
+
+        private final Screen parent;
+        private int x;
+        private int y;
+
+        protected ChangeScreen(Screen parent, int x, int y) {
+            super(Text.empty());
+            this.parent = parent;
+            this.x = x;
+            this.y = y;
+        }
+
+        private static final int PADDING = 16;
+        private static final int BAR_WIDTH = 18;
+        private static final int BAR_HEIGHT = 127 + 20;
+
+        private static final int RECT_WIDTH = 5 * PADDING + 4 * BAR_WIDTH;
+        private static final int RECT_HEIGHT = 2 * PADDING + BAR_HEIGHT;
+
+        @Override
+        protected void init() {
+            super.init();
+            if (y + RECT_HEIGHT > height){
+                y = height - RECT_HEIGHT;
+            }
+            if (x + RECT_WIDTH > width){
+                x = width - RECT_WIDTH;
+            }
+            // Color components
+            // Red color
+            addDrawableChild(new ColorBar(
+                    x + PADDING,
+                    y + PADDING,
+                    BAR_WIDTH,
+                    BAR_HEIGHT,
+                    0
+            ));
+            // Green color
+            addDrawableChild(new ColorBar(
+                    x + 2* PADDING + BAR_WIDTH,
+                    y + PADDING,
+                    BAR_WIDTH,
+                    BAR_HEIGHT,
+                    1
+            ));
+            // Blue color
+            addDrawableChild(new ColorBar(
+                    x + 3* PADDING + 2* BAR_WIDTH,
+                    y + PADDING,
+                    BAR_WIDTH,
+                    BAR_HEIGHT,
+                    2
+            ));
+            // Alpha
+            addDrawableChild(new ColorBar(
+                    x + 4* PADDING + 3* BAR_WIDTH,
+                    y + PADDING,
+                    BAR_WIDTH,
+                    BAR_HEIGHT,
+                    3
+            ));
+        }
+
+        @Override
+        public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+            parent.render(context, 0, 0, deltaTicks);
+            context.fill(x, y, x+ RECT_WIDTH, y+ RECT_HEIGHT,0xc0_00_00_00);
+            context.drawStrokedRectangle(x, y, RECT_WIDTH, RECT_HEIGHT, 0x67_ff_ff_ff);
+            super.render(context, mouseX, mouseY, deltaTicks);
+        }
+
+        @Override
+        public void close() {
+            client.setScreen(parent);
+        }
+
+        @Override
+        public boolean mouseClicked(Click click, boolean doubled) {
+            if (click.x() < x || click.y() < y || click.x() > x + RECT_WIDTH || click.y() > y + RECT_HEIGHT){
+                close();
+                WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_OFF);
+                return false;
+            }
+            return super.mouseClicked(click, doubled);
+        }
+
+        public class ColorBar extends ClickableWidget {
+
+            private final int component;
+
+            public ColorBar(int x, int y, int width, int height, int component) {
+                super(x, y, width, height, Text.empty());
+                this.component = component;
+            }
+
+            @Override
+            public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+                if (isHovered()){
+                    setValue((int) (getValue() + verticalAmount * 2));
+                    return true;
+                }
+                return false;
+            }
+
+            public int getValue(){
+                return switch (component){
+                    case 0 -> RGBAColorWidgetSetting.this.r; // Red
+                    case 1 -> RGBAColorWidgetSetting.this.g; // Green
+                    case 2 -> RGBAColorWidgetSetting.this.b; // Blue
+                    case 3 -> RGBAColorWidgetSetting.this.a; // Alpha
+                    default -> throw new IllegalStateException("Component out of range: " + component);
+                };
+            }
+
+            public void setValue(int val){
+                val = MathHelper.clamp(val, 0, 255);
+                switch (component){
+                    case 0 -> RGBAColorWidgetSetting.this.r = val; // Red
+                    case 1 -> RGBAColorWidgetSetting.this.g = val; // Green
+                    case 2 -> RGBAColorWidgetSetting.this.b = val; // Blue
+                    case 3 -> RGBAColorWidgetSetting.this.a = val; // Alpha
+                    default -> throw new IllegalStateException("Component out of range: " + component);
+                }
+            }
+
+            @Override
+            protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+                context.fillGradient(
+                        getX() + 2,
+                        getY() + 10,
+                        getX() + getWidth() - 2,
+                        getY() + getHeight() - 10,
+                        topColor(),
+                        bottomColor()
+                );
+                context.drawHorizontalLine(
+                        getX(),
+                        getX() + getWidth() - 1,
+                        getY() + 10 + (255 - getValue()) / 2,
+                        0xffffffff
+                );
+                {
+                    String text = ""+getValue();
+                    int textWidth = textRenderer.getWidth(text);
+                    context.drawText(textRenderer, text, getX() + (getWidth() / 2 - textWidth / 2), getY() - 2, 0xffffffff, true);
+                }
+                {
+                    String text = componentLabel();
+                    int textWidth = textRenderer.getWidth(text);
+                    context.drawText(textRenderer, text, getX() + (getWidth() / 2 - textWidth / 2), getY() + 142, 0xffffffff, true);
+                }
+                if (isHovered()){
+                    context.setCursor(StandardCursors.RESIZE_NS);
+                }
+            }
+
+            private String componentLabel() {
+                return switch (component){
+                    case 0 -> "R"; // Red
+                    case 1 -> "G"; // Green
+                    case 2 -> "B"; // Blue
+                    case 3 -> "A"; // Alpha
+                    default -> throw new IllegalStateException("Component out of range: " + component);
+                };
+            }
+
+            @Override
+            public boolean mouseClicked(Click click, boolean doubled) {
+                return this.mouseDragged(click, 0, 0);
+            }
+
+            @Override
+            public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+                if (isHovered()){
+                    double pos = click.y() - this.getY() - 10;
+                    int val = (int) (255 - pos * 2);
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+
+            private int componentMask(){
+                return switch (component){
+                    case 0 -> 0x00_ff_00_00; // Red
+                    case 1 -> 0x00_00_ff_00; // Green
+                    case 2 -> 0x00_00_00_ff; // Blue
+                    case 3 -> 0xff_00_00_00; // Alpha
+                    default -> throw new IllegalStateException("Component out of range: " + component);
+                };
+            }
+
+            private int bottomColor() {
+                return RGBAColorWidgetSetting.this.getColor() & ~componentMask();
+            }
+
+            private int topColor() {
+                return RGBAColorWidgetSetting.this.getColor() | componentMask();
+            }
+
+            @Override
+            protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+        }
     }
 }

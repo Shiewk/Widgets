@@ -21,6 +21,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     private final Runnable onChange;
     private WidgetSettingOption focus = null;
     private int contentsHeight = 10;
+
     public WidgetSettingsEditWidget(int x, int y, int width, int height, TextRenderer textRenderer, ModWidget widget, Runnable onChange) {
         super(x, y, width, height, Text.empty());
         this.widget = widget;
@@ -30,6 +31,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             customSetting.setFocused(false);
         }
         setWidth(width);
+        widget.onSettingsChanged(widget.getSettings());
     }
 
     @Override
@@ -88,8 +90,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
         mouseY += getScrollY();
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
-            if (mouseX >= customSetting.getX() && mouseX <= customSetting.getX() + customSetting.getWidth()
-                    && mouseY >= customSetting.getY() && mouseY <= customSetting.getY() + customSetting.getHeight()){
+            if (customSetting.isHovered(mouseX, mouseY)){
                 focus = customSetting;
                 customSetting.setFocused(true);
                 if (customSetting.mouseClicked(new Click(mouseX, mouseY + getScrollY(), click.buttonInfo()), doubled)){
