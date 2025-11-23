@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -71,6 +72,16 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
             this.changed = true;
             this.value = MathHelper.clamp(xPosToValue(mouseX), minValue, maxValue);
         }
+        if (isHovering(mouseX, mouseY)){
+            context.setCursor(StandardCursors.RESIZE_EW);
+        }
+    }
+
+    private boolean isHovering(int mouseX, int mouseY) {
+        return mouseX >= this.getX()
+                && mouseY >= this.getY()
+                && getY() + getHeight() > mouseY
+                && getX() + getWidth() > mouseX;
     }
 
     @Override

@@ -6,6 +6,7 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -91,6 +92,10 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 context.drawStrokedRectangle(wx, wy, ww, wh, SELECT_COLOR);
             }
             widget.render(context, mt, textRenderer, wx, wy);
+        }
+
+        if (hoveredWidget != null){
+            context.setCursor(StandardCursors.RESIZE_ALL);
         }
     }
 

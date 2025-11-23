@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.OrderedText;
@@ -66,6 +67,10 @@ public class WidgetWidget extends ClickableWidget {
             context.drawText(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.getWidth(t) / 2), y, COLOR_FG, false);
         }
         this.renderToggleButton(context, mouseX, mouseY, widgetEnabled);
+
+        if (hover || isMouseOverToggle(mouseX, mouseY)){
+            context.setCursor(StandardCursors.POINTING_HAND);
+        }
     }
 
     @Override

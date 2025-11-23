@@ -90,8 +90,7 @@ public class WidgetListWidget extends ScrollableWidget {
                 return true;
             }
         }
-        if (super.checkScrollbarDragged(newClick)) return true;
-        return super.mouseClicked(newClick, doubled);
+        return super.checkScrollbarDragged(newClick);
     }
 
     @Override

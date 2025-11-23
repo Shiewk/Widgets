@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -104,6 +105,17 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
                 case 3 -> b = col;
                 case 4 -> a = col;
             }
+        }
+
+
+        if (
+                (mouseY > this.getY() + 5 && mouseY < this.getY() + 20)
+                || (mouseY > this.getY() + 25 && mouseY < this.getY() + 40)
+                || (mouseY > this.getY() + 45 && mouseY < this.getY() + 60)
+                || (mouseY > this.getY() + 65 && mouseY < this.getY() + 80)
+                && mouseX > getX() + 5 + 7 && mouseX < getX() + getWidth()
+        ) {
+            context.setCursor(StandardCursors.RESIZE_EW);
         }
     }
 

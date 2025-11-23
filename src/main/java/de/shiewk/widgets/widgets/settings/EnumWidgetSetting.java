@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -73,6 +74,9 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
             if (hover && mouseClick){
                 this.value = constant;
                 this.changed = true;
+            }
+            if (hover){
+                context.setCursor(StandardCursors.POINTING_HAND);
             }
             nx += textRendererWidth + 20;
         }

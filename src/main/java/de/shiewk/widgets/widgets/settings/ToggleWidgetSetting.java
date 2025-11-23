@@ -6,6 +6,7 @@ import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -54,6 +55,17 @@ public class ToggleWidgetSetting extends WidgetSettingOption {
                 : value ? getX() + getWidth() - 4 - 12 : getX() + 4;
         context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, col);
         context.fill(thumbLoc, getY() + 4, thumbLoc + 12, getY() + getHeight() - 4, thumb);
+
+        if (isHovering(mouseX, mouseY)){
+            context.setCursor(StandardCursors.POINTING_HAND);
+        }
+    }
+
+    private boolean isHovering(int mouseX, int mouseY) {
+        return mouseX >= this.getX()
+                && mouseY >= this.getY()
+                && getY() + getHeight() > mouseY
+                && getX() + getWidth() > mouseX;
     }
 
     @Override

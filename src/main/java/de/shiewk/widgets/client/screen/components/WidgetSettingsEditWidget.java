@@ -100,8 +100,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
-        if (checkScrollbarDragged(click)) return true;
-        return super.mouseClicked(click, doubled);
+        return checkScrollbarDragged(click);
     }
 
     @Override
