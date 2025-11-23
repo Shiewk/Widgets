@@ -29,7 +29,8 @@ public class WidgetWidget extends ClickableWidget {
             COLOR_DISABLED = new Color(200, 0, 0, 200).getRGB(),
             COLOR_DISABLED_HOVER = new Color(255, 0, 0, 200).getRGB(),
             COLOR_ENABLED = new Color(0, 200, 0, 200).getRGB(),
-            COLOR_ENABLED_HOVER = new Color(0, 255, 0, 200).getRGB();
+            COLOR_ENABLED_HOVER = new Color(0, 255, 0, 200).getRGB(),
+            COLOR_BORDER = 0x80_ff_ff_ff;
 
     private final MinecraftClient client;
     private final ModWidget widget;
@@ -71,6 +72,11 @@ public class WidgetWidget extends ClickableWidget {
         if (hover || isMouseOverToggle(mouseX, mouseY)){
             context.setCursor(StandardCursors.POINTING_HAND);
         }
+
+        context.drawHorizontalLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
+        context.drawHorizontalLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
+        context.drawVerticalLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
+        context.drawVerticalLine(getX() + getWidth() - 1, getY(), getY() + getHeight() - 1, COLOR_BORDER);
     }
 
     @Override
