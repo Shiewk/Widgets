@@ -104,44 +104,94 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
     }
 
     private AlignResult alignX(ModWidget widget) {
+        int widgetX = widget.getX(scaledWindowWidth);
+
+        // Align with center
+        if (canAlign(widgetX, scaledWindowWidth / 2)){
+            return new AlignResult(scaledWindowWidth / 2d, false);
+
+        } else if (canAlign(widgetX + (int) widget.scaledWidth(), scaledWindowWidth / 2)){
+            return new AlignResult(scaledWindowWidth / 2d, true);
+
+        } else if (canAlign(widgetX + (int) widget.scaledWidth(), scaledWindowWidth / 2)){
+            return new AlignResult(scaledWindowWidth / 2d, true);
+
+        } else if (canAlign(widgetX + (int) widget.scaledWidth() / 2, scaledWindowWidth / 2)){
+            return new AlignResult(scaledWindowWidth / 2d - widget.scaledWidth() / 2, false);
+        }
+
+        // Align with edges
+        if (canAlign(widgetX, 3)){
+            return new AlignResult(3, false);
+        } else if (canAlign((int) (widgetX + widget.scaledWidth()), scaledWindowWidth - 3)){
+            return new AlignResult(scaledWindowWidth - 3, true);
+        }
+
         // Align with other widgets
         for (ModWidget other : WidgetManager.getEnabledWidgets()) {
             if (other == widget) continue;
-            if (canAlign(widget.getX(scaledWindowWidth), other.getX(scaledWindowWidth))){
-                return new AlignResult(other.getX(scaledWindowWidth), false);
+            int otherX = other.getX(scaledWindowWidth);
+            if (canAlign(widgetX, otherX)){
+                return new AlignResult(otherX, false);
 
-            } else if (canAlign(widget.getX(scaledWindowWidth) + (int) widget.scaledWidth(), other.getX(scaledWindowWidth) + (int) other.scaledWidth())) {
-                return new AlignResult(other.getX(scaledWindowWidth) + other.scaledWidth(), true);
+            } else if (canAlign(widgetX + (int) widget.scaledWidth(), otherX + (int) other.scaledWidth())) {
+                return new AlignResult(otherX + other.scaledWidth(), true);
 
-            } else if (canAlign(widget.getX(scaledWindowWidth), other.getX(scaledWindowWidth) + (int) other.scaledWidth())){
-                return new AlignResult(other.getX(scaledWindowWidth) + other.scaledWidth(), false);
+            } else if (canAlign(widgetX, otherX + (int) other.scaledWidth())){
+                return new AlignResult(otherX + other.scaledWidth(), false);
 
-            } else if (canAlign(widget.getX(scaledWindowWidth) + (int) widget.scaledWidth(), other.getX(scaledWindowWidth))){
-                return new AlignResult(other.getX(scaledWindowWidth), true);
+            } else if (canAlign(widgetX + (int) widget.scaledWidth(), otherX)){
+                return new AlignResult(otherX, true);
 
             }
         }
+
         return null;
     }
 
     private AlignResult alignY(ModWidget widget) {
+        int widgetY = widget.getY(scaledWindowHeight);
+
+        // Align with center
+        if (canAlign(widgetY, scaledWindowHeight / 2)){
+            return new AlignResult(scaledWindowHeight / 2d, false);
+
+        } else if (canAlign(widgetY + (int) widget.scaledHeight(), scaledWindowHeight / 2)){
+            return new AlignResult(scaledWindowHeight / 2d, true);
+
+        } else if (canAlign(widgetY + (int) widget.scaledHeight(), scaledWindowHeight / 2)){
+            return new AlignResult(scaledWindowHeight / 2d, true);
+
+        } else if (canAlign(widgetY + (int) widget.scaledHeight() / 2, scaledWindowHeight / 2)){
+            return new AlignResult(scaledWindowHeight / 2d - widget.scaledHeight() / 2, false);
+        }
+
+        // Align with edges
+        if (canAlign(widgetY, 3)){
+            return new AlignResult(3, false);
+        } else if (canAlign((int) (widgetY + widget.scaledHeight()), scaledWindowHeight - 3)){
+            return new AlignResult(scaledWindowHeight - 3, true);
+        }
+
         // Align with other widgets
         for (ModWidget other : WidgetManager.getEnabledWidgets()) {
             if (other == widget) continue;
-            if (canAlign(widget.getY(scaledWindowHeight), other.getY(scaledWindowHeight))){
-                return new AlignResult(other.getY(scaledWindowHeight), false);
+            int otherY = other.getY(scaledWindowHeight);
+            if (canAlign(widgetY, otherY)){
+                return new AlignResult(otherY, false);
 
-            } else if (canAlign(widget.getY(scaledWindowHeight) + (int) widget.scaledHeight(), other.getY(scaledWindowHeight) + (int) other.scaledHeight())) {
-                return new AlignResult(other.getY(scaledWindowHeight) + other.scaledHeight(), true);
+            } else if (canAlign(widgetY + (int) widget.scaledHeight(), otherY + (int) other.scaledHeight())) {
+                return new AlignResult(otherY + other.scaledHeight(), true);
 
-            } else if (canAlign(widget.getY(scaledWindowHeight), other.getY(scaledWindowHeight) + (int) other.scaledHeight())){
-                return new AlignResult(other.getY(scaledWindowHeight) + other.scaledHeight(), false);
+            } else if (canAlign(widgetY, otherY + (int) other.scaledHeight())){
+                return new AlignResult(otherY + other.scaledHeight(), false);
 
-            } else if (canAlign(widget.getY(scaledWindowHeight) + (int) widget.scaledHeight(), other.getY(scaledWindowHeight))){
-                return new AlignResult(other.getY(scaledWindowHeight), true);
+            } else if (canAlign(widgetY + (int) widget.scaledHeight(), otherY)){
+                return new AlignResult(otherY, true);
 
             }
         }
+
         return null;
     }
 
