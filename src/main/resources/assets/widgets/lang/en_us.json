@@ -1,9 +1,22 @@
 {
   "widgets.key.category": "Widgets",
   "widgets.key.config": "Open Widget Management",
+  "widgets.ui.anchor.bottom_center": "Bottom center",
+  "widgets.ui.anchor.bottom_left": "Bottom left",
+  "widgets.ui.anchor.bottom_right": "Bottom right",
+  "widgets.ui.anchor.center": "Center",
+  "widgets.ui.anchor.center_left": "Center left",
+  "widgets.ui.anchor.center_right": "Center right",
+  "widgets.ui.anchor.top_center": "Top center",
+  "widgets.ui.anchor.top_left": "Top left",
+  "widgets.ui.anchor.top_right": "Top right",
   "widgets.ui.config": "Widgets Config",
   "widgets.ui.disabled": "Disabled",
   "widgets.ui.editPositions": "Edit Layout",
+  "widgets.ui.editPositions.menu.addWidget": "Add widget",
+  "widgets.ui.editPositions.menu.removeWidget": "Disable widget",
+  "widgets.ui.editPositions.menu.setAnchor": "Set anchor",
+  "widgets.ui.editPositions.menu.widgetSettings": "Widget settings",
   "widgets.ui.editPositions.snap": "Align positions: %s",
   "widgets.ui.editPositions.snap.help": "Aligns the widget with positions of other widgets",
   "widgets.ui.enabled": "Enabled",
@@ -88,6 +101,7 @@
   "widgets.widgets.inventory.mode.vanilla": "Vanilla",
   "widgets.widgets.inventory.rainbowBoxes": "Rainbow boxes",
   "widgets.widgets.inventory.rainbowGrid": "Rainbow Grid",
+  "widgets.widgets.inventory.showHotbar": "Show hotbar",
   "widgets.widgets.keystrokes": "Keystrokes",
   "widgets.widgets.keystrokes.colorBackgroundPressed": "Background color (key pressed)",
   "widgets.widgets.keystrokes.colorBackgroundUnpressed": "Background color (key not pressed)",
@@ -132,6 +146,5 @@
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer and estimates server TPS when in multiplayer.",
   "widgets.widgets.tps.dynamicColor": "Dynamic Color",
-  "widgets.widgets.tps.tps": "%s TPS",
-  "widgets.widgets.inventory.showHotbar": "Show hotbar"
+  "widgets.widgets.tps.tps": "%s TPS"
 }

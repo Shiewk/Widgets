@@ -59,4 +59,20 @@ public abstract class ModWidget {
         settings.offsetX += dx;
         settings.offsetY += dy;
     }
+
+    public void setPos(Anchor anchor, int offsetX, int offsetY){
+        getSettings().setPos(anchor, offsetX, offsetY);
+    }
+
+    public void setAbsolutePos(int x, int y, int scaledWindowWidth, int scaledWindowHeight) {
+        Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, x, y);
+        if (anchor == null) {
+            throw new IllegalArgumentException("Provided coordinates have no corresponding anchor");
+        }
+        settings.setPos(
+                anchor,
+                x - anchor.getAlignStartPosX(scaledWindowWidth),
+                y - anchor.getAlignStartPosY(scaledWindowHeight)
+        );
+    }
 }

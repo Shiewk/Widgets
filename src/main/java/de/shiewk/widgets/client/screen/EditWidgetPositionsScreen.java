@@ -4,17 +4,21 @@ import de.shiewk.widgets.Anchor;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
+import de.shiewk.widgets.utils.WidgetUtils;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.joml.Vector2i;
 
 import java.awt.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class EditWidgetPositionsScreen extends AnimatedScreen {
@@ -202,14 +206,16 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 mouseX,
                 mouseY
         );
-        Vector2i topLeft = anchor.getTopLeft(scaledWindowWidth, scaledWindowHeight);
-        context.fill(
-                topLeft.x,
-                topLeft.y,
-                topLeft.x + scaledWindowWidth / 3,
-                topLeft.y + scaledWindowHeight / 3,
-                0x08ffffff
-        );
+        if (anchor != null) {
+            Vector2i topLeft = anchor.getTopLeft(scaledWindowWidth, scaledWindowHeight);
+            context.fill(
+                    topLeft.x,
+                    topLeft.y,
+                    topLeft.x + scaledWindowWidth / 3,
+                    topLeft.y + scaledWindowHeight / 3,
+                    0x08ffffff
+            );
+        }
     }
 
     @Override
@@ -245,6 +251,99 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             selectedWidget = hoveredWidget;
             focusedExtraX = (int) (click.x() - hoveredWidget.getX(scaledWindowWidth));
             focusedExtraY = (int) (click.y() - hoveredWidget.getY(scaledWindowHeight));
+        } else if (click.button() == 1){
+            int x = (int) click.x();
+            int y = (int) click.y();
+            ModWidget hovered = hoveredWidget;
+            WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
+            if (hovered != null){
+                client.setScreen(new ContextMenuScreen(
+                        Text.empty(),
+                        this,
+                        x,
+                        y,
+                        List.of(
+                                new ContextMenuScreen.Option(
+                                        Text.translatable("widgets.ui.editPositions.menu.widgetSettings"),
+                                        () -> client.setScreen(new WidgetSettingsScreen(
+                                                this,
+                                                hovered,
+                                                this.onEdit
+                                        ))
+                                ),
+                                new ContextMenuScreen.Option(
+                                        Text.translatable("widgets.ui.editPositions.menu.setAnchor"),
+                                        () -> {
+                                            List<ContextMenuScreen.Option> options = new ObjectArrayList<>(Anchor.values().length);
+                                            for (Anchor anchor : Anchor.values()) {
+                                                options.add(new ContextMenuScreen.Option(
+                                                        Text.translatable("widgets.ui.anchor." + anchor.name().toLowerCase()),
+                                                        hovered.getSettings().anchor == anchor,
+                                                        () -> {
+                                                            hovered.setPos(
+                                                                    anchor,
+                                                                    hovered.getX(scaledWindowWidth) - anchor.getAlignStartPosX(scaledWindowWidth),
+                                                                    hovered.getY(scaledWindowHeight) - anchor.getAlignStartPosY(scaledWindowHeight)
+                                                            );
+                                                            onEdit.accept(hovered);
+                                                        }
+                                                ));
+                                            }
+                                            // Add widget context menu
+                                            client.setScreen(new ContextMenuScreen(
+                                                    Text.empty(),
+                                                    this,
+                                                    x,
+                                                    y,
+                                                    options
+                                            ));
+                                        }
+                                ),
+                                new ContextMenuScreen.Option(
+                                        Text.translatable("widgets.ui.editPositions.menu.removeWidget"),
+                                        () -> {
+                                            hovered.getSettings().toggleEnabled(hovered);
+                                            onEdit.accept(hovered);
+                                        }
+                                )
+                        )
+                ));
+            } else {
+                client.setScreen(new ContextMenuScreen(
+                        Text.empty(),
+                        this,
+                        x,
+                        y,
+                        List.of(
+                                new ContextMenuScreen.Option(
+                                        Text.translatable("widgets.ui.editPositions.menu.addWidget"),
+                                        () -> {
+                                            List<ContextMenuScreen.Option> options = new ObjectArrayList<>();
+                                            for (ModWidget widget : WidgetManager.getAllWidgets()) {
+                                                if (!widget.getSettings().isEnabled()){
+                                                    options.add(new ContextMenuScreen.Option(
+                                                            widget.getName(),
+                                                            () -> {
+                                                                widget.getSettings().setEnabled(widget, true);
+                                                                widget.setAbsolutePos(x, y, scaledWindowWidth, scaledWindowHeight);
+                                                                onEdit.accept(widget);
+                                                            }
+                                                    ));
+                                                }
+                                            }
+                                            // Add widget context menu
+                                            client.setScreen(new ContextMenuScreen(
+                                                    Text.empty(),
+                                                    this,
+                                                    x,
+                                                    y,
+                                                    options
+                                            ));
+                                        }
+                                )
+                        )
+                ));
+            }
         }
         return super.mouseClicked(click, doubled);
     }
@@ -263,6 +362,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
                     if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
                         Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) click.x(), (int) click.y());
+                        if (anchor == null) {
+                            return false;
+                        }
                         int newOffX = (int) (click.x() - anchor.getAlignStartPosX(scaledWindowWidth)) - focusedExtraX;
                         int newOffY = (int) (click.y() - anchor.getAlignStartPosY(scaledWindowHeight)) - focusedExtraY;
 

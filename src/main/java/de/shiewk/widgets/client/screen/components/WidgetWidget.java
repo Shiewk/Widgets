@@ -82,7 +82,7 @@ public class WidgetWidget extends ClickableWidget {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (isMouseOver(click.x(), click.y())){
-            client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget));
+            client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget, onEdit));
             return true;
         } else if (isMouseOverToggle(click.x(), click.y())){
             this.toggleWidget();

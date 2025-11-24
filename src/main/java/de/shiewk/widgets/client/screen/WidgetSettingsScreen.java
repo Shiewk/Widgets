@@ -2,24 +2,26 @@ package de.shiewk.widgets.client.screen;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.client.screen.components.WidgetSettingsEditWidget;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
+import java.util.function.Consumer;
+
 public class WidgetSettingsScreen extends AnimatedScreen {
     private static final Text previewText = Text.translatable("widgets.ui.preview");
     private final ModWidget widget;
     private final Runnable onChange;
-    public WidgetSettingsScreen(Screen parent, ModWidget widget) {
+    public WidgetSettingsScreen(Screen parent, ModWidget widget, Consumer<ModWidget> changedWidgetConsumer) {
         super(Text.translatable("widgets.ui.widgetSettings", widget.getName()), parent, 500);
         this.widget = widget;
         onChange = () -> {
             widget.onSettingsChanged(widget.getSettings());
-            if (parent instanceof WidgetConfigScreen widgetConfigScreen){
-                widgetConfigScreen.changedSettings(widget);
-            }
+            changedWidgetConsumer.accept(widget);
         };
     }
 

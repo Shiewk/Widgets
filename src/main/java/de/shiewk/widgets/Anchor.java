@@ -56,6 +56,6 @@ public enum Anchor {
                 return anchor;
             }
         }
-        return Anchor.TOP_LEFT;
+        return null;
     }
 }
