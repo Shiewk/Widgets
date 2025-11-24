@@ -12,6 +12,7 @@ import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -303,6 +304,19 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
                     case 3 -> 0xff_00_00_00; // Alpha
                     default -> throw new IllegalStateException("Component out of range: " + component);
                 };
+            }
+
+            @Override
+            public boolean keyPressed(KeyInput input) {
+                if (input.isUp()) {
+                    setValue(getValue() + 1);
+                    return true;
+                } else if (input.isDown()) {
+                    setValue(getValue() - 1);
+                    return true;
+                } else {
+                    return super.keyPressed(input);
+                }
             }
 
             private int bottomColor() {
