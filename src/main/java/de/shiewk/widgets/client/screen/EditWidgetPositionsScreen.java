@@ -15,6 +15,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2i;
 
 import java.awt.*;
@@ -59,9 +60,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
 
         for (ModWidget widget : WidgetManager.getEnabledWidgets()) {
             final int ww = (int) (widget.width() * widget.getScaleFactor());
-            int wx = Math.min(widget.getX(scaledWindowWidth), this.width - ww);
+            int wx = MathHelper.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
             final int wh = (int) (widget.height() * widget.getScaleFactor());
-            int wy = Math.min(widget.getY(scaledWindowHeight), this.height - wh);
+            int wy = MathHelper.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
             if (selectedWidget == widget){
                 AlignResult alignedX = alignX(widget);
                 if (alignedX != null){
@@ -256,6 +257,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             int y = (int) click.y();
             ModWidget hovered = hoveredWidget;
             WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
+            assert client != null;
             if (hovered != null){
                 client.setScreen(new ContextMenuScreen(
                         Text.empty(),
@@ -356,9 +358,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             if (widget != null){
                 final WidgetSettings settings = widget.getSettings();
                 final int ww = (int) (widget.width() * widget.getScaleFactor());
-                int wx = Math.min(widget.getX(scaledWindowWidth), this.width - ww);
+                int wx = MathHelper.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
                 final int wh = (int) (widget.height() * widget.getScaleFactor());
-                int wy = Math.min(widget.getY(scaledWindowHeight), this.height - wh);
+                int wy = MathHelper.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
                 if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
                     if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
                         Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) click.x(), (int) click.y());
@@ -368,9 +370,9 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                         int newOffX = (int) (click.x() - anchor.getAlignStartPosX(scaledWindowWidth)) - focusedExtraX;
                         int newOffY = (int) (click.y() - anchor.getAlignStartPosY(scaledWindowHeight)) - focusedExtraY;
 
-                        // Ensure the thing does not go out of bounds
                         settings.setPos(anchor, newOffX, newOffY);
 
+                        // Ensure the thing does not go out of bounds
                         if (widget.getX(scaledWindowWidth) + ww > scaledWindowWidth){
                             newOffX -= widget.getX(scaledWindowWidth) - scaledWindowWidth + ww;
                             settings.setPos(anchor, newOffX, newOffY);
