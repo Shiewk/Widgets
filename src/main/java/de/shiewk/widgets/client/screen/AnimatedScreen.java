@@ -26,7 +26,7 @@ public abstract class AnimatedScreen extends Screen {
             Matrix3x2fStack stack = context.getMatrices().pushMatrix();
 
             stack.translate((float) -translation, 0, stack);
-            parent.render(context, (int) (mouseX + translation), mouseY, delta);
+            parent.render(context, -67, -67, delta);
             stack.translate(this.width, 0, stack);
             mouseX -= (int) translation;
         }
