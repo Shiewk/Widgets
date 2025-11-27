@@ -57,7 +57,7 @@ public class WidgetListWidget extends ScrollableWidget {
         for (ModWidget widget : widgets) {
             adder.add(new WidgetWidget(0, 0, 200, 100, client, widget, textRenderer, onEdit));
         }
-        SimplePositioningWidget.setPos(gw, getX(), getY(), this.getWidth(), this.getContentsHeightWithPadding(), 0, 0);
+        SimplePositioningWidget.setPos(gw, getX(), getY(), this.getWidth(), this.getContentsHeight(), 0, 0);
         gw.refreshPositions();
         this.elements.clear();
         gw.forEachChild(w -> this.addWidget((WidgetWidget) w));
@@ -68,7 +68,7 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     @Override
-    protected int getContentsHeightWithPadding() {
+    protected int getContentsHeight() {
         final int columns = getColumns();
         final int rows = widgets.size() / columns;
         return 10 + (rows * 108);
@@ -88,7 +88,7 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(), getY(), getX()+width, getY()+height);
         MatrixStack stack = context.getMatrices();
         stack.push();
@@ -109,7 +109,12 @@ public class WidgetListWidget extends ScrollableWidget {
                 return true;
             }
         }
-        return super.checkScrollbarDragged(mouseX, mouseY, button);
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    protected void drawBox(DrawContext context) {
+
     }
 
     @Override

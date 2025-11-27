@@ -1,38 +1,25 @@
 package de.shiewk.widgets.client;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.client.screen.EditWidgetPositionsScreen;
 import de.shiewk.widgets.client.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
-import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
-public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted, HudLayerRegistrationCallback {
+public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted, HudRenderCallback {
 
-    public static final Identifier LAYER_ID = Identifier.of(WidgetsMod.MOD_ID, "widgets-hud-layer");
     private static MinecraftClient client;
 
-    @Override
-    public void register(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(
-                LAYER_ID,
-                this::renderWidgets
-        ));
-    }
-
-    public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {
+    public void renderWidgets(DrawContext drawContext) {
         if (client.options.hudHidden) return;
         if (client.currentScreen instanceof EditWidgetPositionsScreen) return;
         final Profiler profiler = Profilers.get();
@@ -84,5 +71,10 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         for (ModWidget widget : WidgetManager.getAllWidgets()) {
             widget.onSettingsChanged(widget.getSettings());
         }
+    }
+
+    @Override
+    public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        this.renderWidgets(drawContext);
     }
 }

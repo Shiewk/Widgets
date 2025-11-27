@@ -40,7 +40,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected int getContentsHeightWithPadding() {
+    protected int getContentsHeight() {
         return this.contentsHeight;
     }
 
@@ -50,7 +50,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
         context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
         MatrixStack matrices = context.getMatrices();
         matrices.push();
@@ -97,7 +97,12 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
-        return checkScrollbarDragged(mouseX, mouseY, button);
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    protected void drawBox(DrawContext context) {
+
     }
 
     @Override
