@@ -75,7 +75,7 @@ public class ArmorHudWidget extends ResizableWidget {
 
     private void renderItem(DrawContext context, long mt, TextRenderer textRenderer, ItemStack stack, int posX, int posY){
         context.drawItemWithoutEntity(stack, posX, posY);
-        context.drawStackOverlay(textRenderer, stack, posX, posY);
+        context.drawItemInSlot(textRenderer, stack, posX, posY);
         if (showDurability){
             renderDurability(context, mt, textRenderer, stack, posX, posY);
         }

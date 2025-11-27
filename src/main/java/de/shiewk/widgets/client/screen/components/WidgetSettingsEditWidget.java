@@ -51,10 +51,8 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
 
     @Override
     protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
+        context.fill(getX(), getY() - 67, getX()+width, getY()+getContentsHeight() + 67, COLOR_BG);
         MatrixStack matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(0, (float) -getScrollY(), 0);
         matrices.push();
         matrices.scale(2, 2, 1);
         matrices.translate(0, (float) -getScrollY(), 0);
@@ -78,7 +76,6 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             y += 5;
         }
         this.contentsHeight = y;
-        matrices.pop();
     }
 
     @Override
