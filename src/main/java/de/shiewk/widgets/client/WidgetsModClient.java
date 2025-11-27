@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -26,6 +27,7 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetRenderer widgetRenderer = new WidgetRenderer();
         ClientTickEvents.START_CLIENT_TICK.register(widgetRenderer);
         ClientLifecycleEvents.CLIENT_STARTED.register(widgetRenderer);
+        HudLayerRegistrationCallback.EVENT.register(widgetRenderer);
 
         // manage widgets keybind
         configKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(

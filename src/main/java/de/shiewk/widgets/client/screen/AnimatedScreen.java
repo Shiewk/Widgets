@@ -3,9 +3,9 @@ package de.shiewk.widgets.client.screen;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-import org.joml.Matrix3x2fStack;
 
 public abstract class AnimatedScreen extends Screen {
     protected final Screen parent;
@@ -23,17 +23,18 @@ public abstract class AnimatedScreen extends Screen {
         final boolean shouldAnimate = timeMs < animationDurationMs;
         if (shouldAnimate){
             double translation = WidgetUtils.computeEasing(timeMs / animationDurationMs) * this.width;
-            Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+            MatrixStack stack = context.getMatrices();
+            stack.push();
 
-            stack.translate((float) -translation, 0, stack);
+            stack.translate((float) -translation, 0, 0);
             parent.render(context, -67, -67, delta);
-            stack.translate(this.width, 0, stack);
+            stack.translate(this.width, 0, 0);
             mouseX -= (int) translation;
         }
         super.render(context, mouseX, mouseY, delta);
         this.renderScreenContents(context, mouseX, mouseY, delta);
         if (shouldAnimate){
-            context.getMatrices().popMatrix();
+            context.getMatrices().pop();
         }
     }
 

@@ -7,7 +7,9 @@ import de.shiewk.widgets.client.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -17,16 +19,17 @@ import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
-public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
+public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted, HudLayerRegistrationCallback {
 
     public static final Identifier LAYER_ID = Identifier.of(WidgetsMod.MOD_ID, "widgets-hud-layer");
     private static MinecraftClient client;
 
-    public WidgetRenderer(){
-        HudElementRegistry.addLast(
+    @Override
+    public void register(LayeredDrawerWrapper layeredDrawerWrapper) {
+        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(
                 LAYER_ID,
                 this::renderWidgets
-        );
+        ));
     }
 
     public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {

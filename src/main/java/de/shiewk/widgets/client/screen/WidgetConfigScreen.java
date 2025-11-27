@@ -11,9 +11,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -93,15 +93,16 @@ public class WidgetConfigScreen extends Screen {
         assert client != null;
         final double time = getScreenTimeMs();
         if (time < 400){
-            Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+            MatrixStack stack = context.getMatrices();
+            stack.push();
             final float v = (float) WidgetUtils.computeEasing(time / 400d);
-            stack.translate((float) (width / 2d - (width * v / 2d)), (float) (height / 2d - (height * v / 2d)), stack);
-            stack.scale(v, v, stack);
+            stack.translate((float) (width / 2d - (width * v / 2d)), (float) (height / 2d - (height * v / 2d)), 0);
+            stack.scale(v, v, 1);
         }
         super.render(context, mouseX, mouseY, delta);
 
         if (time < 400){
-            context.getMatrices().popMatrix();
+            context.getMatrices().pop();
         }
     }
 

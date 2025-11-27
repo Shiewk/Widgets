@@ -4,8 +4,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import org.joml.Matrix3x2fStack;
 
 public class ScaledTextWidget extends ClickableWidget {
 
@@ -25,10 +25,11 @@ public class ScaledTextWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        Matrix3x2fStack stack = context.getMatrices().pushMatrix();
-        stack.scale(scale);
+        MatrixStack stack = context.getMatrices();
+        stack.push();
+        stack.scale(scale, scale, 1);
         context.drawText(textRenderer, getMessage(), (int) (getX() / scale), (int) (getY() / scale), 0xffffffff, true);
-        stack.popMatrix();
+        stack.pop();
     }
 
     @Override

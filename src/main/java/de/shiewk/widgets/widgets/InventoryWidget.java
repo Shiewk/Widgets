@@ -7,9 +7,9 @@ import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -98,13 +98,13 @@ public class InventoryWidget extends ResizableWidget {
 
     private void drawBackground(DrawContext context, long mt, int posX, int posY) {
         switch (mode){
-            case VANILLA -> context.drawTexture(RenderPipelines.GUI_TEXTURED, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
+            case VANILLA -> context.drawTexture(RenderLayer::getGuiTextured, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
             case TEXTURE_PACK -> {
                 context.enableScissor(posX, posY, posX + width(), posY + 6);
-                context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
+                context.drawTexture(RenderLayer::getGuiTextured, TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
                 context.enableScissor(posX, posY + 6, posX + width(), posY + height());
-                context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
+                context.drawTexture(RenderLayer::getGuiTextured, TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
             }
             case GRID -> {

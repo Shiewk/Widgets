@@ -6,9 +6,9 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +30,13 @@ public abstract class ResizableWidget extends ModWidget {
     @Override
     public final void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
         if (size != 1f){
-            Matrix3x2fStack matrices = context.getMatrices();
-            matrices.pushMatrix();
-            matrices.translate(-(size-1) * posX, -(size-1) * posY, matrices);
-            matrices.scale(size, size, matrices);
+            MatrixStack matrices = context.getMatrices();
+            matrices.push();
+            matrices.translate(-(size-1) * posX, -(size-1) * posY, 0);
+            matrices.scale(size, size, 1);
         }
         this.renderScaled(context, measuringTimeNano, textRenderer, posX, posY);
-        if (size != 1f) context.getMatrices().popMatrix();
+        if (size != 1f) context.getMatrices().pop();
     }
 
     public abstract void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY);
