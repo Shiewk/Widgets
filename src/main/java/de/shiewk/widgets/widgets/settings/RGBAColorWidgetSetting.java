@@ -102,7 +102,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
         MinecraftClient client = MinecraftClient.getInstance();
         WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
         client.setScreen(
-                new ChangeScreen(client.currentScreen, (int) client.mouse.getScaledX(client.getWindow()), (int) client.mouse.getScaledY(client.getWindow()))
+                new ChangeScreen(client.currentScreen, (int) (client.mouse.getX() / client.getWindow().getScaleFactor()), (int) (client.mouse.getY() / client.getWindow().getScaleFactor()))
         );
         return true;
     }
