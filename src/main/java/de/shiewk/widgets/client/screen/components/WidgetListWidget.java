@@ -12,7 +12,6 @@ import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
@@ -90,13 +89,9 @@ public class WidgetListWidget extends ScrollableWidget {
     @Override
     protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(), getY(), getX()+width, getY()+height);
-        MatrixStack stack = context.getMatrices();
-        stack.push();
-        stack.translate(0, (float) -getScrollY(), 0);
         for (WidgetWidget element : elements) {
             element.render(context, mouseX, (int) (mouseY + getScrollY()), delta);
         }
-        stack.pop();
         context.disableScissor();
     }
 

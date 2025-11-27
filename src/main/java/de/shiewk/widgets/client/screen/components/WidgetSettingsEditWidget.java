@@ -54,8 +54,6 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
         context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(0, (float) -getScrollY(), 0);
-        matrices.push();
         matrices.scale(2, 2, 1);
         matrices.translate(0, (float) -getScrollY(), 0);
         context.drawText(textRenderer, widget.getName(), this.width / 4 - textRenderer.getWidth(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
@@ -78,7 +76,6 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             y += 5;
         }
         this.contentsHeight = y;
-        matrices.pop();
     }
 
     @Override
