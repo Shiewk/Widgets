@@ -32,7 +32,7 @@ public class WidgetsModClient implements ClientModInitializer {
                 "widgets.key.config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                KeyBinding.Category.create(Identifier.of(WidgetsMod.MOD_ID, "main"))
+                "widgets.key.category"
         ));
 
         // in-game /widgetsmod command

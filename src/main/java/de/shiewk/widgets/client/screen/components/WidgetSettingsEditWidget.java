@@ -3,12 +3,9 @@ package de.shiewk.widgets.client.screen.components;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
 
@@ -84,16 +81,14 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        double mouseY = click.y();
-        double mouseX = click.x();
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         mouseY += getScrollY();
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
             if (customSetting.isHovered(mouseX, mouseY)){
                 focus = customSetting;
                 customSetting.setFocused(true);
-                if (customSetting.mouseClicked(new Click(mouseX, mouseY + getScrollY(), click.buttonInfo()), doubled)){
+                if (customSetting.mouseClicked(mouseX, mouseY + getScrollY(), button)){
                     onChange.run();
                     return true;
                 }
@@ -101,52 +96,52 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
-        return checkScrollbarDragged(click);
+        return checkScrollbarDragged(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
-            if (customSetting.mouseReleased(new Click(click.x(), click.y() + getScrollY(), click.buttonInfo()))){
+            if (customSetting.mouseReleased(mouseX, mouseY + getScrollY())){
                 onChange.run();
                 return true;
             }
         }
-        return super.mouseReleased(click);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(char chr, int modifiers) {
         if (this.focus != null){
-            if (this.focus.charTyped(input)){
+            if (this.focus.charTyped(chr, modifiers)){
                 onChange.run();
                 return true;
             }
         }
-        return super.charTyped(input);
+        return super.charTyped(chr, modifiers);
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.focus != null){
-            if (this.focus.keyPressed(input)){
+            if (this.focus.keyPressed(keyCode, scanCode, modifiers)){
                 onChange.run();
                 return true;
             }
         }
-        return super.keyPressed(input);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
         if (this.focus != null){
-            if (this.focus.keyReleased(input)){
+            if (this.focus.keyReleased(keyCode, scanCode, modifiers)){
                 onChange.run();
                 return true;
             }
         }
-        return super.keyReleased(input);
+        return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override

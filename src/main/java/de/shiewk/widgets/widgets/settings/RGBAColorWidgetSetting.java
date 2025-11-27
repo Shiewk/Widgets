@@ -6,16 +6,14 @@ import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
@@ -88,10 +86,6 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
                 0xff_ff_ff_ff,
                 true
         );
-
-        if (this.isHovered(mouseX, mouseY)){
-            context.setCursor(StandardCursors.POINTING_HAND);
-        }
     }
 
     private String toHexSingle(int comp){
@@ -104,7 +98,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         MinecraftClient client = MinecraftClient.getInstance();
         WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
         client.setScreen(
@@ -181,7 +175,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
         public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
             parent.render(context, 0, 0, deltaTicks);
             context.fill(x, y, x+ RECT_WIDTH, y+ RECT_HEIGHT,0xc0_00_00_00);
-            context.drawStrokedRectangle(x, y, RECT_WIDTH, RECT_HEIGHT, 0x67_ff_ff_ff);
+            context.drawBorder(x, y, RECT_WIDTH, RECT_HEIGHT, 0x67_ff_ff_ff);
             super.render(context, mouseX, mouseY, deltaTicks);
         }
 
@@ -191,13 +185,13 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
-            if (click.x() < x || click.y() < y || click.x() > x + RECT_WIDTH || click.y() > y + RECT_HEIGHT){
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (mouseX < x || mouseY < y || mouseX > x + RECT_WIDTH || mouseY > y + RECT_HEIGHT){
                 close();
                 WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_OFF);
                 return false;
             }
-            return super.mouseClicked(click, doubled);
+            return super.mouseClicked(mouseX, mouseY, button);
         }
 
         public class ColorBar extends ClickableWidget {
@@ -265,9 +259,6 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
                     int textWidth = textRenderer.getWidth(text);
                     context.drawText(textRenderer, text, getX() + (getWidth() / 2 - textWidth / 2), getY() + 142, 0xffffffff, true);
                 }
-                if (isHovered()){
-                    context.setCursor(StandardCursors.RESIZE_NS);
-                }
             }
 
             private String componentLabel() {
@@ -281,14 +272,14 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
             }
 
             @Override
-            public boolean mouseClicked(Click click, boolean doubled) {
-                return this.mouseDragged(click, 0, 0);
+            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                return this.mouseDragged(mouseX, mouseY, button, 0, 0);
             }
 
             @Override
-            public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+            public boolean mouseDragged(double mouseX, double mouseY, int button, double offsetX, double offsetY) {
                 if (isHovered()){
-                    double pos = click.y() - this.getY() - 10;
+                    double pos = mouseY - this.getY() - 10;
                     int val = (int) (255 - pos * 2);
                     setValue(val);
                     return true;
@@ -307,15 +298,15 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
             }
 
             @Override
-            public boolean keyPressed(KeyInput input) {
-                if (input.isUp()) {
+            public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+                if (keyCode == GLFW.GLFW_KEY_UP) {
                     setValue(getValue() + 1);
                     return true;
-                } else if (input.isDown()) {
+                } else if (keyCode == GLFW.GLFW_KEY_DOWN) {
                     setValue(getValue() - 1);
                     return true;
                 } else {
-                    return super.keyPressed(input);
+                    return super.keyPressed(keyCode, scanCode, modifiers);
                 }
             }
 

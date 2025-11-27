@@ -2,7 +2,6 @@ package de.shiewk.widgets.client.screen;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.client.screen.components.WidgetSettingsEditWidget;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -38,13 +37,13 @@ public class WidgetSettingsScreen extends AnimatedScreen {
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for (Element child : children()) {
             if (child instanceof ClickableWidget s){
-                s.mouseReleased(click);
+                s.mouseReleased(mouseX, mouseY, button);
             }
         }
-        return super.mouseReleased(click);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override

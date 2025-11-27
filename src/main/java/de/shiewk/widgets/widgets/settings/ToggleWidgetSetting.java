@@ -4,9 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -56,14 +54,9 @@ public class ToggleWidgetSetting extends WidgetSettingOption {
                 : value ? getX() + getWidth() - 4 - 12 : getX() + 4;
         context.fill(getX() + 2, getY() + 2, getX() + getWidth() - 2, getY() + getHeight() - 2, col);
         context.fill(thumbLoc, getY() + 4, thumbLoc + 12, getY() + getHeight() - 4, thumb);
-
-        if (this.isHovered(mouseX, mouseY)){
-            context.setCursor(StandardCursors.POINTING_HAND);
-        }
     }
 
-    @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         toggle();
         return true;
     }

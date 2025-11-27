@@ -61,7 +61,7 @@ public class SpeedWidget extends BasicTextWidget {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
             Vec3d lastPos = this.lastPos;
-            Vec3d newPos = this.lastPos = player.getEntityPos();
+            Vec3d newPos = this.lastPos = player.getPos();
             Vec3d velocity = lastPos.subtract(newPos);
             double rt = 0;
             if (withXVelocity) rt += velocity.getX() * velocity.getX();

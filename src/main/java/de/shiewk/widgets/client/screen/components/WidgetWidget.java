@@ -5,9 +5,7 @@ import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.OrderedText;
@@ -69,10 +67,6 @@ public class WidgetWidget extends ClickableWidget {
         }
         this.renderToggleButton(context, mouseX, mouseY, widgetEnabled);
 
-        if (hover || isMouseOverToggle(mouseX, mouseY)){
-            context.setCursor(StandardCursors.POINTING_HAND);
-        }
-
         context.drawHorizontalLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
         context.drawHorizontalLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
         context.drawVerticalLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
@@ -80,11 +74,11 @@ public class WidgetWidget extends ClickableWidget {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        if (isMouseOver(click.x(), click.y())){
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (isMouseOver(mouseX, mouseY)){
             client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget, onEdit));
             return true;
-        } else if (isMouseOverToggle(click.x(), click.y())){
+        } else if (isMouseOverToggle(mouseX, mouseY)){
             this.toggleWidget();
             return true;
         }

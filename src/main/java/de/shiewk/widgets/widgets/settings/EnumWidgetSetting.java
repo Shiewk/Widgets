@@ -6,9 +6,7 @@ import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
@@ -78,9 +76,6 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
                 this.changed = true;
                 WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
             }
-            if (hover){
-                context.setCursor(StandardCursors.POINTING_HAND);
-            }
             nx += textRendererWidth + 20;
         }
 
@@ -89,13 +84,13 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         mouseClick = true;
         return false;
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(double mouseX, double mouseY) {
         mouseClick = false;
         boolean changed = this.changed;
         this.changed = false;

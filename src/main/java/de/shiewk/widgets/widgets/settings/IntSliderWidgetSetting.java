@@ -5,12 +5,10 @@ import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 public class IntSliderWidgetSetting extends WidgetSettingOption {
 
@@ -28,11 +26,11 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if (maxValue > value && input.isRight()) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (maxValue > value && keyCode == GLFW.GLFW_KEY_RIGHT) {
             value++;
             return true;
-        } else if (minValue < value && input.isLeft()){
+        } else if (minValue < value && keyCode == GLFW.GLFW_KEY_LEFT){
             value--;
             return true;
         }
@@ -72,9 +70,6 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
             this.changed = true;
             this.value = MathHelper.clamp(xPosToValue(mouseX), minValue, maxValue);
         }
-        if (isHovering(mouseX, mouseY)){
-            context.setCursor(StandardCursors.RESIZE_EW);
-        }
     }
 
     private boolean isHovering(int mouseX, int mouseY) {
@@ -85,13 +80,13 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.clicked = true;
-        return super.mouseClicked(click, doubled);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(double mouseX, double mouseY) {
         this.clicked = false;
         boolean t = this.changed;
         this.changed = false;

@@ -6,9 +6,7 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
 import de.shiewk.widgets.utils.WidgetUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -93,14 +91,10 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 }
             }
             if (selectedWidget == null ? hoveredWidget == widget : selectedWidget == widget){
-                context.drawStrokedRectangle(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
-                context.drawStrokedRectangle(wx, wy, ww, wh, SELECT_COLOR);
+                context.drawBorder(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
+                context.drawBorder(wx, wy, ww, wh, SELECT_COLOR);
             }
             widget.render(context, mt, textRenderer, wx, wy);
-        }
-
-        if (hoveredWidget != null){
-            context.setCursor(StandardCursors.RESIZE_ALL);
         }
     }
 
@@ -220,8 +214,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
-        if (click.button() == 0 && selectedWidget != null){
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0 && selectedWidget != null){
             if (align){
                 AlignResult alignedX = alignX(selectedWidget);
                 if (alignedX != null){
@@ -243,18 +237,18 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
             onEdit.accept(selectedWidget);
             selectedWidget = null;
         }
-        return super.mouseReleased(click);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        if (click.button() == 0 && hoveredWidget != null){
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && hoveredWidget != null){
             selectedWidget = hoveredWidget;
-            focusedExtraX = (int) (click.x() - hoveredWidget.getX(scaledWindowWidth));
-            focusedExtraY = (int) (click.y() - hoveredWidget.getY(scaledWindowHeight));
-        } else if (click.button() == 1){
-            int x = (int) click.x();
-            int y = (int) click.y();
+            focusedExtraX = (int) (mouseX - hoveredWidget.getX(scaledWindowWidth));
+            focusedExtraY = (int) (mouseY - hoveredWidget.getY(scaledWindowHeight));
+        } else if (button == 1){
+            int x = (int) mouseX;
+            int y = (int) mouseY;
             ModWidget hovered = hoveredWidget;
             WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
             assert client != null;
@@ -347,12 +341,12 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 ));
             }
         }
-        return super.mouseClicked(click, doubled);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
-        if (click.button() == 0){
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (button == 0){
             assert client != null;
             final ModWidget widget = selectedWidget;
             if (widget != null){
@@ -361,14 +355,14 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 int wx = MathHelper.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
                 final int wh = (int) (widget.height() * widget.getScaleFactor());
                 int wy = MathHelper.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
-                if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
-                    if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
-                        Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) click.x(), (int) click.y());
+                if (mouseX <= wx + ww + deltaX && mouseX >= wx + deltaX){
+                    if (mouseY <= wy + wh + deltaY && mouseY >= wy + deltaY){
+                        Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) mouseX, (int) mouseY);
                         if (anchor == null) {
                             return false;
                         }
-                        int newOffX = (int) (click.x() - anchor.getAlignStartPosX(scaledWindowWidth)) - focusedExtraX;
-                        int newOffY = (int) (click.y() - anchor.getAlignStartPosY(scaledWindowHeight)) - focusedExtraY;
+                        int newOffX = (int) (mouseX - anchor.getAlignStartPosX(scaledWindowWidth)) - focusedExtraX;
+                        int newOffY = (int) (mouseY - anchor.getAlignStartPosY(scaledWindowHeight)) - focusedExtraY;
 
                         settings.setPos(anchor, newOffX, newOffY);
 
@@ -395,7 +389,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                 }
             }
         }
-        return super.mouseDragged(click, deltaX, deltaY);
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override

@@ -6,11 +6,8 @@ import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.WidgetsMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 public class TextFieldWidgetSettingOption extends WidgetSettingOption {
@@ -95,28 +92,28 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        return isFocused() && textField.mouseClicked(click, doubled);
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return isFocused() && textField.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
-        return isFocused() && textField.mouseReleased(click);
+    public boolean mouseReleased(double mouseX, double mouseY) {
+        return isFocused() && textField.mouseReleased(mouseX, mouseY, 0);
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
-        return isFocused() && textField.charTyped(input);
+    public boolean charTyped(char chr, int modifiers) {
+        return isFocused() && textField.charTyped(chr, modifiers);
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        return isFocused() && textField.keyPressed(input);
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return isFocused() && textField.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
-        return isFocused() && textField.keyReleased(input);
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        return isFocused() && textField.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override

@@ -1,9 +1,7 @@
 package de.shiewk.widgets.client.screen;
 
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -75,12 +73,12 @@ public class ContextMenuScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        if (!isInBounds(click.x(), click.y())){
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isInBounds(mouseX, mouseY)){
             close();
             return false;
         }
-        int opt = (int) (click.y() - menuY - 1) / 15;
+        int opt = (int) (mouseY - menuY - 1) / 15;
         if (opt < options.size()){
             Option option = options.get(opt);
             close();
@@ -98,7 +96,7 @@ public class ContextMenuScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         super.render(context, mouseX, mouseY, deltaTicks);
         parent.render(context, -67, -67, deltaTicks);
-        context.drawStrokedRectangle(
+        context.drawBorder(
                 menuX,
                 menuY,
                 menuWidth,
@@ -127,7 +125,6 @@ public class ContextMenuScreen extends Screen {
                         y + 15,
                         0x30_ff_ff_ff
                 );
-                context.setCursor(StandardCursors.POINTING_HAND);
             }
             context.drawText(textRenderer, option.title, menuX + 5, y + 3, option.highlighted ? 0xff_00_ff_ff : 0xff_ff_ff_ff, false);
             y += 15;
