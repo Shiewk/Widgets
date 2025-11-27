@@ -1,7 +1,7 @@
 # Widgets
 **Adds customizable in-game widgets to your game.**
 
-![Screenshot of in-game HUD with many enabled widgets](https://github.com/user-attachments/assets/663eff7e-0aee-47a6-a6a7-d5e02cf976d4)
+![Screenshot of in-game HUD with many enabled widgets](assets/images/ingame-hud.webp)
 
 This Minecraft mod adds customizable widgets that you may know from other Minecraft clients.
 
@@ -23,19 +23,17 @@ There are three ways to open the widget settings:
 
 Once you've opened the settings, you will see the widget overview menu:
 
-![Widget Settings Menu](https://github.com/user-attachments/assets/6f17eb5c-d1aa-41c8-b8ea-d0fa58a4ae14)
+![Widget Settings Menu](assets/images/mod-config.webp)
 
 You can now enable the widgets you want to enable, or click on them to view their additional settings, as you can see here:
 
-![FPS Widget Settings](https://github.com/user-attachments/assets/8f05ceb5-e3ef-4a0b-ab69-809bec49e7ab)
+![FPS Widget Settings](assets/images/fps-settings.webp)
 
-When you're done with configuring which widgets you want to enable and their settings, click the "Edit Layout" button on the left:
-
-![Edit Layout button](https://github.com/user-attachments/assets/51242fc7-95a6-4950-9dcf-ec6ff2da711b)
+When you're done with configuring which widgets you want to enable and their settings, click the "Edit Layout" button on the left side of the mod configuration screen.
 
 This will take you to a screen where you can freely move around your enabled widgets.
 
-![Edit Layout screen](https://github.com/user-attachments/assets/bb32755f-2d1d-4ec6-bfd5-af0b67c7e098)
+![Edit Layout screen](assets/images/edit-layout.webp)
 
 Right-clicking on this screen will bring up a useful context menu with additional options, like enabling/disabling widgets or changing their settings.
 
