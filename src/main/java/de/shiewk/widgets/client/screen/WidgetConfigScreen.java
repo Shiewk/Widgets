@@ -64,6 +64,7 @@ public class WidgetConfigScreen extends Screen {
 
         this.addDrawableChild(widgetList);
         this.addDrawableChild(searchField);
+        setInitialFocus(searchField);
 
         // Left side
         GridWidget gw = new GridWidget(0, 0);
