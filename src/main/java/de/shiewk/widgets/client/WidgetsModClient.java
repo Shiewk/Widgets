@@ -65,11 +65,11 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new MemoryUsageWidget(Identifier.of(WidgetsMod.MOD_ID, "memory")));
         WidgetManager.register(new KeyStrokesWidget(Identifier.of(WidgetsMod.MOD_ID, "keystrokes")));
         WidgetManager.register(new PlainTextWidget(Identifier.of(WidgetsMod.MOD_ID, "plaintext")));
-        WidgetManager.register(new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps")));
         WidgetManager.register(new BiomeWidget(Identifier.of(WidgetsMod.MOD_ID, "biome")));
         WidgetManager.register(new SpeedWidget(Identifier.of(WidgetsMod.MOD_ID, "speed")));
         WidgetManager.register(new ArmorHudWidget(Identifier.of(WidgetsMod.MOD_ID, "armor")));
         WidgetManager.register(new InventoryWidget(Identifier.of(WidgetsMod.MOD_ID, "inventory")));
+        WidgetManager.register(TPSWidget.INSTANCE);
 
         ComboWidget comboWidget = new ComboWidget(Identifier.of(WidgetsMod.MOD_ID, "combo"));
         WidgetManager.register(comboWidget);
