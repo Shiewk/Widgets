@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.Locale;
 
 import static net.minecraft.text.Text.translatable;
 
@@ -42,7 +43,7 @@ public class InventoryWidget extends ResizableWidget {
         }
 
         public Text display() {
-            return translatable("widgets.widgets.inventory.mode." + name().toLowerCase());
+            return translatable("widgets.widgets.inventory.mode." + name().toLowerCase(Locale.ROOT));
         }
     }
 

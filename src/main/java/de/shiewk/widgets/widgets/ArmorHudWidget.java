@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.Locale;
 
 import static net.minecraft.text.Text.translatable;
 
@@ -41,7 +42,7 @@ public class ArmorHudWidget extends ResizableWidget {
         PERCENT;
 
         public Text getDisplayName() {
-            return translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase());
+            return translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase(Locale.ROOT));
         }
     }
 

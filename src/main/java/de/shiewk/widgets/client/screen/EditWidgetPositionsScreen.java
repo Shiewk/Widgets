@@ -20,6 +20,7 @@ import org.joml.Vector2i;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class EditWidgetPositionsScreen extends AnimatedScreen {
@@ -279,7 +280,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
                                             List<ContextMenuScreen.Option> options = new ObjectArrayList<>(Anchor.values().length);
                                             for (Anchor anchor : Anchor.values()) {
                                                 options.add(new ContextMenuScreen.Option(
-                                                        Text.translatable("widgets.ui.anchor." + anchor.name().toLowerCase()),
+                                                        Text.translatable("widgets.ui.anchor." + anchor.name().toLowerCase(Locale.ROOT)),
                                                         hovered.getSettings().anchor == anchor,
                                                         () -> {
                                                             hovered.setPos(

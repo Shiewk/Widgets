@@ -18,7 +18,9 @@ import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class WidgetListWidget extends ScrollableWidget {
@@ -31,6 +33,7 @@ public class WidgetListWidget extends ScrollableWidget {
     private final Consumer<ModWidget> onEdit;
 
     public static boolean searchQueryMatches(String search, ModWidget widget) {
+        if (search == null) return true;
         return widget.getName().getString().contains(search) || widget.getDescription().getString().contains(search) || widget.getId().toString().contains(search);
     }
 
@@ -44,11 +47,11 @@ public class WidgetListWidget extends ScrollableWidget {
     }
 
     private List<ModWidget> loadWidgets(String search) {
-        if (search == null) {
-            return WidgetManager.getAllWidgets();
-        } else {
-            return WidgetManager.getAllWidgets().stream().filter(w -> searchQueryMatches(search, w)).toList();
-        }
+        return WidgetManager.getAllWidgets()
+                .stream()
+                .filter(w -> searchQueryMatches(search, w))
+                .sorted(Comparator.comparing(w -> w.getName().getString().toLowerCase(Locale.ROOT)))
+                .toList();
     }
 
     private void init(){
