@@ -25,7 +25,7 @@ public abstract class ResizableWidget extends ModWidget {
         return settings;
     }
 
-    private float size = 1f;
+    protected float size = 1f;
 
     @Override
     public final void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
