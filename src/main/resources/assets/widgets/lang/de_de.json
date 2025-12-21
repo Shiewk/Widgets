@@ -33,6 +33,7 @@
   "widgets.widgets.bandwidth": "Bandbreite",
   "widgets.widgets.bandwidth.description": "Zeigt, wie viele Daten an den aktuell Server gesendet werden/vom Server an den Klient gesendet werden.",
   "widgets.widgets.bandwidth.dynamicColor": "Farbe dynamisch anzeigen",
+  "widgets.widgets.bandwidth.fastupdate": "Schnelle Aktualisierung",
   "widgets.widgets.bandwidth.unit": "Einheit",
   "widgets.widgets.basictext.alignment": "Text Ausrichtung",
   "widgets.widgets.basictext.alignment.center": "Mitte",
@@ -71,6 +72,7 @@
   "widgets.widgets.common.hideInSingleplayer": "In Einzelspielerwelten verbergen",
   "widgets.widgets.common.rainbow": "Regenbogen-Text",
   "widgets.widgets.common.rainbow.speed": "Regenbogengeschwindigkeit",
+  "widgets.widgets.common.realtime": "Echtzeit-Update (braucht mehr Leistung)",
   "widgets.widgets.common.showLabel": "Beschriftung anzeigen",
   "widgets.widgets.common.sizePercent": "Widgetgröße (%)",
   "widgets.widgets.coordinates": "Koordinaten",
@@ -146,5 +148,6 @@
   "widgets.widgets.tps": "TPS",
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
-  "widgets.widgets.tps.tps": "%s TPS"
+  "widgets.widgets.tps.tps": "%s TPS",
+  "widgets.widgets.tps.windowSize": "Durchschnittsfenstergröße (Sekunden)"
 }

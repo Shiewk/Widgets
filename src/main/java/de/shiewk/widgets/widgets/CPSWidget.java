@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
 
 public class CPSWidget extends BasicTextWidget {
 
@@ -44,6 +45,7 @@ public class CPSWidget extends BasicTextWidget {
     }
 
     private Appearance appearance = Appearance.UNIFIED;
+    private boolean showLabel = true;
 
     public enum Appearance {
         SPLIT_PIPE("pipe"),
@@ -59,10 +61,11 @@ public class CPSWidget extends BasicTextWidget {
 
     public CPSWidget(Identifier id) {
         super(id, List.of(
-                new EnumWidgetSetting<>("appearance", Text.translatable("widgets.widgets.cps.appearance"), Appearance.class, Appearance.UNIFIED, appearance -> Text.translatable("widgets.widgets.cps.appearance."+appearance.key)),
-                new ToggleWidgetSetting("left", Text.translatable("widgets.widgets.cps.left"), true),
-                new ToggleWidgetSetting("middle", Text.translatable("widgets.widgets.cps.middle"), false),
-                new ToggleWidgetSetting("right", Text.translatable("widgets.widgets.cps.right"), true)
+                new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true),
+                new EnumWidgetSetting<>("appearance", translatable("widgets.widgets.cps.appearance"), Appearance.class, Appearance.UNIFIED, appearance -> translatable("widgets.widgets.cps.appearance."+appearance.key)),
+                new ToggleWidgetSetting("left", translatable("widgets.widgets.cps.left"), true),
+                new ToggleWidgetSetting("middle", translatable("widgets.widgets.cps.middle"), false),
+                new ToggleWidgetSetting("right", translatable("widgets.widgets.cps.right"), true)
         ));
     }
 
@@ -102,10 +105,17 @@ public class CPSWidget extends BasicTextWidget {
             middleClicks.removeIf(click -> click.expiresAt <= mtime);
             middle = middleClicks.size();
         }
-        formatAndSetRenderText(switch (appearance){
-            case UNIFIED -> literal((left + right + middle) + " CPS");
-            case SPLIT_PIPE, SPLIT_SLASH -> literal(getClickText(left, middle, right) + " CPS");
-        });
+        if (showLabel){
+            formatAndSetRenderText(switch (appearance){
+                case UNIFIED -> literal((left + right + middle) + " CPS");
+                case SPLIT_PIPE, SPLIT_SLASH -> literal(getClickText(left, middle, right) + " CPS");
+            });
+        } else {
+            formatAndSetRenderText(switch (appearance){
+                case UNIFIED -> literal(""+(left + right + middle));
+                case SPLIT_PIPE, SPLIT_SLASH -> literal(getClickText(left, middle, right).toString());
+            });
+        }
     }
 
     private @NotNull StringBuilder getClickText(int left, int middle, int right) {
@@ -135,15 +145,16 @@ public class CPSWidget extends BasicTextWidget {
         countMiddleClicks = ((ToggleWidgetSetting) settings.optionById("middle")).getValue();
         countRightClicks = ((ToggleWidgetSetting) settings.optionById("right")).getValue();
         appearance = (Appearance) ((EnumWidgetSetting<?>) settings.optionById("appearance")).getValue();
+        showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
     }
 
     @Override
     public Text getName() {
-        return Text.translatable("widgets.widgets.cps");
+        return translatable("widgets.widgets.cps");
 }
 
     @Override
     public Text getDescription() {
-        return Text.translatable("widgets.widgets.cps.description");
+        return translatable("widgets.widgets.cps.description");
     }
 }

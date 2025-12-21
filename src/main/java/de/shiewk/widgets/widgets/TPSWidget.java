@@ -1,6 +1,8 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.WidgetsMod;
+import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.ServerTickManager;
@@ -14,21 +16,20 @@ import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class TPSWidget extends BasicTextWidget {
-    public TPSWidget(Identifier id) {
+    private TPSWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true),
-                new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true)
+                new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true),
+                new IntSliderWidgetSetting("window_size", translatable("widgets.widgets.tps.windowSize"), 2, 5, 20)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
         getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
         getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
-        if (INSTANCE != null) throw new IllegalStateException("Instance already initialized");
-        INSTANCE = this;
     }
 
-    private static TPSWidget INSTANCE;
+    public static final TPSWidget INSTANCE = new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps"));
 
-    private static final long[] lastUpdates = new long[5];
+    private static long[] lastUpdates = new long[5];
     private static int updatePointer = 0;
     private static int updatesSinceWorldChange = 0;
 
@@ -69,7 +70,7 @@ public class TPSWidget extends BasicTextWidget {
             float mspt = avgDifference / 20000000f;
             float ticksPerSecond = 1000f / mspt;
 
-            boolean loadingFinished = updatesSinceWorldChange > 5;
+            boolean loadingFinished = updatesSinceWorldChange > lastUpdates.length;
             if (client.world != null) {
                 INSTANCE.updateTPS(ticksPerSecond, client.world.getTickManager().getTickRate(), loadingFinished);
             } else {
@@ -125,5 +126,10 @@ public class TPSWidget extends BasicTextWidget {
         super.onSettingsChanged(settings);
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
         this.showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
+
+        int windowSize = ((IntSliderWidgetSetting) settings.optionById("window_size")).getValue();
+        updatePointer = 0;
+        updatesSinceWorldChange = 0;
+        lastUpdates = new long[windowSize];
     }
 }

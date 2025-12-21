@@ -2,6 +2,7 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.client.WidgetRenderer;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
@@ -9,6 +10,7 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -60,8 +62,8 @@ public abstract class BasicTextWidget extends ResizableWidget {
 
     protected Text renderText = empty();
     protected boolean shouldRender = true;
-    private int textX = 0;
-    private int textY = 0;
+    private float textX = 0;
+    private float textY = 0;
     private int padding = 0;
     private TextRenderer renderer = null;
     private boolean textShadow = true;
@@ -114,7 +116,11 @@ public abstract class BasicTextWidget extends ResizableWidget {
         if (!shouldRender) return;
         renderer = textRenderer;
         context.fill(posX, posY, posX + width(), posY + height(), this.backgroundColor);
-        context.drawText(textRenderer, renderText, posX + textX,  posY + (textShadow ? textY : textY + 1), rainbow ? rainbowColor(n, rainbowSpeed) : this.textColor, textShadow);
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(posX + textX, posY + textY, 0);
+        context.drawText(textRenderer, renderText, 0, 0, rainbow ? rainbowColor(n, rainbowSpeed) : this.textColor, textShadow);
+        matrices.pop();
     }
 
     public static int rainbowColor(long n, float speed) {
@@ -128,11 +134,22 @@ public abstract class BasicTextWidget extends ResizableWidget {
             int textWidth = renderer.getWidth(renderText);
             switch (textAlignment){
                 case LEFT -> textX = padding;
-                case CENTER -> textX = width() / 2 - textWidth / 2;
+                case CENTER -> {
+                    if (textShadow){
+                        textX = (width() - textWidth) / 2f;
+                    } else {
+                        textX = (width() - textWidth + 1) / 2f;
+                    }
+                }
                 case RIGHT -> textX = width() - padding - textWidth;
             }
+            float textHeight = textShadow ? 8 : 7;
+            if (WidgetRenderer.guiScale == 1 && size <= 1){
+                textY = (int) ((height() - textHeight) / 2);
+            } else {
+                textY = (height() - textHeight) / 2f;
+            }
         }
-        textY = (height-9) / 2;
     }
 
     protected void formatAndSetRenderText(Text renderText) {

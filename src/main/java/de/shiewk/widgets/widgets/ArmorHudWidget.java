@@ -25,12 +25,16 @@ public class ArmorHudWidget extends ResizableWidget {
         super(id, List.of(
                 new IntSliderWidgetSetting("padding", translatable("widgets.widgets.armorHud.padding"), 0, 2, 5),
                 new ToggleWidgetSetting("show_durability", translatable("widgets.widgets.armorHud.showDurability"), true),
+                new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 16, 42, 128),
+                new EnumWidgetSetting<>("alignment", translatable("widgets.widgets.basictext.alignment"), BasicTextWidget.TextAlignment.class, BasicTextWidget.TextAlignment.CENTER, BasicTextWidget.TextAlignment::displayText),
                 new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80),
                 new EnumWidgetSetting<>("durability_style", translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
                 new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
                 new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
                 new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255)
         ));
+        getSettings().optionById("width").setShowCondition(() -> this.showDurability);
+        getSettings().optionById("alignment").setShowCondition(() -> this.showDurability);
         getSettings().optionById("durability_style").setShowCondition(() -> this.showDurability);
         getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
         getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
@@ -54,6 +58,8 @@ public class ArmorHudWidget extends ResizableWidget {
     protected ItemStack boots;
     protected boolean rainbow = false;
     protected int rainbowSpeed = 3;
+    protected int preferredWidth = 42;
+    protected BasicTextWidget.TextAlignment textAlignment = BasicTextWidget.TextAlignment.CENTER;
     protected int backgroundColor = 0x50_00_00_00, textColor = 0xff_ff_ff_ff;
 
     @Override
@@ -89,7 +95,19 @@ public class ArmorHudWidget extends ResizableWidget {
                 case NUMBER -> String.valueOf(maxDamage - damage);
                 case PERCENT -> ((maxDamage - damage) * 100 / maxDamage) + "%";
             };
-            context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+            switch (textAlignment){
+                case RIGHT -> {
+                    int width = textRenderer.getWidth(text);
+                    context.drawText(textRenderer, text, posX + width() - width - padding * 2, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                }
+                case CENTER -> {
+                    int width = textRenderer.getWidth(text);
+                    context.drawText(textRenderer, text, posX + ((preferredWidth + padding*2) - width) / 2 + 8, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                }
+                case LEFT -> {
+                    context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                }
+            }
         }
     }
 
@@ -120,9 +138,9 @@ public class ArmorHudWidget extends ResizableWidget {
     @Override
     public int width() {
         if (showDurability){
-            return 36 + padding * 3;
+            return 3 * padding + this.preferredWidth;
         } else {
-            return 16 + padding * 2;
+            return 2 * padding + 16;
         }
     }
 
@@ -141,5 +159,7 @@ public class ArmorHudWidget extends ResizableWidget {
         this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
         this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
         this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
+        this.preferredWidth = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
+        this.textAlignment = (BasicTextWidget.TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
     }
 }
