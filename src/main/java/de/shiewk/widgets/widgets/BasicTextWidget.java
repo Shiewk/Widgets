@@ -2,6 +2,7 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.client.WidgetRenderer;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
@@ -143,7 +144,11 @@ public abstract class BasicTextWidget extends ResizableWidget {
                 case RIGHT -> textX = width() - padding - textWidth;
             }
             float textHeight = textShadow ? 8 : 7;
-            textY = (height() - textHeight) / 2f;
+            if (WidgetRenderer.guiScale == 1 && size <= 1){
+                textY = (int) ((height() - textHeight) / 2);
+            } else {
+                textY = (height() - textHeight) / 2f;
+            }
         }
     }
 

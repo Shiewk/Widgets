@@ -21,6 +21,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
     public static final Identifier LAYER_ID = Identifier.of(WidgetsMod.MOD_ID, "widgets-hud-layer");
     private static MinecraftClient client;
+    public static int guiScale = 1;
 
     public WidgetRenderer(){
         HudElementRegistry.addLast(
@@ -60,6 +61,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         WidgetRenderer.client = client;
         final Profiler profiler = Profilers.get();
         profiler.push("widgets");
+        guiScale = client.getWindow().getScaleFactor();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
         for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
