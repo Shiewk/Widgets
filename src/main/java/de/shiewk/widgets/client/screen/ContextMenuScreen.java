@@ -113,6 +113,11 @@ public class ContextMenuScreen extends Screen {
         renderMenu(context, mouseX, mouseY);
     }
 
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+
+    }
+
     public void renderMenu(DrawContext context, int mouseX, int mouseY){
         int y = menuY + 1;
         for (Option option : options) {
