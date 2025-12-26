@@ -107,17 +107,17 @@ public class CoordinatesWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
-        this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
-        this.showX = ((ToggleWidgetSetting) settings.optionById("x")).getValue();
-        this.showY = ((ToggleWidgetSetting) settings.optionById("y")).getValue();
-        this.showZ = ((ToggleWidgetSetting) settings.optionById("z")).getValue();
-        this.paddingX = ((IntSliderWidgetSetting) settings.optionById("paddingX")).getValue();
-        this.paddingY = ((IntSliderWidgetSetting) settings.optionById("paddingY")).getValue();
-        this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
-        this.shadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
-        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
-        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
+        this.backgroundColor = (int) settings.optionById("backgroundcolor").getValue();
+        this.textColor = (int) settings.optionById("textcolor").getValue();
+        this.showX = (boolean) settings.optionById("x").getValue();
+        this.showY = (boolean) settings.optionById("y").getValue();
+        this.showZ = (boolean) settings.optionById("z").getValue();
+        this.paddingX = (int) settings.optionById("paddingX").getValue();
+        this.paddingY = (int) settings.optionById("paddingY").getValue();
+        this.width = (int) settings.optionById("width").getValue();
+        this.shadow = (boolean) settings.optionById("shadow").getValue();
+        this.rainbow = (boolean) settings.optionById("rainbow").getValue();
+        this.rainbowSpeed = (int) settings.optionById("rainbow_speed").getValue();
     }
 
     @Override

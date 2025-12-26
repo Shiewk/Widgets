@@ -100,10 +100,10 @@ public class BandwidthWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
-        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
-        this.unit = (Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue();
-        this.fastUpdate = ((ToggleWidgetSetting) settings.optionById("fastupdate")).getValue();
+        this.dynamicColor = (boolean) settings.optionById("dynamic_color").getValue();
+        this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
+        this.unit = (Unit) settings.optionById("unit").getValue();
+        this.fastUpdate = (boolean) settings.optionById("fastupdate").getValue();
     }
 
     @Override

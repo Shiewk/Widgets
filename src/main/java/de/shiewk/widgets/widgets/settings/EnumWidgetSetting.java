@@ -2,7 +2,6 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -15,7 +14,7 @@ import net.minecraft.text.Text;
 import java.awt.*;
 import java.util.function.Function;
 
-public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
+public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T> {
 
     private final Class<T> enumClass;
     private T value;
@@ -31,6 +30,7 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption {
         this.enumNameGetter = enumNameGetter;
     }
 
+    @Override
     public T getValue(){
         return value;
     }

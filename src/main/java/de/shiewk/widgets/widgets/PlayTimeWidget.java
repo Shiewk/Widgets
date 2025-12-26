@@ -73,6 +73,6 @@ public class PlayTimeWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.labelStyle = (LabelStyle) ((EnumWidgetSetting<?>) settings.optionById("labelstyle")).getValue();
+        this.labelStyle = (LabelStyle) settings.optionById("labelstyle").getValue();
     }
 }

@@ -124,10 +124,10 @@ public class TPSWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
-        this.showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
+        this.dynamicColor = (boolean) settings.optionById("dynamic_color").getValue();
+        this.showLabel = (boolean) settings.optionById("show_label").getValue();
 
-        int windowSize = ((IntSliderWidgetSetting) settings.optionById("window_size")).getValue();
+        int windowSize = (int) settings.optionById("window_size").getValue();
         updatePointer = 0;
         updatesSinceWorldChange = 0;
         lastUpdates = new long[windowSize];

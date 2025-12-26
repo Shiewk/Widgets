@@ -1,6 +1,6 @@
 package de.shiewk.widgets.widgets;
 
-import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetRenderer;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
@@ -70,8 +70,8 @@ public abstract class BasicTextWidget extends ResizableWidget {
     protected boolean rainbow = false;
     private int rainbowSpeed = 3;
 
-    private static ObjectArrayList<WidgetSettingOption> getCustomSettings(List<WidgetSettingOption> otherCustomOptions) {
-        final ObjectArrayList<WidgetSettingOption> list = new ObjectArrayList<>(otherCustomOptions);
+    private static ObjectArrayList<WidgetSettingOption<?>> getCustomSettings(List<WidgetSettingOption<?>> otherCustomOptions) {
+        final ObjectArrayList<WidgetSettingOption<?>> list = new ObjectArrayList<>(otherCustomOptions);
         list.add(new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80));
         list.add(new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false));
         list.add(new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255));
@@ -84,7 +84,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
         list.add(new EnumWidgetSetting<>("text_style", translatable("widgets.widgets.basictext.textstyle"), TextStyle.class, TextStyle.PLAIN, TextStyle::displayText));
         return list;
     }
-    protected BasicTextWidget(Identifier id, List<WidgetSettingOption> otherCustomOptions) {
+    protected BasicTextWidget(Identifier id, List<WidgetSettingOption<?>> otherCustomOptions) {
         super(id, getCustomSettings(otherCustomOptions));
         getSettings().optionById("padding").setShowCondition(() -> this.textAlignment != TextAlignment.CENTER);
         getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
@@ -165,15 +165,15 @@ public abstract class BasicTextWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
-        this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
-        this.width = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
-        this.height = ((IntSliderWidgetSetting) settings.optionById("height")).getValue();
-        this.textAlignment = (TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
-        this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
-        this.textShadow = ((ToggleWidgetSetting) settings.optionById("shadow")).getValue();
-        this.textStyle = (TextStyle) ((EnumWidgetSetting<?>) settings.optionById("text_style")).getValue();
-        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
-        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
+        this.backgroundColor = (int) settings.optionById("backgroundcolor").getValue();
+        this.textColor = (int) settings.optionById("textcolor").getValue();
+        this.width = (int) settings.optionById("width").getValue();
+        this.height = (int) settings.optionById("height").getValue();
+        this.textAlignment = (TextAlignment) settings.optionById("alignment").getValue();
+        this.padding = (int) settings.optionById("padding").getValue();
+        this.textShadow = (boolean) settings.optionById("shadow").getValue();
+        this.textStyle = (TextStyle) settings.optionById("text_style").getValue();
+        this.rainbow = (boolean) settings.optionById("rainbow").getValue();
+        this.rainbowSpeed = (int) settings.optionById("rainbow_speed").getValue();
     }
 }

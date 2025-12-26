@@ -153,14 +153,14 @@ public class ArmorHudWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
-        this.showDurability = ((ToggleWidgetSetting) settings.optionById("show_durability")).getValue();
-        this.durabilityStyle = (DurabilityStyle) ((EnumWidgetSetting<?>) settings.optionById("durability_style")).getValue();
-        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
-        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
-        this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
-        this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
-        this.preferredWidth = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
-        this.textAlignment = (BasicTextWidget.TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
+        this.padding = (int) settings.optionById("padding").getValue();
+        this.showDurability = (boolean) settings.optionById("show_durability").getValue();
+        this.durabilityStyle = (DurabilityStyle) settings.optionById("durability_style").getValue();
+        this.rainbow = (boolean) settings.optionById("rainbow").getValue();
+        this.rainbowSpeed = (int) settings.optionById("rainbow_speed").getValue();
+        this.textColor = (int) settings.optionById("textcolor").getValue();
+        this.backgroundColor = (int) settings.optionById("backgroundcolor").getValue();
+        this.preferredWidth = (int) settings.optionById("width").getValue();
+        this.textAlignment = (BasicTextWidget.TextAlignment) settings.optionById("alignment").getValue();
     }
 }

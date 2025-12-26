@@ -73,8 +73,8 @@ public class PingWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
-        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
+        this.dynamicColor = (boolean) settings.optionById("dynamic_color").getValue();
+        this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
     }
 
     @Override

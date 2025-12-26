@@ -1,7 +1,7 @@
 package de.shiewk.widgets.client.screen.components;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -19,7 +19,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     private final TextRenderer textRenderer;
     private final ModWidget widget;
     private final Runnable onChange;
-    private WidgetSettingOption focus = null;
+    private WidgetSettingOption<?> focus = null;
     private int contentsHeight = 10;
 
     public WidgetSettingsEditWidget(int x, int y, int width, int height, TextRenderer textRenderer, ModWidget widget, Runnable onChange) {
@@ -27,7 +27,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
         this.widget = widget;
         this.textRenderer = textRenderer;
         this.onChange = onChange;
-        for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
+        for (WidgetSettingOption<?> customSetting : widget.getSettings().getCustomSettings()) {
             customSetting.setFocused(false);
         }
         setWidth(width);
@@ -36,7 +36,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
 
     @Override
     public void setWidth(int width) {
-        for (WidgetSettingOption setting : widget.getSettings().getCustomSettings()) {
+        for (WidgetSettingOption<?> setting : widget.getSettings().getCustomSettings()) {
             setting.setMaxRenderWidth(width - 10);
         }
         super.setWidth(width);
@@ -63,7 +63,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
         context.drawText(textRenderer, widget.getName(), this.width / 4 - textRenderer.getWidth(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
         matrices.popMatrix();
         int y = textRenderer.fontHeight * 2 + this.height / 50 + 5;
-        for (WidgetSettingOption setting : widget.getSettings().getCustomSettings()) {
+        for (WidgetSettingOption<?> setting : widget.getSettings().getCustomSettings()) {
             if (!setting.shouldShow()) continue;
             if (this.width - setting.getWidth() > textRenderer.getWidth(setting.getName()) + 20){
                 setting.setX(this.getX() + this.width - setting.getWidth() - 5);
@@ -88,7 +88,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
         double mouseY = click.y();
         double mouseX = click.x();
         mouseY += getScrollY();
-        for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
+        for (WidgetSettingOption<?> customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
             if (customSetting.isHovered(mouseX, mouseY)){
                 focus = customSetting;
@@ -106,7 +106,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
 
     @Override
     public boolean mouseReleased(Click click) {
-        for (WidgetSettingOption customSetting : widget.getSettings().getCustomSettings()) {
+        for (WidgetSettingOption<?> customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
             if (customSetting.mouseReleased(new Click(click.x(), click.y() + getScrollY(), click.buttonInfo()))){
                 onChange.run();

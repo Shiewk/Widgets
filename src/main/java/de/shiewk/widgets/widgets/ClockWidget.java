@@ -104,10 +104,10 @@ public class ClockWidget extends BasicTextWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         String datePattern = "HH:mm:ss";
-        TimeOption timeOption = (TimeOption) ((EnumWidgetSetting<?>) settings.optionById("hour_format")).getValue();
-        DateOption dateOption = (DateOption) ((EnumWidgetSetting<?>) settings.optionById("date_format")).getValue();
-        WeekOption weekOption = (WeekOption) ((EnumWidgetSetting<?>) settings.optionById("week_format")).getValue();
-        boolean showSeconds = ((ToggleWidgetSetting) settings.optionById("show_seconds")).getValue();
+        TimeOption timeOption = (TimeOption) settings.optionById("hour_format").getValue();
+        DateOption dateOption = (DateOption) settings.optionById("date_format").getValue();
+        WeekOption weekOption = (WeekOption) settings.optionById("week_format").getValue();
+        boolean showSeconds = (boolean) settings.optionById("show_seconds").getValue();
         if (timeOption == TimeOption.HOUR_24){
             datePattern = showSeconds ? "HH:mm:ss" : "HH:mm";
         } else if (timeOption == TimeOption.AM_PM){

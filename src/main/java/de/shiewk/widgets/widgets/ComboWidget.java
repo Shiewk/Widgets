@@ -106,8 +106,8 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.displayThreshold = ((IntSliderWidgetSetting) settings.optionById("display_threshold")).getValue();
-        this.showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
+        this.displayThreshold = (int) settings.optionById("display_threshold").getValue();
+        this.showLabel = (boolean) settings.optionById("show_label").getValue();
         updateComboText();
     }
 }

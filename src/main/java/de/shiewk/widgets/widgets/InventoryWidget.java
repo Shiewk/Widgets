@@ -205,15 +205,15 @@ public class InventoryWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.mode = ((InventoryMode) ((EnumWidgetSetting<?>) settings.optionById("mode")).getValue());
-        this.rainbowGrid = ((ToggleWidgetSetting) settings.optionById("rainbow_grid")).getValue();
-        this.gridRainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("grid_rainbow_speed")).getValue();
-        this.gridColor = ((RGBAColorWidgetSetting) settings.optionById("grid_color")).getColor();
+        this.mode = (InventoryMode) settings.optionById("mode").getValue();
+        this.rainbowGrid = (boolean) settings.optionById("rainbow_grid").getValue();
+        this.gridRainbowSpeed = (int) settings.optionById("grid_rainbow_speed").getValue();
+        this.gridColor = (int) settings.optionById("grid_color").getValue();
 
-        this.rainbowBoxes = ((ToggleWidgetSetting) settings.optionById("rainbow_boxes")).getValue();
-        this.boxRainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("box_rainbow_speed")).getValue();
-        this.boxColor = ((RGBAColorWidgetSetting) settings.optionById("box_color")).getColor();
+        this.rainbowBoxes = (boolean) settings.optionById("rainbow_boxes").getValue();
+        this.boxRainbowSpeed = (int) settings.optionById("box_rainbow_speed").getValue();
+        this.boxColor = (int) settings.optionById("box_color").getValue();
 
-        this.showHotbar = ((ToggleWidgetSetting) settings.optionById("show_hotbar")).getValue() || !mode.canDisableHotbar;
+        this.showHotbar = (boolean) settings.optionById("show_hotbar").getValue() || !mode.canDisableHotbar;
     }
 }

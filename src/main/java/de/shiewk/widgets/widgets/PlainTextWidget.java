@@ -32,6 +32,6 @@ public class PlainTextWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        formatAndSetRenderText(literal(((TextFieldWidgetSettingOption) settings.optionById("text")).getValue()));
+        formatAndSetRenderText(literal((String) settings.optionById("text").getValue()));
     }
 }

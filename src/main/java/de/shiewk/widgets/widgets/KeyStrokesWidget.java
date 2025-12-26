@@ -35,18 +35,6 @@ public class KeyStrokesWidget extends ResizableWidget {
         getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
-    @Override
-    public void onSettingsChanged(WidgetSettings settings) {
-        super.onSettingsChanged(settings);
-        this.showJumpKey = ((ToggleWidgetSetting) settings.optionById("showjump")).getValue();
-        this.colorBackgroundPressed = ((RGBAColorWidgetSetting) settings.optionById("bgpressed")).getColor();
-        this.colorBackgroundUnpressed = ((RGBAColorWidgetSetting) settings.optionById("bgunpressed")).getColor();
-        this.colorKeyPressed = ((RGBAColorWidgetSetting) settings.optionById("keypressed")).getColor();
-        this.colorKeyUnpressed = ((RGBAColorWidgetSetting) settings.optionById("keyunpressed")).getColor();
-        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
-        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
-    }
-
     private boolean showJumpKey = true;
 
     private int colorBackgroundPressed = new Color(255, 255, 255, 80).getRGB(),
@@ -174,5 +162,17 @@ public class KeyStrokesWidget extends ResizableWidget {
     @Override
     public int height() {
         return showJumpKey ? 56 : 44;
+    }
+
+    @Override
+    public void onSettingsChanged(WidgetSettings settings) {
+        super.onSettingsChanged(settings);
+        this.showJumpKey = (boolean) settings.optionById("showjump").getValue();
+        this.colorBackgroundPressed = (int) settings.optionById("bgpressed").getValue();
+        this.colorBackgroundUnpressed = (int) settings.optionById("bgunpressed").getValue();
+        this.colorKeyPressed = (int) settings.optionById("keypressed").getValue();
+        this.colorKeyUnpressed = (int) settings.optionById("keyunpressed").getValue();
+        this.rainbow = (boolean) settings.optionById("rainbow").getValue();
+        this.rainbowSpeed = (int) settings.optionById("rainbow_speed").getValue();
     }
 }

@@ -104,12 +104,12 @@ public class SpeedWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.unit = ((Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue());
-        this.withXVelocity = ((ToggleWidgetSetting) settings.optionById("with_x")).getValue();
-        this.withYVelocity = ((ToggleWidgetSetting) settings.optionById("with_y")).getValue();
-        this.withZVelocity = ((ToggleWidgetSetting) settings.optionById("with_z")).getValue();
-        this.digitsAfterComma = ((IntSliderWidgetSetting) settings.optionById("digits")).getValue();
+        this.unit = (Unit) settings.optionById("unit").getValue();
+        this.withXVelocity = (boolean) settings.optionById("with_x").getValue();
+        this.withYVelocity = (boolean) settings.optionById("with_y").getValue();
+        this.withZVelocity = (boolean) settings.optionById("with_z").getValue();
+        this.digitsAfterComma = (int) settings.optionById("digits").getValue();
         this.windowPointer = 0;
-        this.averagingWindow = new double[((IntSliderWidgetSetting) settings.optionById("window_size")).getValue()];
+        this.averagingWindow = new double[(int) settings.optionById("window_size").getValue()];
     }
 }
