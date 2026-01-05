@@ -2,7 +2,7 @@ package de.shiewk.widgets.client;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetsMod;
-import de.shiewk.widgets.client.screen.EditWidgetPositionsScreen;
+import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
 import de.shiewk.widgets.client.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -32,7 +32,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
     public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (client.options.hudHidden) return;
-        if (client.currentScreen instanceof EditWidgetPositionsScreen) return;
+        if (client.currentScreen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
         final Profiler profiler = Profilers.get();
         profiler.push("widgets");
         final TextRenderer textRenderer = client.textRenderer;
@@ -81,7 +81,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
     @Override
     public void onClientStarted(MinecraftClient client) {
         for (ModWidget widget : WidgetManager.getAllWidgets()) {
-            widget.onSettingsChanged(widget.getSettings());
+            widget.onSettingsChanged();
         }
     }
 }

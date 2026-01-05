@@ -14,6 +14,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public abstract class WidgetSettingOption<T> implements Drawable, Widget {
+
     private final String id;
     private final Text name;
     private int x = 0;

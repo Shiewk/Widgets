@@ -31,7 +31,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
             customSetting.setFocused(false);
         }
         setWidth(width);
-        widget.onSettingsChanged(widget.getSettings());
+        widget.onSettingsChanged();
     }
 
     @Override

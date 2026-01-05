@@ -3,6 +3,7 @@ package de.shiewk.widgets.utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.tick.TickManager;
 
 import java.util.function.BooleanSupplier;
@@ -33,6 +34,27 @@ public class WidgetUtils {
 
     public static void playSound(SoundEvent ev){
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(ev, 1f, 1f));
+    }
+
+    public static int fadeColor(int color1, int color2, double delta) {
+        int alpha = (int) MathHelper.lerp(delta, (color1 >> 24) & 0xff, (color2 >> 24) & 0xff);
+        int red = (int) MathHelper.lerp(delta, (color1 >> 16) & 0xff, (color2 >> 16) & 0xff);
+        int green = (int) MathHelper.lerp(delta, (color1 >> 8) & 0xff, (color2 >> 8) & 0xff);
+        int blue = (int) MathHelper.lerp(delta, color1 & 0xff, color2 & 0xff);
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
+    public static String colorARGBToHexRGBA(int color) {
+        int a = color >> 24 & 0xff;
+        int r = color >> 16 & 0xff;
+        int g = color >> 8 & 0xff;
+        int b = color & 0xff;
+        return toHexSingle(r) + toHexSingle(g) + toHexSingle(b) + toHexSingle(a);
+    }
+
+    private static String toHexSingle(int comp){
+        String s = Integer.toHexString(comp);
+        return "0".repeat(2 - s.length()) + s;
     }
 
 }

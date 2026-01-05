@@ -37,6 +37,10 @@ public abstract class ModWidget {
     public abstract Text getDescription();
     public abstract void onSettingsChanged(WidgetSettings settings);
 
+    public void onSettingsChanged() {
+        this.onSettingsChanged(this.getSettings());
+    }
+
     public int getX(int scaledScreenWidth){
         return settings.anchor.getAlignStartPosX(scaledScreenWidth) + settings.offsetX;
     }

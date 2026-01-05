@@ -1,8 +1,8 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
-import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
+import de.shiewk.widgets.color.GradientOptions;
+import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -11,39 +11,23 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Objects;
-
-import static net.minecraft.text.Text.translatable;
 
 public class KeyStrokesWidget extends ResizableWidget {
     public KeyStrokesWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("showjump", Text.translatable("widgets.widgets.keystrokes.showJumpKey"), true),
-                new RGBAColorWidgetSetting("bgpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundPressed"), 255, 255, 255, 80),
-                new RGBAColorWidgetSetting("bgunpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundUnpressed"), 0, 0, 0, 80),
-                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
-                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
-                new RGBAColorWidgetSetting("keypressed", Text.translatable("widgets.widgets.keystrokes.colorKeyPressed"), 255, 255, 255, 255),
-                new RGBAColorWidgetSetting("keyunpressed", Text.translatable("widgets.widgets.keystrokes.colorKeyUnpressed"), 255, 255, 255, 255)
+                new GradientWidgetSetting("bgpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundPressed"), 0x50ffffff),
+                new GradientWidgetSetting("bgunpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundUnpressed"), 0x50000000),
+                new GradientWidgetSetting("keypressed", Text.translatable("widgets.widgets.keystrokes.colorKeyPressed"), 0xffffffff),
+                new GradientWidgetSetting("keyunpressed", Text.translatable("widgets.widgets.keystrokes.colorKeyUnpressed"), 0xffffffff)
         ));
-        getSettings().optionById("keypressed").setShowCondition(() -> !this.rainbow);
-        getSettings().optionById("keyunpressed").setShowCondition(() -> !this.rainbow);
-        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
     }
 
+    private GradientOptions colorBackgroundPressed, colorBackgroundUnpressed, colorKeyUnpressed, colorKeyPressed;
     private boolean showJumpKey = true;
-
-    private int colorBackgroundPressed = new Color(255, 255, 255, 80).getRGB(),
-            colorBackgroundUnpressed = new Color(0, 0, 0, 80).getRGB(),
-            colorKeyUnpressed = 0xffffffff,
-            colorKeyPressed = 0xffffffff;
-
-    protected boolean rainbow = false;
-    protected int rainbowSpeed = 3;
 
     protected static class Key {
         protected final KeyBinding binding;
@@ -78,49 +62,28 @@ public class KeyStrokesWidget extends ResizableWidget {
         if (showJumpKey) renderSpaceBar(context, measuringTimeNano, posX, posY + 44, KEY_JUMP);
     }
 
-    protected void renderSpaceBar(final DrawContext context,
-                                  final long measuringTimeNano,
-                                  final int posX,
-                                  final int posY,
-                                  final Key key){
-        long l = measuringTimeNano - key.lastChanged;
+    protected void renderSpaceBar(final DrawContext context, long mt, int posX, int posY, Key key){
+        long l = mt - key.lastChanged;
         if (l < 100000000){
-            if (key.isPressed){
-                context.fill(posX, posY, posX + 64, posY + 10, fadeColor(colorBackgroundUnpressed, colorBackgroundPressed, 0.00000001d * l));
-            } else {
-                context.fill(posX, posY, posX + 64, posY + 10, fadeColor(colorBackgroundPressed, colorBackgroundUnpressed, 0.00000001d * l));
-            }
+            double alpha = 0.00000001d * l;
+            colorBackgroundUnpressed.multiplyAlpha(key.isPressed ? 1-alpha : alpha).fillHorizontal(context, mt, posX, posY, posX + 64, posY + 10);
+            colorBackgroundPressed.multiplyAlpha(key.isPressed ? alpha : 1-alpha).fillHorizontal(context, mt, posX, posY, posX + 64, posY + 10);
         } else {
-            context.fill(posX, posY, posX + 64, posY + 10, key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed);
+            (key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed).fillHorizontal(context, mt, posX, posY, posX + 64, posY + 10);
         }
-        context.fill(posX + 5, posY + 4, posX + 59, posY + 5, rainbow ? BasicTextWidget.rainbowColor(measuringTimeNano, rainbowSpeed) : (key.isPressed ? colorKeyPressed : colorKeyUnpressed));
+        (key.isPressed ? colorKeyPressed : colorKeyUnpressed).fillHorizontal(context, mt, posX + 5, posY + 4, posX + 59, posY + 5);
     }
 
-    protected void renderKeyStroke(final DrawContext context,
-                                   final TextRenderer textRenderer,
-                                   final long measuringTimeNano,
-                                   final int posX,
-                                   final int posY,
-                                   final KeyLarge key){
-        long l = measuringTimeNano - key.lastChanged;
+    protected void renderKeyStroke(DrawContext context, TextRenderer textRenderer, long mt, int posX, int posY, KeyLarge key){
+        long l = mt - key.lastChanged;
         if (l < 100000000){
-            if (key.isPressed){
-                context.fill(posX, posY, posX+20, posY+20, fadeColor(colorBackgroundUnpressed, colorBackgroundPressed, 0.00000001d * l));
-            } else {
-                context.fill(posX, posY, posX+20, posY+20, fadeColor(colorBackgroundPressed, colorBackgroundUnpressed, 0.00000001d * l));
-            }
+            double alpha = 0.00000001d * l;
+            colorBackgroundUnpressed.multiplyAlpha(key.isPressed ? 1-alpha : alpha).fillHorizontal(context, mt, posX, posY, posX + 20, posY + 20);
+            colorBackgroundPressed.multiplyAlpha(key.isPressed ? alpha : 1-alpha).fillHorizontal(context, mt, posX, posY, posX + 20, posY + 20);
         } else {
-            context.fill(posX, posY, posX+20, posY+20, key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed);
+            (key.isPressed ? colorBackgroundPressed : colorBackgroundUnpressed).fillHorizontal(context, mt, posX, posY, posX + 20, posY + 20);
         }
-        context.drawText(textRenderer, key.boundToKey, posX+10-(key.boundToLength/2), posY + 6, rainbow ? BasicTextWidget.rainbowColor(measuringTimeNano, rainbowSpeed) : (key.isPressed ? colorKeyPressed : colorKeyUnpressed), true);
-    }
-
-    private int fadeColor(int color1, int color2, double delta) {
-        int alpha = (int) MathHelper.lerp(delta, (color1 >> 24) & 0xff, (color2 >> 24) & 0xff);
-        int red = (int) MathHelper.lerp(delta, (color1 >> 16) & 0xff, (color2 >> 16) & 0xff);
-        int green = (int) MathHelper.lerp(delta, (color1 >> 8) & 0xff, (color2 >> 8) & 0xff);
-        int blue = (int) MathHelper.lerp(delta, color1 & 0xff, color2 & 0xff);
-        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+        (key.isPressed ? colorKeyPressed : colorKeyUnpressed).drawText(context, textRenderer, mt, key.boundToKey, posX+10-(key.boundToLength/2), posY+6, true);
     }
 
     @Override
@@ -168,11 +131,9 @@ public class KeyStrokesWidget extends ResizableWidget {
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.showJumpKey = (boolean) settings.optionById("showjump").getValue();
-        this.colorBackgroundPressed = (int) settings.optionById("bgpressed").getValue();
-        this.colorBackgroundUnpressed = (int) settings.optionById("bgunpressed").getValue();
-        this.colorKeyPressed = (int) settings.optionById("keypressed").getValue();
-        this.colorKeyUnpressed = (int) settings.optionById("keyunpressed").getValue();
-        this.rainbow = (boolean) settings.optionById("rainbow").getValue();
-        this.rainbowSpeed = (int) settings.optionById("rainbow_speed").getValue();
+        this.colorBackgroundPressed = (GradientOptions) settings.optionById("bgpressed").getValue();
+        this.colorBackgroundUnpressed = (GradientOptions) settings.optionById("bgunpressed").getValue();
+        this.colorKeyPressed = (GradientOptions) settings.optionById("keypressed").getValue();
+        this.colorKeyUnpressed = (GradientOptions) settings.optionById("keyunpressed").getValue();
     }
 }

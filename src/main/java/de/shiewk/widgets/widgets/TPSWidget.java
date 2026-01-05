@@ -2,6 +2,7 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.WidgetsMod;
+import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
@@ -22,9 +23,7 @@ public class TPSWidget extends BasicTextWidget {
                 new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true),
                 new IntSliderWidgetSetting("window_size", translatable("widgets.widgets.tps.windowSize"), 2, 5, 20)
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
-        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
-        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
 
     public static final TPSWidget INSTANCE = new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps"));
@@ -86,7 +85,7 @@ public class TPSWidget extends BasicTextWidget {
             } else {
                 formatAndSetRenderText(literal("???"));
             }
-            if (dynamicColor) this.textColor = 0xff00ff00;
+            if (dynamicColor) this.textColor = GradientOptions.solidColor(0xff00ff00);
         } else {
             tps = Math.round(tps * 10f) / 10f;
             if (showLabel){
@@ -96,11 +95,11 @@ public class TPSWidget extends BasicTextWidget {
             }
             if (dynamicColor){
                 if (tps >= targetTickRate * 0.990){
-                    this.textColor = 0xff00ff00;
+                    this.textColor = GradientOptions.solidColor(0xff00ff00);
                 } else if (tps >= targetTickRate * 0.740){
-                    this.textColor = 0xffffff00;
+                    this.textColor = GradientOptions.solidColor(0xffffff00);
                 } else {
-                    this.textColor = 0xffff0000;
+                    this.textColor = GradientOptions.solidColor(0xffff0000);
                 }
             }
         }

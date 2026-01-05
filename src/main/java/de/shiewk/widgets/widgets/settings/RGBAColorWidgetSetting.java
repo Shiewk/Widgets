@@ -2,6 +2,7 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -19,6 +20,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
+/**
+ * @deprecated Use {@link GradientWidgetSetting}
+ */
+@Deprecated(forRemoval = true, since = "2.3.0")
 public class RGBAColorWidgetSetting extends WidgetSettingOption<Integer> {
     public RGBAColorWidgetSetting(String id, Text name, int defaultR, int defaultG, int defaultB, int defaultAlpha) {
         super(id, name);
@@ -118,7 +123,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption<Integer> {
         return true;
     }
 
-    public class ChangeScreen extends Screen {
+    public class ChangeScreen extends Screen implements WidgetVisibilityToggle {
 
         private final Screen parent;
         private int x;
@@ -203,6 +208,11 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption<Integer> {
                 return false;
             }
             return super.mouseClicked(click, doubled);
+        }
+
+        @Override
+        public boolean shouldRenderWidgets() {
+            return false;
         }
 
         public class ColorBar extends ClickableWidget {
