@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import de.shiewk.widgets.client.WidgetManager;
+import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Identifier;
 
@@ -18,9 +19,9 @@ public class WidgetSettings {
     public int offsetX = 0;
     public int offsetY = 0;
     private boolean enabled = false;
-    private final ObjectArrayList<WidgetSettingOption> customSettings;
+    private final ObjectArrayList<WidgetSettingOption<?>> customSettings;
 
-    private WidgetSettings(JsonObject data, List<WidgetSettingOption> settings){
+    private WidgetSettings(JsonObject data, List<WidgetSettingOption<?>> settings){
         customSettings = new ObjectArrayList<>(settings);
         if (data != null){
             try {
@@ -39,7 +40,7 @@ public class WidgetSettings {
             final JsonElement s = data.get("settings");
             if (s != null && s.isJsonObject()){
                 final JsonObject savedSettings = s.getAsJsonObject();
-                for (WidgetSettingOption setting : this.customSettings) {
+                for (WidgetSettingOption<?> setting : this.customSettings) {
                     final String settingId = setting.getId();
                     if (savedSettings.has(settingId)){
                         try {
@@ -56,7 +57,7 @@ public class WidgetSettings {
             }
         }
     }
-    public static WidgetSettings ofId(Identifier id, List<WidgetSettingOption> customSettings){
+    public static WidgetSettings ofId(Identifier id, List<WidgetSettingOption<?>> customSettings){
         final JsonObject data = WidgetManager.loadWidget(id);
         return new WidgetSettings(data, customSettings);
     }
@@ -92,7 +93,7 @@ public class WidgetSettings {
         object.add("oy", gson.toJsonTree(this.offsetY));
 
         JsonObject customSettings = new JsonObject();
-        for (WidgetSettingOption customSetting : this.customSettings) {
+        for (WidgetSettingOption<?> customSetting : this.customSettings) {
             customSettings.add(customSetting.getId(), customSetting.saveState());
         }
         object.add("settings", customSettings);
@@ -100,8 +101,8 @@ public class WidgetSettings {
         return object;
     }
 
-    public WidgetSettingOption optionById(String id){
-        for (WidgetSettingOption customSetting : customSettings) {
+    public WidgetSettingOption<?> optionById(String id){
+        for (WidgetSettingOption<?> customSetting : customSettings) {
             if (customSetting.getId().equals(id)){
                 return customSetting;
             }
@@ -109,7 +110,7 @@ public class WidgetSettings {
         return null;
     }
 
-    public ObjectArrayList<WidgetSettingOption> getCustomSettings() {
+    public ObjectArrayList<WidgetSettingOption<?>> getCustomSettings() {
         return customSettings.clone();
     }
 }

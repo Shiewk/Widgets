@@ -2,7 +2,6 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.WidgetsMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -10,7 +9,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
-public class TextFieldWidgetSettingOption extends WidgetSettingOption {
+public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
 
     private TextField textField = null;
     private final Text initialValue;
@@ -52,6 +51,7 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption {
         textField.setText(value.isEmpty() ? initialValue.getString() : value);
     }
 
+    @Override
     public String getValue(){
         return value;
     }

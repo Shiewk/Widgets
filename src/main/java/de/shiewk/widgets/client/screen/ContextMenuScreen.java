@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 
-public class ContextMenuScreen extends Screen {
+public class ContextMenuScreen extends Screen implements WidgetVisibilityToggle {
 
     public record Option(Text title, boolean highlighted, Runnable action){
 
@@ -134,5 +134,13 @@ public class ContextMenuScreen extends Screen {
             context.drawText(textRenderer, option.title, menuX + 5, y + 3, option.highlighted ? 0xff_00_ff_ff : 0xff_ff_ff_ff, false);
             y += 15;
         }
+    }
+
+    @Override
+    public boolean shouldRenderWidgets() {
+        if (parent instanceof WidgetVisibilityToggle t) {
+            return t.shouldRenderWidgets();
+        }
+        return true;
     }
 }

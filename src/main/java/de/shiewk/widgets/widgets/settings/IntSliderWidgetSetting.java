@@ -2,15 +2,15 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import de.shiewk.widgets.WidgetSettingOption;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-public class IntSliderWidgetSetting extends WidgetSettingOption {
+public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
 
     private int value;
     private int minValue;
@@ -93,7 +93,8 @@ public class IntSliderWidgetSetting extends WidgetSettingOption {
         return t;
     }
 
-    public int getValue() {
+    @Override
+    public @NotNull Integer getValue() {
         return value;
     }
 

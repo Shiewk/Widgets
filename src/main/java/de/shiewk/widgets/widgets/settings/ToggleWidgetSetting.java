@@ -2,17 +2,17 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import de.shiewk.widgets.WidgetSettingOption;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class ToggleWidgetSetting extends WidgetSettingOption {
+public class ToggleWidgetSetting extends WidgetSettingOption<Boolean> {
 
     private boolean value;
     private long toggleTime = 0;
@@ -22,7 +22,8 @@ public class ToggleWidgetSetting extends WidgetSettingOption {
         this.value = defaultValue;
     }
 
-    public boolean getValue(){
+    @Override
+    public @NotNull Boolean getValue(){
         return value;
     }
 

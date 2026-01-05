@@ -141,17 +141,17 @@ public class CPSWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        countLeftClicks = ((ToggleWidgetSetting) settings.optionById("left")).getValue();
-        countMiddleClicks = ((ToggleWidgetSetting) settings.optionById("middle")).getValue();
-        countRightClicks = ((ToggleWidgetSetting) settings.optionById("right")).getValue();
-        appearance = (Appearance) ((EnumWidgetSetting<?>) settings.optionById("appearance")).getValue();
-        showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
+        countLeftClicks = (boolean) settings.optionById("left").getValue();
+        countMiddleClicks = (boolean) settings.optionById("middle").getValue();
+        countRightClicks = (boolean) settings.optionById("right").getValue();
+        appearance = (Appearance) settings.optionById("appearance").getValue();
+        showLabel = (boolean) settings.optionById("show_label").getValue();
     }
 
     @Override
     public Text getName() {
         return translatable("widgets.widgets.cps");
-}
+    }
 
     @Override
     public Text getDescription() {

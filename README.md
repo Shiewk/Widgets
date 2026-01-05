@@ -42,3 +42,14 @@ Right-clicking on this screen will bring up a useful context menu with additiona
 When you're done, just press Escape until you return to the game.
 
 Now, everything is done. Your widgets automatically save for the next time you play.
+
+## Color editor
+
+Newer mod versions (2.3.0+) include a **color editor** which provides full customization for your widgets' background and text colors:
+
+![Color editor screen](assets/images/color-editor.webp)
+
+The color list on the left shows the colors which are currently configured; if you add more than one, it becomes a gradient. Clicking on the colors will select them.
+
+The settings bar on the right of the color list can be used to customize gradient settings, import from other widgets, or use presets.
+Below that, the color which is currently selected can be changed or deleted.

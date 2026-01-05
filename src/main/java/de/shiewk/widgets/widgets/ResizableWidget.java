@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import net.minecraft.client.font.TextRenderer;
@@ -15,12 +15,12 @@ import java.util.List;
 
 public abstract class ResizableWidget extends ModWidget {
 
-    protected ResizableWidget(Identifier id, List<WidgetSettingOption> customSettings) {
+    protected ResizableWidget(Identifier id, List<WidgetSettingOption<?>> customSettings) {
         super(id, addScaleSetting(customSettings));
     }
 
-    private static List<WidgetSettingOption> addScaleSetting(List<WidgetSettingOption> target) {
-        ArrayList<WidgetSettingOption> settings = new ArrayList<>(target);
+    private static List<WidgetSettingOption<?>> addScaleSetting(List<WidgetSettingOption<?>> target) {
+        ArrayList<WidgetSettingOption<?>> settings = new ArrayList<>(target);
         settings.add(new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400));
         return settings;
     }
@@ -43,7 +43,7 @@ public abstract class ResizableWidget extends ModWidget {
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
-        this.size = 0.01f * ((IntSliderWidgetSetting) settings.optionById("size")).getValue();
+        this.size = 0.01f * (int) settings.optionById("size").getValue();
     }
 
     @Override

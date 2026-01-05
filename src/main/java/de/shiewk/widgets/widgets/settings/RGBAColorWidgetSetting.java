@@ -2,7 +2,7 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import de.shiewk.widgets.WidgetSettingOption;
+import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -13,11 +13,16 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
-public class RGBAColorWidgetSetting extends WidgetSettingOption {
+/**
+ * @deprecated Use {@link GradientWidgetSetting}
+ */
+@Deprecated(forRemoval = true, since = "2.3.0")
+public class RGBAColorWidgetSetting extends WidgetSettingOption<Integer> {
     public RGBAColorWidgetSetting(String id, Text name, int defaultR, int defaultG, int defaultB, int defaultAlpha) {
         super(id, name);
         this.r = defaultR;
@@ -38,6 +43,11 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
 
     public int getColor(){
         return a << 24 | r << 16 | g << 8 | b;
+    }
+
+    @Override
+    public @NotNull Integer getValue(){
+        return getColor();
     }
 
     @Override
@@ -102,12 +112,13 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
         MinecraftClient client = MinecraftClient.getInstance();
         WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
         client.setScreen(
-                new ChangeScreen(client.currentScreen, (int) (client.mouse.getX() / client.getWindow().getScaleFactor()), (int) (client.mouse.getY() / client.getWindow().getScaleFactor()))
+                // does not matter this is deprecated for removal anyway
+                new ChangeScreen(client.currentScreen, 0, 0)
         );
         return true;
     }
 
-    public class ChangeScreen extends Screen {
+    public class ChangeScreen extends Screen implements WidgetVisibilityToggle {
 
         private final Screen parent;
         private int x;
@@ -180,11 +191,6 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
         }
 
         @Override
-        public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-
-        }
-
-        @Override
         public void close() {
             client.setScreen(parent);
         }
@@ -197,6 +203,11 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
                 return false;
             }
             return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        public boolean shouldRenderWidgets() {
+            return false;
         }
 
         public class ColorBar extends ClickableWidget {
@@ -282,7 +293,7 @@ public class RGBAColorWidgetSetting extends WidgetSettingOption {
             }
 
             @Override
-            public boolean mouseDragged(double mouseX, double mouseY, int button, double offsetX, double offsetY) {
+            public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
                 if (isHovered()){
                     double pos = mouseY - this.getY() - 10;
                     int val = (int) (255 - pos * 2);

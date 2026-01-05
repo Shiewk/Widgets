@@ -1,4 +1,4 @@
-package de.shiewk.widgets;
+package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import de.shiewk.widgets.utils.WidgetUtils;
@@ -10,7 +10,8 @@ import net.minecraft.text.Text;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public abstract class WidgetSettingOption implements Drawable, Widget {
+public abstract class WidgetSettingOption<T> implements Drawable, Widget {
+
     private final String id;
     private final Text name;
     private int x = 0;
@@ -42,6 +43,7 @@ public abstract class WidgetSettingOption implements Drawable, Widget {
 
     public abstract JsonElement saveState();
     public abstract void loadState(JsonElement state);
+    public abstract T getValue();
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return false;
@@ -105,7 +107,7 @@ public abstract class WidgetSettingOption implements Drawable, Widget {
         return shouldShow.getAsBoolean();
     }
 
-    public WidgetSettingOption setShowCondition(BooleanSupplier shouldShow){
+    public WidgetSettingOption<?> setShowCondition(BooleanSupplier shouldShow){
         this.shouldShow = shouldShow;
         return this;
     }

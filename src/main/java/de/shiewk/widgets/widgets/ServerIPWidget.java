@@ -63,7 +63,7 @@ public class ServerIPWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicWidth = ((ToggleWidgetSetting) settings.optionById("dynamicwidth")).getValue();
-        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
+        this.dynamicWidth = (boolean) settings.optionById("dynamicwidth").getValue();
+        this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
     }
 }

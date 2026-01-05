@@ -45,8 +45,8 @@ public class PlayerCountWidget extends BasicTextWidget{
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
-        showLabel = ((ToggleWidgetSetting) settings.optionById("showlabel")).getValue();
-        hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
+        showLabel = (boolean) settings.optionById("showlabel").getValue();
+        hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
         super.onSettingsChanged(settings);
     }
 }
