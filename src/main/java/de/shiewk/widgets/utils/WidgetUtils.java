@@ -33,7 +33,7 @@ public class WidgetUtils {
     }
 
     public static void playSound(SoundEvent ev){
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(ev, 1f, 1f));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(ev, 1f, 1f));
     }
 
     public static int fadeColor(int color1, int color2, double delta) {

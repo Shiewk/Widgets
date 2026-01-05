@@ -111,7 +111,7 @@ public class WidgetListWidget extends ScrollableWidget {
         Click newClick = new Click(mouseX, mouseY, click.buttonInfo());
         for (Element element : elements) {
             if (element.mouseClicked(newClick, doubled)){
-                client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                client.getSoundManager().play(PositionedSoundInstance.ui(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 return true;
             }
         }
