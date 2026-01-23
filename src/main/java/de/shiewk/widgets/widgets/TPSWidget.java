@@ -37,6 +37,7 @@ public class TPSWidget extends BasicTextWidget {
 
     public static void worldChanged(){
         updatesSinceWorldChange = 0;
+        INSTANCE.updateTPS(1, 1, false);
     }
 
     public static void worldTimeUpdated(long nanoTime) {
