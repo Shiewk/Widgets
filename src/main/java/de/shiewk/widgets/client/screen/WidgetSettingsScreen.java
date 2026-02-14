@@ -11,7 +11,7 @@ import net.minecraft.util.Util;
 
 import java.util.function.Consumer;
 
-public class WidgetSettingsScreen extends AnimatedScreen {
+public class WidgetSettingsScreen extends AnimatedScreen implements WidgetVisibilityToggle {
     private static final Text previewText = Text.translatable("widgets.ui.preview");
     private final ModWidget widget;
     private final Runnable onChange;
@@ -19,7 +19,7 @@ public class WidgetSettingsScreen extends AnimatedScreen {
         super(Text.translatable("widgets.ui.widgetSettings", widget.getName()), parent, 500);
         this.widget = widget;
         onChange = () -> {
-            widget.onSettingsChanged(widget.getSettings());
+            widget.onSettingsChanged();
             changedWidgetConsumer.accept(widget);
         };
     }
@@ -58,5 +58,18 @@ public class WidgetSettingsScreen extends AnimatedScreen {
         if (!widget.getSettings().isEnabled()){
             widget.tick();
         }
+    }
+
+    @Override
+    public boolean shouldRenderWidgets() {
+        return false;
+    }
+
+    public ModWidget getWidget() {
+        return widget;
+    }
+
+    public Runnable getOnChange() {
+        return onChange;
     }
 }

@@ -1,6 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.MinecraftClient;
@@ -21,9 +22,7 @@ public class PingWidget extends BasicTextWidget {
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.ping.dynamicColor"), true),
                 new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false)
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
-        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
-        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
 
     private boolean dynamicColor = false;
@@ -53,18 +52,18 @@ public class PingWidget extends BasicTextWidget {
             }
             if (valuesRead == 0){
                 formatAndSetRenderText(literal("??? ms"));
-                if (this.dynamicColor) this.textColor = 0xff00ff00;
+                if (this.dynamicColor) this.textColor = GradientOptions.solidColor(0xff00ff00);
                 return;
             }
             long avgPing = ping / valuesRead;
             formatAndSetRenderText(literal(avgPing + " ms"));
             if (this.dynamicColor){
                 if (avgPing < 50){
-                    this.textColor = 0xff00ff00;
+                    this.textColor = GradientOptions.solidColor(0xff00ff00);
                 } else if (avgPing < 120) {
-                    this.textColor = 0xffffff00;
+                    this.textColor = GradientOptions.solidColor(0xffffff00);
                 } else {
-                    this.textColor = 0xffff3030;
+                    this.textColor = GradientOptions.solidColor(0xffff3030);
                 }
             }
         }
@@ -73,8 +72,8 @@ public class PingWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
-        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
+        this.dynamicColor = (boolean) settings.optionById("dynamic_color").getValue();
+        this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
     }
 
     @Override

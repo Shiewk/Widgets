@@ -57,7 +57,7 @@ public class FPSWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.realtime = ((ToggleWidgetSetting) settings.optionById("realtime")).getValue();
+        this.realtime = (boolean) settings.optionById("realtime").getValue();
 
         timedFrames = this.realtime ? new LinkedList<>() : null;
     }

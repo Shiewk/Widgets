@@ -68,6 +68,6 @@ public class BiomeWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.showLabel = ((ToggleWidgetSetting) settings.optionById("show_label")).getValue();
+        this.showLabel = (boolean) settings.optionById("show_label").getValue();
     }
 }

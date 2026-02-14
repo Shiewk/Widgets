@@ -1,6 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
@@ -52,9 +53,7 @@ public class BandwidthWidget extends BasicTextWidget {
                 new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name)),
                 new ToggleWidgetSetting("fastupdate", translatable("widgets.widgets.bandwidth.fastupdate"), false)
         ));
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
-        getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
-        getSettings().optionById("rainbow_speed").setShowCondition(() -> !this.dynamicColor && this.rainbow);
+        getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
 
     private int t = 0;
@@ -75,11 +74,11 @@ public class BandwidthWidget extends BasicTextWidget {
             formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
-                    this.textColor = 0xff00ff00;
+                    this.textColor = GradientOptions.solidColor(0xff00ff00);
                 } else if (avgBytesPerSecond < 750000) {
-                    this.textColor = 0xffffff00;
+                    this.textColor = GradientOptions.solidColor(0xffffff00);
                 } else {
-                    this.textColor = 0xffff3030;
+                    this.textColor = GradientOptions.solidColor(0xffff3030);
                 }
             }
         }
@@ -100,10 +99,10 @@ public class BandwidthWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
-        this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
-        this.unit = (Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue();
-        this.fastUpdate = ((ToggleWidgetSetting) settings.optionById("fastupdate")).getValue();
+        this.dynamicColor = (boolean) settings.optionById("dynamic_color").getValue();
+        this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
+        this.unit = (Unit) settings.optionById("unit").getValue();
+        this.fastUpdate = (boolean) settings.optionById("fastupdate").getValue();
     }
 
     @Override

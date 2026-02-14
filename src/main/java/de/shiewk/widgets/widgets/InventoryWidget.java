@@ -1,10 +1,8 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
-import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
-import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
-import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
+import de.shiewk.widgets.color.GradientOptions;
+import de.shiewk.widgets.widgets.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
@@ -51,34 +49,18 @@ public class InventoryWidget extends ResizableWidget {
         super(id, List.of(
                 new EnumWidgetSetting<>("mode", translatable("widgets.widgets.inventory.mode"), InventoryMode.class, InventoryMode.TEXTURE_PACK, InventoryMode::display),
                 new ToggleWidgetSetting("show_hotbar", translatable("widgets.widgets.inventory.showHotbar"), true),
-                new ToggleWidgetSetting("rainbow_grid", translatable("widgets.widgets.inventory.rainbowGrid"), false),
-                new IntSliderWidgetSetting("grid_rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
-                new RGBAColorWidgetSetting("grid_color", translatable("widgets.widgets.inventory.gridColor"), 0, 0, 0, 255),
-                new ToggleWidgetSetting("rainbow_boxes", translatable("widgets.widgets.inventory.rainbowBoxes"), false),
-                new IntSliderWidgetSetting("box_rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
-                new RGBAColorWidgetSetting("box_color", translatable("widgets.widgets.inventory.boxColor"), 80, 80, 80, 128)
+                new GradientWidgetSetting("grid_color", translatable("widgets.widgets.inventory.gridColor"), 0xff000000),
+                new GradientWidgetSetting("box_color", translatable("widgets.widgets.inventory.boxColor"), 0x88505050)
         ));
-        getSettings().optionById("rainbow_grid").setShowCondition(() -> this.mode == InventoryMode.GRID);
-        getSettings().optionById("grid_rainbow_speed").setShowCondition(() -> this.mode == InventoryMode.GRID && this.rainbowGrid);
-        getSettings().optionById("grid_color").setShowCondition(() -> this.mode == InventoryMode.GRID && !this.rainbowGrid);
-
-        getSettings().optionById("rainbow_boxes").setShowCondition(() -> this.mode == InventoryMode.BOXES);
-        getSettings().optionById("box_rainbow_speed").setShowCondition(() -> this.mode == InventoryMode.BOXES && this.rainbowBoxes);
-        getSettings().optionById("box_color").setShowCondition(() -> this.mode == InventoryMode.BOXES && !this.rainbowBoxes);
-
+        getSettings().optionById("grid_color").setShowCondition(() -> this.mode == InventoryMode.GRID);
+        getSettings().optionById("box_color").setShowCondition(() -> this.mode == InventoryMode.BOXES);
         getSettings().optionById("show_hotbar").setShowCondition(() -> this.mode.canDisableHotbar);
     }
 
     private InventoryMode mode = InventoryMode.TEXTURE_PACK;
     private PlayerInventory inventory;
 
-    private boolean rainbowGrid = false;
-    private int gridColor = 0xff000000;
-    private int gridRainbowSpeed = 3;
-
-    private boolean rainbowBoxes = false;
-    private int boxColor = 0xff000000;
-    private int boxRainbowSpeed = 3;
+    private GradientOptions gridColor, boxColor;
     private boolean showHotbar = false;
 
     @Override
@@ -109,30 +91,28 @@ public class InventoryWidget extends ResizableWidget {
                 context.disableScissor();
             }
             case GRID -> {
-                int gridColor = rainbowGrid ? BasicTextWidget.rainbowColor(mt, gridRainbowSpeed) : this.gridColor;
-                context.drawHorizontalLine(posX, posX+width(), posY, gridColor);
-                context.drawHorizontalLine(posX, posX+width(), posY + 18, gridColor);
-                context.drawHorizontalLine(posX, posX+width(), posY + 36, gridColor);
-                context.drawHorizontalLine(posX, posX+width(), posY + 54, gridColor);
+                gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY);
+                gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY + 18);
+                gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY + 36);
+                gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY + 54);
 
                 if (showHotbar){
-                    context.drawHorizontalLine(posX, posX+width(), posY + 58, gridColor);
-                    context.drawHorizontalLine(posX, posX+width(), posY + 76, gridColor);
+                    gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY + 58);
+                    gridColor.drawHorizontalLine(context, mt, posX, posX+width(), posY + 76);
                 }
 
-                context.drawVerticalLine(posX, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*2, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*3, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*4, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*5, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*6, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*7, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*8, posY, posY+height(), gridColor);
-                context.drawVerticalLine(posX+18*9, posY, posY+height(), gridColor);
+                gridColor.drawVerticalLine(context, mt, posX, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*2, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*3, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*4, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*5, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*6, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*7, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*8, posY, posY+height());
+                gridColor.drawVerticalLine(context, mt, posX+18*9, posY, posY+height());
             }
             case BOXES -> {
-                int boxColor = rainbowBoxes ? ((BasicTextWidget.rainbowColor(mt, boxRainbowSpeed) & 0xffffff) | (this.boxColor & 0xff000000)) : this.boxColor;
                 for (int ry = 0; ry < 4; ry++) {
                     if (ry == 0 && !showHotbar) continue;
                     for (int rx = 0; rx < 9; rx++) {
@@ -140,7 +120,7 @@ public class InventoryWidget extends ResizableWidget {
                         int itemY = ry == 0 ? posY + 58 : posY + (ry-1) * 18;
                         int itemX = posX + rx * 18;
 
-                        context.fill(itemX, itemY, itemX + 16, itemY + 16, boxColor);
+                        boxColor.fillHorizontal(context, mt, itemX, itemY, itemX + 16, itemY + 16);
                     }
                 }
             }
@@ -205,15 +185,11 @@ public class InventoryWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.mode = ((InventoryMode) ((EnumWidgetSetting<?>) settings.optionById("mode")).getValue());
-        this.rainbowGrid = ((ToggleWidgetSetting) settings.optionById("rainbow_grid")).getValue();
-        this.gridRainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("grid_rainbow_speed")).getValue();
-        this.gridColor = ((RGBAColorWidgetSetting) settings.optionById("grid_color")).getColor();
+        this.mode = (InventoryMode) settings.optionById("mode").getValue();
 
-        this.rainbowBoxes = ((ToggleWidgetSetting) settings.optionById("rainbow_boxes")).getValue();
-        this.boxRainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("box_rainbow_speed")).getValue();
-        this.boxColor = ((RGBAColorWidgetSetting) settings.optionById("box_color")).getColor();
+        this.gridColor = (GradientOptions) settings.optionById("grid_color").getValue();
+        this.boxColor = (GradientOptions) settings.optionById("box_color").getValue();
 
-        this.showHotbar = ((ToggleWidgetSetting) settings.optionById("show_hotbar")).getValue() || !mode.canDisableHotbar;
+        this.showHotbar = (boolean) settings.optionById("show_hotbar").getValue() || !mode.canDisableHotbar;
     }
 }

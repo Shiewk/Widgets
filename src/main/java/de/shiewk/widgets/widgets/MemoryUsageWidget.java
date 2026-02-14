@@ -71,8 +71,8 @@ public class MemoryUsageWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.showPercentage = ((ToggleWidgetSetting) settings.optionById("percentage")).getValue();
-        this.showLabel = ((ToggleWidgetSetting) settings.optionById("label")).getValue();
-        this.realtime = ((ToggleWidgetSetting) settings.optionById("realtime")).getValue();
+        this.showPercentage = (boolean) settings.optionById("percentage").getValue();
+        this.showLabel = (boolean) settings.optionById("label").getValue();
+        this.realtime = (boolean) settings.optionById("realtime").getValue();
     }
 }

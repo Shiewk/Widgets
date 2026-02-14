@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class EditWidgetPositionsScreen extends AnimatedScreen {
+public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetVisibilityToggle {
 
     private final Screen parent;
     private final Consumer<ModWidget> onEdit;
@@ -36,6 +36,11 @@ public class EditWidgetPositionsScreen extends AnimatedScreen {
     public void close() {
         assert client != null;
         client.setScreen(parent);
+    }
+
+    @Override
+    public boolean shouldRenderWidgets() {
+        return false;
     }
 
     private record AlignResult(double result, boolean isEnd){}

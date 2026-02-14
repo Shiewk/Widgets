@@ -38,7 +38,7 @@ public class WidgetConfigScreen extends Screen {
     public void close() {
         WidgetManager.saveWidgets(widgetsEdited);
         for (ModWidget widget : widgetsEdited) {
-            widget.onSettingsChanged(widget.getSettings());
+            widget.onSettingsChanged();
         }
         assert client != null;
         client.setScreen(parent);

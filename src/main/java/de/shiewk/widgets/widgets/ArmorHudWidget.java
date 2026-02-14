@@ -1,10 +1,8 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
-import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
-import de.shiewk.widgets.widgets.settings.RGBAColorWidgetSetting;
-import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
+import de.shiewk.widgets.color.GradientOptions;
+import de.shiewk.widgets.widgets.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -28,17 +26,13 @@ public class ArmorHudWidget extends ResizableWidget {
                 new ToggleWidgetSetting("show_durability", translatable("widgets.widgets.armorHud.showDurability"), true),
                 new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 16, 42, 128),
                 new EnumWidgetSetting<>("alignment", translatable("widgets.widgets.basictext.alignment"), BasicTextWidget.TextAlignment.class, BasicTextWidget.TextAlignment.CENTER, BasicTextWidget.TextAlignment::displayText),
-                new RGBAColorWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0, 0, 0, 80),
+                new GradientWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0x50_00_00_00),
                 new EnumWidgetSetting<>("durability_style", translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
-                new ToggleWidgetSetting("rainbow", translatable("widgets.widgets.common.rainbow"), false),
-                new IntSliderWidgetSetting("rainbow_speed", translatable("widgets.widgets.common.rainbow.speed"), 1, 3, 10),
-                new RGBAColorWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 255, 255, 255, 255)
+                new GradientWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 0xff_ff_ff_ff)
         ));
         getSettings().optionById("width").setShowCondition(() -> this.showDurability);
         getSettings().optionById("alignment").setShowCondition(() -> this.showDurability);
         getSettings().optionById("durability_style").setShowCondition(() -> this.showDurability);
-        getSettings().optionById("rainbow_speed").setShowCondition(() -> this.rainbow);
-        getSettings().optionById("textcolor").setShowCondition(() -> !this.rainbow);
     }
 
     public enum DurabilityStyle {
@@ -50,22 +44,25 @@ public class ArmorHudWidget extends ResizableWidget {
         }
     }
 
-    private int padding = 1;
-    private boolean showDurability = true;
-    private DurabilityStyle durabilityStyle;
+    protected int padding = 1;
+    protected boolean showDurability = true;
+    protected DurabilityStyle durabilityStyle;
     protected ItemStack helmet;
     protected ItemStack chestplate;
     protected ItemStack leggings;
     protected ItemStack boots;
-    protected boolean rainbow = false;
-    protected int rainbowSpeed = 3;
     protected int preferredWidth = 42;
     protected BasicTextWidget.TextAlignment textAlignment = BasicTextWidget.TextAlignment.CENTER;
-    protected int backgroundColor = 0x50_00_00_00, textColor = 0xff_ff_ff_ff;
+    protected GradientOptions backgroundColor, textColor;
 
     @Override
     public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
-        context.fill(posX, posY, posX+width(), posY+height(), backgroundColor);
+        backgroundColor.fillHorizontal(
+                context,
+                measuringTimeNano,
+                posX, posY,
+                posX+width(), posY+height()
+        );
         if (helmet != null){
             renderItem(context, measuringTimeNano, textRenderer, helmet, posX + padding, posY + padding);
         }
@@ -99,14 +96,14 @@ public class ArmorHudWidget extends ResizableWidget {
             switch (textAlignment){
                 case RIGHT -> {
                     int width = textRenderer.getWidth(text);
-                    context.drawText(textRenderer, text, posX + width() - width - padding * 2, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                    textColor.drawText(context, textRenderer, mt, text, posX + width() - width - padding * 2, posY + 5, true);
                 }
                 case CENTER -> {
                     int width = textRenderer.getWidth(text);
-                    context.drawText(textRenderer, text, posX + ((preferredWidth + padding*2) - width) / 2 + 8, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                    textColor.drawText(context, textRenderer, mt, text, posX + ((preferredWidth + padding*2) - width) / 2 + 8, posY + 5, true);
                 }
                 case LEFT -> {
-                    context.drawText(textRenderer, text, posX + 16 + padding, posY + 5, rainbow ? BasicTextWidget.rainbowColor(mt, rainbowSpeed) : textColor, true);
+                    textColor.drawText(context, textRenderer, mt, text, posX + 16 + padding, posY + 5, true);
                 }
             }
         }
@@ -153,14 +150,12 @@ public class ArmorHudWidget extends ResizableWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        this.padding = ((IntSliderWidgetSetting) settings.optionById("padding")).getValue();
-        this.showDurability = ((ToggleWidgetSetting) settings.optionById("show_durability")).getValue();
-        this.durabilityStyle = (DurabilityStyle) ((EnumWidgetSetting<?>) settings.optionById("durability_style")).getValue();
-        this.rainbow = ((ToggleWidgetSetting) settings.optionById("rainbow")).getValue();
-        this.rainbowSpeed = ((IntSliderWidgetSetting) settings.optionById("rainbow_speed")).getValue();
-        this.textColor = ((RGBAColorWidgetSetting) settings.optionById("textcolor")).getColor();
-        this.backgroundColor = ((RGBAColorWidgetSetting) settings.optionById("backgroundcolor")).getColor();
-        this.preferredWidth = ((IntSliderWidgetSetting) settings.optionById("width")).getValue();
-        this.textAlignment = (BasicTextWidget.TextAlignment) ((EnumWidgetSetting<?>) settings.optionById("alignment")).getValue();
+        this.padding = (int) settings.optionById("padding").getValue();
+        this.showDurability = (boolean) settings.optionById("show_durability").getValue();
+        this.durabilityStyle = (DurabilityStyle) settings.optionById("durability_style").getValue();
+        this.textColor = (GradientOptions) settings.optionById("textcolor").getValue();
+        this.backgroundColor = (GradientOptions) settings.optionById("backgroundcolor").getValue();
+        this.preferredWidth = (int) settings.optionById("width").getValue();
+        this.textAlignment = (BasicTextWidget.TextAlignment) settings.optionById("alignment").getValue();
     }
 }

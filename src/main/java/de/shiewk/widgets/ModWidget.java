@@ -1,5 +1,6 @@
 package de.shiewk.widgets;
 
+import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -13,7 +14,7 @@ public abstract class ModWidget {
     private final Identifier id;
     private final WidgetSettings settings;
 
-    protected ModWidget(Identifier id, List<WidgetSettingOption> customSettings) {
+    protected ModWidget(Identifier id, List<WidgetSettingOption<?>> customSettings) {
         Objects.requireNonNull(id, "id");
         this.id = id;
         this.settings = WidgetSettings.ofId(id, customSettings);
@@ -35,6 +36,10 @@ public abstract class ModWidget {
     public abstract Text getName();
     public abstract Text getDescription();
     public abstract void onSettingsChanged(WidgetSettings settings);
+
+    public void onSettingsChanged() {
+        this.onSettingsChanged(this.getSettings());
+    }
 
     public int getX(int scaledScreenWidth){
         return settings.anchor.getAlignStartPosX(scaledScreenWidth) + settings.offsetX;
