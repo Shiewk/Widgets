@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.LongFunction;
 
 import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
 
 public class BandwidthWidget extends BasicTextWidget {
 
@@ -48,7 +49,8 @@ public class BandwidthWidget extends BasicTextWidget {
         super(id, List.of(
                 new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
                 new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
-                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name))
+                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name)),
+                new ToggleWidgetSetting("fastupdate", translatable("widgets.widgets.bandwidth.fastupdate"), false)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor && !this.rainbow);
         getSettings().optionById("rainbow").setShowCondition(() -> !this.dynamicColor);
@@ -59,6 +61,7 @@ public class BandwidthWidget extends BasicTextWidget {
     private boolean dynamicColor = false;
     private boolean hideInSingleplayer = false;
     private Unit unit = Unit.KB;
+    protected boolean fastUpdate = false;
 
     @Override
     public void tickWidget() {
@@ -66,7 +69,7 @@ public class BandwidthWidget extends BasicTextWidget {
         if (!shouldRender) return;
         float tickRate = WidgetUtils.getClientTickRate();
         t++;
-        if (t >= tickRate){
+        if (t >= tickRate || fastUpdate){
             t = 0;
             long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
             formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
@@ -100,6 +103,7 @@ public class BandwidthWidget extends BasicTextWidget {
         this.dynamicColor = ((ToggleWidgetSetting) settings.optionById("dynamic_color")).getValue();
         this.hideInSingleplayer = ((ToggleWidgetSetting) settings.optionById("hide_in_singleplayer")).getValue();
         this.unit = (Unit) ((EnumWidgetSetting<?>) settings.optionById("unit")).getValue();
+        this.fastUpdate = ((ToggleWidgetSetting) settings.optionById("fastupdate")).getValue();
     }
 
     @Override
