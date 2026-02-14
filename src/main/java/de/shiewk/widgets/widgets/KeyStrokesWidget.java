@@ -96,7 +96,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
         for (Key key : new Key[]{KEY_FWD, KEY_BWD, KEY_LEFT, KEY_RIGHT, KEY_JUMP}){
             if (key instanceof KeyLarge keyLarge){
-                keyLarge.boundToKey = key.binding.getBoundKeyLocalizedText().getString();
+                keyLarge.boundToKey = getKeyName(key);
                 keyLarge.boundToLength = renderer.getWidth(keyLarge.boundToKey);
             }
             final boolean pressed = key.binding.isPressed();
@@ -105,6 +105,16 @@ public class KeyStrokesWidget extends ResizableWidget {
                 key.lastChanged = Util.getMeasuringTimeNano();
             }
         }
+    }
+
+    private static String getKeyName(Key key) {
+        return switch (key.binding.getBoundKeyTranslationKey()) {
+            case "key.keyboard.up" -> "\u2191";
+            case "key.keyboard.down" -> "\u2193";
+            case "key.keyboard.left" -> "\u2190";
+            case "key.keyboard.right" -> "\u2192";
+            default -> key.binding.getBoundKeyLocalizedText().getString();
+        };
     }
 
     @Override
