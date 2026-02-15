@@ -74,7 +74,7 @@ public class WidgetListWidget extends ScrollableWidget {
     @Override
     protected int getContentsHeightWithPadding() {
         final int columns = getColumns();
-        final int rows = widgets.size() / columns;
+        final int rows = (int) Math.ceil((double) widgets.size() / columns);
         return 10 + (rows * 108);
     }
 
