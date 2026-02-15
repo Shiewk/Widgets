@@ -1,10 +1,10 @@
 {
+  "key.category.widgets.main": "Widgets",
   "widgets.gradient.preset.rainbow": "Rainbow",
   "widgets.gradient.pulse": "Pulse",
   "widgets.gradient.pulse.description": "Paints the text or surface with one solid color, cycling through your selected palette",
   "widgets.gradient.sweep": "Sweep",
   "widgets.gradient.sweep.description": "Paints the text or surface with a moving gradient",
-  "widgets.key.category": "Widgets",
   "widgets.key.config": "Open Widget Management",
   "widgets.ui.anchor.bottom_center": "Bottom center",
   "widgets.ui.anchor.bottom_left": "Bottom left",

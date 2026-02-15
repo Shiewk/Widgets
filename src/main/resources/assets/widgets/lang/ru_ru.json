@@ -1,10 +1,10 @@
 {
+  "key.category.widgets.main": "Widgets",
   "widgets.gradient.preset.rainbow": "Радужный",
   "widgets.gradient.pulse": "Пульсация",
   "widgets.gradient.pulse.description": "Окрашивает текст или поверхность в один сплошной цвет, циклически проходящий по выбранной палитре",
   "widgets.gradient.sweep": "Разметание",
   "widgets.gradient.sweep.description": "Окрашивает текст или поверхность движущимся градиентом",
-  "widgets.key.category": "Widgets",
   "widgets.key.config": "Открыть управление widgets",
   "widgets.ui.anchor.bottom_center": "По центру снизу",
   "widgets.ui.anchor.bottom_left": "Слева снизу",

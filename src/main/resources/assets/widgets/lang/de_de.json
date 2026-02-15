@@ -1,10 +1,10 @@
 {
+  "key.category.widgets.main": "Widgets",
   "widgets.gradient.preset.rainbow": "Regenbogen",
   "widgets.gradient.pulse": "Pulse",
   "widgets.gradient.pulse.description": "Färbt Text oder Oberfläche mit einer einzelnen Farbe und geht dabei zwischen den ausgewählten Farben über",
   "widgets.gradient.sweep": "Sweep",
   "widgets.gradient.sweep.description": "Färbt Text oder Oberfläche mit einem sich bewegenden Farbverlauf",
-  "widgets.key.category": "Widgets",
   "widgets.key.config": "Widgets-Einstellungen öffnen",
   "widgets.ui.anchor.bottom_center": "Unten mittig",
   "widgets.ui.anchor.bottom_left": "Unten links",
