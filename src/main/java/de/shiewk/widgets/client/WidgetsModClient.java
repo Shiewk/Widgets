@@ -69,6 +69,7 @@ public class WidgetsModClient implements ClientModInitializer {
         WidgetManager.register(new SpeedWidget(Identifier.of(WidgetsMod.MOD_ID, "speed")));
         WidgetManager.register(new ArmorHudWidget(Identifier.of(WidgetsMod.MOD_ID, "armor")));
         WidgetManager.register(new InventoryWidget(Identifier.of(WidgetsMod.MOD_ID, "inventory")));
+        WidgetManager.register(new WorldTimeWidget(Identifier.of(WidgetsMod.MOD_ID, "worldtime")));
         WidgetManager.register(TPSWidget.INSTANCE);
 
         ComboWidget comboWidget = new ComboWidget(Identifier.of(WidgetsMod.MOD_ID, "combo"));

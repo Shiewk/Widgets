@@ -7,8 +7,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
-
 public class PlainTextWidget extends BasicTextWidget {
     public PlainTextWidget(Identifier id) {
         super(id, List.of(
@@ -32,6 +30,6 @@ public class PlainTextWidget extends BasicTextWidget {
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
-        formatAndSetRenderText(literal((String) settings.optionById("text").getValue()));
+        formatAndSetRenderText((String) settings.optionById("text").getValue());
     }
 }

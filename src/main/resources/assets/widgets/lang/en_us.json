@@ -165,5 +165,11 @@
   "widgets.widgets.tps.description": "Shows the current TPS when in singleplayer and estimates server TPS when in multiplayer.",
   "widgets.widgets.tps.dynamicColor": "Dynamic Color",
   "widgets.widgets.tps.tps": "%s TPS",
-  "widgets.widgets.tps.windowSize": "Averaging window size (seconds)"
+  "widgets.widgets.tps.windowSize": "Averaging window size (seconds)",
+  "widgets.widgets.worldtime": "World time",
+  "widgets.widgets.worldtime.day": "Day %s",
+  "widgets.widgets.worldtime.dayAndTime": "%1$s, %2$s",
+  "widgets.widgets.worldtime.description": "Shows the in-game time and day of the world you're in",
+  "widgets.widgets.worldtime.showDay": "Show day",
+  "widgets.widgets.worldtime.timeFormat": "Time format"
 }

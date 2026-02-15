@@ -165,5 +165,11 @@
   "widgets.widgets.tps.description": "Zeigt die TPS im Einzelspielermodus an oder schätzt die TPS im Mehrspielermodus",
   "widgets.widgets.tps.dynamicColor": "Farbe dynamisch anzeigen",
   "widgets.widgets.tps.tps": "%s TPS",
-  "widgets.widgets.tps.windowSize": "Durchschnittsfenstergröße (Sekunden)"
+  "widgets.widgets.tps.windowSize": "Durchschnittsfenstergröße (Sekunden)",
+  "widgets.widgets.worldtime": "Weltzeit",
+  "widgets.widgets.worldtime.day": "Tag %s",
+  "widgets.widgets.worldtime.dayAndTime": "%1$s, %2$s",
+  "widgets.widgets.worldtime.description": "Zeigt die Uhrzeit und Tageszahl der Welt, in der du bist, an",
+  "widgets.widgets.worldtime.showDay": "Tag anzeigen",
+  "widgets.widgets.worldtime.timeFormat": "Zeitformat"
 }

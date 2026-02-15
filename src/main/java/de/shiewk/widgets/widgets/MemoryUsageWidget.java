@@ -9,7 +9,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class MemoryUsageWidget extends BasicTextWidget {
@@ -48,9 +47,9 @@ public class MemoryUsageWidget extends BasicTextWidget {
                 mib(memUsed) + "MiB / " + mib(memTotal) + "MiB (" + memUsagePercent + "%)" :
                 mib(memUsed) + "MiB / " + mib(memTotal) + "MiB";
         if (showLabel){
-            formatAndSetRenderText(literal(translatable("widgets.widgets.memory.withLabel", memUsageString).getString()));
+            formatAndSetRenderText(translatable("widgets.widgets.memory.withLabel", memUsageString).getString());
         } else {
-            formatAndSetRenderText(literal(memUsageString));
+            formatAndSetRenderText(memUsageString);
         }
     }
 

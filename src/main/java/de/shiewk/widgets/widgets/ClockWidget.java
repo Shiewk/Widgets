@@ -12,8 +12,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
-
 public class ClockWidget extends BasicTextWidget {
 
     public enum TimeOption {
@@ -25,6 +23,10 @@ public class ClockWidget extends BasicTextWidget {
 
         TimeOption(String key) {
             this.key = key;
+        }
+
+        public Text getName() {
+            return Text.translatable("widgets.widgets.clock.hourFormat."+key);
         }
     }
 
@@ -75,7 +77,7 @@ public class ClockWidget extends BasicTextWidget {
                         Text.translatable("widgets.widgets.clock.hourFormat"),
                         TimeOption.class,
                         TimeOption.HOUR_24,
-                        timeOption -> Text.translatable("widgets.widgets.clock.hourFormat."+timeOption.key)),
+                        TimeOption::getName),
                 new ToggleWidgetSetting("show_seconds",
                         Text.translatable("widgets.widgets.clock.showSeconds"),
                         true),
@@ -97,7 +99,7 @@ public class ClockWidget extends BasicTextWidget {
 
     @Override
     public void tickWidget() {
-        formatAndSetRenderText(literal(dateFormat.format(Date.from(Instant.now()))));
+        formatAndSetRenderText(dateFormat.format(Date.from(Instant.now())));
     }
 
     @Override

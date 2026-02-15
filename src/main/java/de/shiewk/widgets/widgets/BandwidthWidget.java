@@ -71,7 +71,7 @@ public class BandwidthWidget extends BasicTextWidget {
         if (t >= tickRate || fastUpdate){
             t = 0;
             long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
-            formatAndSetRenderText(literal(unit.sizeFormatter.apply(avgBytesPerSecond)));
+            formatAndSetRenderText(unit.sizeFormatter.apply(avgBytesPerSecond));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
                     this.textColor = GradientOptions.solidColor(0xff00ff00);

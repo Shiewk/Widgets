@@ -12,7 +12,6 @@ import net.minecraft.world.biome.Biome;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class BiomeWidget extends BasicTextWidget {
@@ -44,12 +43,12 @@ public class BiomeWidget extends BasicTextWidget {
                         },
                         (b) -> "[unregistered " + b + "]"
                 );
-                formatAndSetRenderText(literal(text));
+                formatAndSetRenderText(text);
             } else {
                 if (showLabel){
                     formatAndSetRenderText(translatable("widgets.widgets.biome.label", "?"));
                 } else {
-                    formatAndSetRenderText(literal("?"));
+                    formatAndSetRenderText("?");
                 }
             }
         }

@@ -13,7 +13,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class TPSWidget extends BasicTextWidget {
@@ -82,17 +81,17 @@ public class TPSWidget extends BasicTextWidget {
     private void updateTPS(float tps, float targetTickRate, boolean loadingFinished) {
         if (!loadingFinished){
             if (showLabel){
-                formatAndSetRenderText(literal(translatable("widgets.widgets.tps.tps", "???").getString()));
+                formatAndSetRenderText(translatable("widgets.widgets.tps.tps", "???").getString());
             } else {
-                formatAndSetRenderText(literal("???"));
+                formatAndSetRenderText("???");
             }
             if (dynamicColor) this.textColor = GradientOptions.solidColor(0xff00ff00);
         } else {
             tps = Math.round(tps * 10f) / 10f;
             if (showLabel){
-                formatAndSetRenderText(literal(translatable("widgets.widgets.tps.tps", tps).getString()));
+                formatAndSetRenderText(translatable("widgets.widgets.tps.tps", tps).getString());
             } else {
-                formatAndSetRenderText(literal(String.valueOf(tps)));
+                formatAndSetRenderText(String.valueOf(tps));
             }
             if (dynamicColor){
                 if (tps >= targetTickRate * 0.990){

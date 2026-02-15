@@ -10,7 +10,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class ServerIPWidget extends BasicTextWidget {
@@ -34,7 +33,7 @@ public class ServerIPWidget extends BasicTextWidget {
         if (!shouldRender) return;
         final ServerInfo serverEntry = MinecraftClient.getInstance().getCurrentServerEntry();
         if (serverEntry != null){
-            formatAndSetRenderText(literal(serverEntry.address));
+            formatAndSetRenderText(serverEntry.address);
         } else {
             formatAndSetRenderText(translatable("menu.singleplayer"));
         }

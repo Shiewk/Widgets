@@ -13,10 +13,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class ComboWidget extends BasicTextWidget implements AttackEntityCallback {
@@ -40,7 +40,7 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
     private int displayThreshold = 0;
 
     @Override
-    public ActionResult interact(PlayerEntity playerEntity, World world, Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
+    public @NonNull ActionResult interact(@NonNull PlayerEntity playerEntity, @NonNull World world, @NonNull Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
         clientHitEntity(entity.getId());
         return ActionResult.PASS;
     }
@@ -89,7 +89,7 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
         if (showLabel){
             formatAndSetRenderText(translatable("widgets.widgets.combo.combo", combo));
         } else {
-            formatAndSetRenderText(literal(""+combo));
+            formatAndSetRenderText(""+combo);
         }
     }
 

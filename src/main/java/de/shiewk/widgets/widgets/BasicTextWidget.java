@@ -146,6 +146,10 @@ public abstract class BasicTextWidget extends ResizableWidget {
         }
     }
 
+    protected void formatAndSetRenderText(String renderText) {
+        formatAndSetRenderText(literal(renderText));
+    }
+
     public abstract void tickWidget();
 
     @Override

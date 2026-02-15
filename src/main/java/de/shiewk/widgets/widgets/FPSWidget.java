@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 import java.util.LinkedList;
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
 import static net.minecraft.text.Text.translatable;
 
 public class FPSWidget extends BasicTextWidget {
@@ -32,7 +31,7 @@ public class FPSWidget extends BasicTextWidget {
             while (timedFrames.getFirst() < n - 500_000_100L){
                 timedFrames.removeFirst();
             }
-            formatAndSetRenderText(literal(timedFrames.size() * 2 + " FPS"));
+            formatAndSetRenderText(timedFrames.size() * 2 + " FPS");
         }
         super.renderScaled(context, n, textRenderer, posX, posY);
     }
@@ -40,7 +39,7 @@ public class FPSWidget extends BasicTextWidget {
     @Override
     public void tickWidget() {
         if (!realtime){
-            formatAndSetRenderText(literal(MinecraftClient.getInstance().getCurrentFps() + " FPS"));
+            formatAndSetRenderText(MinecraftClient.getInstance().getCurrentFps() + " FPS");
         }
     }
 
