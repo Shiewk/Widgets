@@ -13,6 +13,8 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
+import static de.shiewk.widgets.utils.WidgetUtils.reduceDigits;
+
 public class SpeedWidget extends BasicTextWidget {
 
     public enum Unit {
@@ -80,13 +82,7 @@ public class SpeedWidget extends BasicTextWidget {
             avg += v;
         }
         avg /= averagingWindow.length;
-        formatAndSetRenderText(reduceDigits(avg) + unit.displayName);
-    }
-
-    private String reduceDigits(double v) {
-        if (digitsAfterComma == 0) return String.valueOf((int) Math.floor(v));
-        double f = Math.pow(10, digitsAfterComma);
-        return String.valueOf(Math.floor(v * f) / f);
+        formatAndSetRenderText(reduceDigits(avg, digitsAfterComma) + unit.displayName);
     }
 
     @Override

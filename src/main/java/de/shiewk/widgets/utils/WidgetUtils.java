@@ -57,4 +57,10 @@ public class WidgetUtils {
         return "0".repeat(2 - s.length()) + s;
     }
 
+    public static String reduceDigits(double v, int digits) {
+        if (digits == 0) return String.valueOf((int) Math.floor(v));
+        double f = Math.pow(10, digits);
+        return String.valueOf(Math.floor(v * f) / f);
+    }
+
 }
