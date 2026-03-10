@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -17,7 +16,8 @@ import net.minecraft.util.math.MathHelper;
 import java.util.List;
 import java.util.Locale;
 
-import static net.minecraft.text.Text.*;
+import static net.minecraft.text.Text.literal;
+import static net.minecraft.text.Text.translatable;
 
 public class DirectionWidget extends BasicTextWidget {
 
@@ -25,7 +25,10 @@ public class DirectionWidget extends BasicTextWidget {
         YAW_ONLY(true),
         DIRECTION_ONLY(false),
         YAW_DIRECTION(true),
-        DIRECTION_YAW(true);
+        DIRECTION_YAW(true),
+        DIRECTION_SHORT(false),
+        DIRECTION_SHORT_YAW(true),
+        YAW_DIRECTION_SHORT(true);
 
         public final boolean showsYaw;
 
@@ -35,17 +38,20 @@ public class DirectionWidget extends BasicTextWidget {
 
         public Text format(int digits) {
             String yaw = "0";
-            MutableText direction = literal("Direction");
+            String direction = "???";
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
                 yaw = WidgetUtils.reduceDigits(MathHelper.wrapDegrees(player.getYaw()), digits);
-                direction = translatable("widgets.widgets.direction." + player.getHorizontalFacing().name().toLowerCase(Locale.ROOT));
+                direction = player.getHorizontalFacing().name().toLowerCase(Locale.ROOT);
             }
             return switch (this){
                 case YAW_ONLY -> literal(yaw);
-                case DIRECTION_ONLY -> direction;
-                case YAW_DIRECTION -> literal(yaw+" (").append(direction).append(")");
-                case DIRECTION_YAW -> direction.append(" ("+yaw+")");
+                case DIRECTION_ONLY -> translatable("widgets.widgets.direction." + direction);
+                case YAW_DIRECTION -> literal(yaw+" (").append(translatable("widgets.widgets.direction." + direction)).append(")");
+                case DIRECTION_YAW -> translatable("widgets.widgets.direction." + direction).append(" ("+yaw+")");
+                case DIRECTION_SHORT -> translatable("widgets.widgets.direction.short." + direction);
+                case DIRECTION_SHORT_YAW -> translatable("widgets.widgets.direction.short." + direction).append(" ("+yaw+")");
+                case YAW_DIRECTION_SHORT -> literal(yaw+" (").append(translatable("widgets.widgets.direction.short." + direction)).append(")");
             };
         }
 
@@ -67,7 +73,7 @@ public class DirectionWidget extends BasicTextWidget {
                         DisplayFormat.DIRECTION_YAW,
                         DisplayFormat::format
                 ),
-                new IntSliderWidgetSetting("digits", Text.translatable("widgets.widgets.direction.digits"), 0, 1, 3),
+                new IntSliderWidgetSetting("digits", translatable("widgets.widgets.direction.digits"), 0, 1, 3),
                 new ToggleWidgetSetting("realtime", translatable("widgets.widgets.common.realtime"), false)
         ));
         getSettings().optionById("digits").setShowCondition(() -> displayFormat.showsYaw);
