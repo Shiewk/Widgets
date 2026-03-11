@@ -2,10 +2,7 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
-import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
-import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
-import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
-import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
+import de.shiewk.widgets.widgets.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -32,6 +29,28 @@ public class CoordinatesWidget extends ResizableWidget {
                         DirectionWidget.DisplayFormat.DIRECTION_YAW,
                         DirectionWidget.DisplayFormat::format
                 ),
+                new ToggleWidgetSetting("hideCoordinates", translatable("widgets.widgets.coordinates.hideCoordinates"), false),
+                new TextFieldWidgetSettingOption(
+                        "hiddenX",
+                        translatable("widgets.widgets.coordinates.hiddenX"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        true, 32
+                ),
+                new TextFieldWidgetSettingOption(
+                        "hiddenY",
+                        translatable("widgets.widgets.coordinates.hiddenY"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        true, 32
+                ),
+                new TextFieldWidgetSettingOption(
+                        "hiddenZ",
+                        translatable("widgets.widgets.coordinates.hiddenZ"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        translatable("widgets.widgets.coordinates.hidden"),
+                        true, 32
+                ),
                 new GradientWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0x50_00_00_00),
                 new GradientWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 0xffffffff),
                 new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 10, WIDTH, 80*3),
@@ -39,11 +58,16 @@ public class CoordinatesWidget extends ResizableWidget {
                 new IntSliderWidgetSetting("paddingY", translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
                 new ToggleWidgetSetting("shadow", translatable("widgets.widgets.basictext.textshadow"), true)
         ));
+        getSettings().optionById("directionFormat").setShowCondition(() -> this.showDirection);
+        getSettings().optionById("hiddenX").setShowCondition(() -> this.hideCoordinates);
+        getSettings().optionById("hiddenY").setShowCondition(() -> this.hideCoordinates);
+        getSettings().optionById("hiddenZ").setShowCondition(() -> this.hideCoordinates);
     }
 
     protected String textX = "X", textY = "Y", textZ = "Z", textDirection = "direction";
+    protected String textHiddenX, textHiddenY, textHiddenZ;
     protected int txc = 0, tyc = 0, tzc = 0, tdc = 0;
-    protected boolean shadow = true;
+    protected boolean shadow = true, hideCoordinates = false;
     protected DirectionWidget.DisplayFormat directionFormat;
 
     @Override
@@ -75,17 +99,20 @@ public class CoordinatesWidget extends ResizableWidget {
     public void tick() {
         final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         final ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null){
+        if (hideCoordinates){
+            textX = textHiddenX;
+            textY = textHiddenY;
+            textZ = textHiddenZ;
+        } else if (player == null){
             textX = "?";
             textY = "?";
             textZ = "?";
-            textDirection = "?";
         } else {
             textX = String.valueOf(player.getBlockX());
             textY = String.valueOf(player.getBlockY());
             textZ = String.valueOf(player.getBlockZ());
-            textDirection = directionFormat.format().getString();
         }
+        textDirection = directionFormat.format().getString();
 
         txc = width() - textRenderer.getWidth(textX) - paddingX;
         tyc = width() - textRenderer.getWidth(textY) - paddingX;
@@ -119,6 +146,10 @@ public class CoordinatesWidget extends ResizableWidget {
         this.showZ = (boolean) settings.optionById("z").getValue();
         this.showDirection = (boolean) settings.optionById("direction").getValue();
         this.directionFormat = (DirectionWidget.DisplayFormat) settings.optionById("directionFormat").getValue();
+        this.hideCoordinates = (boolean) settings.optionById("hideCoordinates").getValue();
+        this.textHiddenX = (String) settings.optionById("hiddenX").getValue();
+        this.textHiddenY = (String) settings.optionById("hiddenY").getValue();
+        this.textHiddenZ = (String) settings.optionById("hiddenZ").getValue();
         this.paddingX = (int) settings.optionById("paddingX").getValue();
         this.paddingY = (int) settings.optionById("paddingY").getValue();
         this.width = (int) settings.optionById("width").getValue();
