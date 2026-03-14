@@ -38,7 +38,7 @@ public class DirectionWidget extends BasicTextWidget {
 
         public Text format(int digits) {
             String yaw = "0";
-            String direction = "???";
+            String direction = "unknown";
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
                 yaw = WidgetUtils.reduceDigits(MathHelper.wrapDegrees(player.getYaw()), digits);
