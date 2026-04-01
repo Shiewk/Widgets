@@ -1,4 +1,0 @@
-accessWidener v2 named
-
-accessible field net/minecraft/client/network/ClientPlayNetworkHandler pingMeasurer Lnet/minecraft/client/network/PingMeasurer;
-accessible field net/minecraft/client/network/PingMeasurer log Lnet/minecraft/util/profiler/MultiValueDebugSampleLogImpl;

@@ -2,14 +2,14 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
@@ -20,7 +20,7 @@ public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
     private boolean changed = false;
     private boolean clicked = false;
 
-    public IntSliderWidgetSetting(String id, Text name, int minValue, int defaultValue, int maxValue) {
+    public IntSliderWidgetSetting(String id, Component name, int minValue, int defaultValue, int maxValue) {
         super(id, name);
         this.value = defaultValue;
         this.minValue = minValue;
@@ -28,7 +28,7 @@ public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (maxValue > value && input.isRight()) {
             value++;
             return true;
@@ -52,28 +52,28 @@ public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
     }
 
     private int valueToXPos(int value){
-        return MathHelper.lerp((float) (value - minValue) / (maxValue - minValue), getX() + 5, getX() + 155);
+        return Mth.lerpInt((float) (value - minValue) / (maxValue - minValue), getX() + 5, getX() + 155);
     }
 
     private int xPosToValue(int xpos){
-        return MathHelper.lerp((xpos - getX() - 5) / 150f, minValue, maxValue);
+        return Mth.lerpInt((xpos - getX() - 5) / 150f, minValue, maxValue);
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         int xp = valueToXPos(getValue());
-        context.drawHorizontalLine(getX() + 5, getX() + 155, getY() + 6, 0xffffffff);
-        context.drawVerticalLine(getX() + 4, getY() + 3, getY() + 10, 0xffffffff);
-        context.drawVerticalLine(getX() + 155, getY() + 3, getY() + 10, 0xffffffff);
+        context.horizontalLine(getX() + 5, getX() + 155, getY() + 6, 0xffffffff);
+        context.verticalLine(getX() + 4, getY() + 3, getY() + 10, 0xffffffff);
+        context.verticalLine(getX() + 155, getY() + 3, getY() + 10, 0xffffffff);
         context.fill(xp-2, getY() + 3, xp+2, getY() + 10, 0xffffffff);
-        final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawText(textRenderer, String.valueOf(getValue()), getX() + 160, getY() + 3, 0xffffffff, true);
+        final Font textRenderer = Minecraft.getInstance().font;
+        context.text(textRenderer, String.valueOf(getValue()), getX() + 160, getY() + 3, 0xffffffff, true);
         if (clicked){
             this.changed = true;
-            this.value = MathHelper.clamp(xPosToValue(mouseX), minValue, maxValue);
+            this.value = Mth.clamp(xPosToValue(mouseX), minValue, maxValue);
         }
         if (isHovering(mouseX, mouseY)){
-            context.setCursor(StandardCursors.RESIZE_EW);
+            context.requestCursor(CursorTypes.RESIZE_EW);
         }
     }
 
@@ -85,13 +85,13 @@ public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         this.clicked = true;
         return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         this.clicked = false;
         boolean t = this.changed;
         this.changed = false;

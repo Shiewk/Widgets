@@ -4,14 +4,14 @@ import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public abstract class ResizableWidget extends ModWidget {
 
@@ -21,25 +21,25 @@ public abstract class ResizableWidget extends ModWidget {
 
     private static List<WidgetSettingOption<?>> addScaleSetting(List<WidgetSettingOption<?>> target) {
         ArrayList<WidgetSettingOption<?>> settings = new ArrayList<>(target);
-        settings.add(new IntSliderWidgetSetting("size", Text.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400));
+        settings.add(new IntSliderWidgetSetting("size", Component.translatable("widgets.widgets.common.sizePercent"), 25, 100, 400));
         return settings;
     }
 
     protected float size = 1f;
 
     @Override
-    public final void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public final void render(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         if (size != 1f){
-            Matrix3x2fStack matrices = context.getMatrices();
+            Matrix3x2fStack matrices = context.pose();
             matrices.pushMatrix();
             matrices.translate(-(size-1) * posX, -(size-1) * posY, matrices);
             matrices.scale(size, size, matrices);
         }
         this.renderScaled(context, measuringTimeNano, textRenderer, posX, posY);
-        if (size != 1f) context.getMatrices().popMatrix();
+        if (size != 1f) context.pose().popMatrix();
     }
 
-    public abstract void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY);
+    public abstract void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY);
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {

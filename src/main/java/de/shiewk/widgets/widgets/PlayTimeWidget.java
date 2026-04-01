@@ -2,13 +2,12 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class PlayTimeWidget extends BasicTextWidget {
 
@@ -61,12 +60,12 @@ public class PlayTimeWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.playtime");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.playtime.description");
     }
 

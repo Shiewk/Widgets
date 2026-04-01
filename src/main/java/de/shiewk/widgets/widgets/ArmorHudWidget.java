@@ -2,21 +2,24 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
-import de.shiewk.widgets.widgets.settings.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
+import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
+import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
+import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Locale;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class ArmorHudWidget extends ResizableWidget {
 
@@ -39,7 +42,7 @@ public class ArmorHudWidget extends ResizableWidget {
         NUMBER,
         PERCENT;
 
-        public Text getDisplayName() {
+        public Component getDisplayName() {
             return translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase(Locale.ROOT));
         }
     }
@@ -56,7 +59,7 @@ public class ArmorHudWidget extends ResizableWidget {
     protected GradientOptions backgroundColor, textColor;
 
     @Override
-    public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         backgroundColor.fillHorizontal(
                 context,
                 measuringTimeNano,
@@ -77,29 +80,29 @@ public class ArmorHudWidget extends ResizableWidget {
         }
     }
 
-    private void renderItem(DrawContext context, long mt, TextRenderer textRenderer, ItemStack stack, int posX, int posY){
-        context.drawItemWithoutEntity(stack, posX, posY);
-        context.drawStackOverlay(textRenderer, stack, posX, posY);
+    private void renderItem(GuiGraphicsExtractor context, long mt, Font textRenderer, ItemStack stack, int posX, int posY){
+        context.fakeItem(stack, posX, posY);
+        context.itemDecorations(textRenderer, stack, posX, posY);
         if (showDurability){
             renderDurability(context, mt, textRenderer, stack, posX, posY);
         }
     }
 
-    private void renderDurability(DrawContext context, long mt, TextRenderer textRenderer, ItemStack stack, int posX, int posY) {
-        Integer maxDamage = stack.get(DataComponentTypes.MAX_DAMAGE);
+    private void renderDurability(GuiGraphicsExtractor context, long mt, Font textRenderer, ItemStack stack, int posX, int posY) {
+        Integer maxDamage = stack.get(DataComponents.MAX_DAMAGE);
         if (maxDamage != null) {
-            int damage = stack.getOrDefault(DataComponentTypes.DAMAGE, 0);
+            int damage = stack.getOrDefault(DataComponents.DAMAGE, 0);
             String text = switch (durabilityStyle){
                 case NUMBER -> String.valueOf(maxDamage - damage);
                 case PERCENT -> ((maxDamage - damage) * 100 / maxDamage) + "%";
             };
             switch (textAlignment){
                 case RIGHT -> {
-                    int width = textRenderer.getWidth(text);
+                    int width = textRenderer.width(text);
                     textColor.drawText(context, textRenderer, mt, text, posX + width() - width - padding * 2, posY + 5, true);
                 }
                 case CENTER -> {
-                    int width = textRenderer.getWidth(text);
+                    int width = textRenderer.width(text);
                     textColor.drawText(context, textRenderer, mt, text, posX + ((preferredWidth + padding*2) - width) / 2 + 8, posY + 5, true);
                 }
                 case LEFT -> {
@@ -111,25 +114,25 @@ public class ArmorHudWidget extends ResizableWidget {
 
     @Override
     public void tick() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            PlayerInventory inventory = player.getInventory();
-            helmet = inventory.getStack(39);
-            chestplate = inventory.getStack(38);
-            leggings = inventory.getStack(37);
-            boots = inventory.getStack(36);
+            Inventory inventory = player.getInventory();
+            helmet = inventory.getItem(39);
+            chestplate = inventory.getItem(38);
+            leggings = inventory.getItem(37);
+            boots = inventory.getItem(36);
         } else {
             helmet = chestplate = leggings = boots = null;
         }
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.armorHud");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.armorHud.description");
     }
 

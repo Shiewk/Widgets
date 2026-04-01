@@ -4,20 +4,20 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class ComboWidget extends BasicTextWidget implements AttackEntityCallback {
 
@@ -40,9 +40,9 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
     private int displayThreshold = 0;
 
     @Override
-    public @NonNull ActionResult interact(@NonNull PlayerEntity playerEntity, @NonNull World world, @NonNull Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
+    public @NonNull InteractionResult interact(@NonNull Player playerEntity, @NonNull Level world, @NonNull InteractionHand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
         clientHitEntity(entity.getId());
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     private void clientHitEntity(int targetEntityId) {
@@ -94,12 +94,12 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.combo");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.combo.description");
     }
 

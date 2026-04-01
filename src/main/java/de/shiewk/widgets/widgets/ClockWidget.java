@@ -4,13 +4,12 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class ClockWidget extends BasicTextWidget {
 
@@ -25,8 +24,8 @@ public class ClockWidget extends BasicTextWidget {
             this.key = key;
         }
 
-        public Text getName() {
-            return Text.translatable("widgets.widgets.clock.hourFormat."+key);
+        public Component getName() {
+            return Component.translatable("widgets.widgets.clock.hourFormat."+key);
         }
     }
 
@@ -51,8 +50,8 @@ public class ClockWidget extends BasicTextWidget {
             this.format = format;
         }
 
-        public Text getName(){
-            return this.format == null ? Text.translatable("widgets.widgets.clock.dateFormat.none") : Text.of(new SimpleDateFormat(format).format(Date.from(Instant.now())));
+        public Component getName(){
+            return this.format == null ? Component.translatable("widgets.widgets.clock.dateFormat.none") : Component.nullToEmpty(new SimpleDateFormat(format).format(Date.from(Instant.now())));
         }
     }
 
@@ -67,27 +66,27 @@ public class ClockWidget extends BasicTextWidget {
             this.format = format;
         }
 
-        public Text getName(){
-            return this.format == null ? Text.translatable("widgets.widgets.clock.weekFormat.none") : Text.of(new SimpleDateFormat(format).format(Date.from(Instant.now())));
+        public Component getName(){
+            return this.format == null ? Component.translatable("widgets.widgets.clock.weekFormat.none") : Component.nullToEmpty(new SimpleDateFormat(format).format(Date.from(Instant.now())));
         }
     }
     public ClockWidget(Identifier id) {
         super(id, List.of(
                 new EnumWidgetSetting<>("hour_format",
-                        Text.translatable("widgets.widgets.clock.hourFormat"),
+                        Component.translatable("widgets.widgets.clock.hourFormat"),
                         TimeOption.class,
                         TimeOption.HOUR_24,
                         TimeOption::getName),
                 new ToggleWidgetSetting("show_seconds",
-                        Text.translatable("widgets.widgets.clock.showSeconds"),
+                        Component.translatable("widgets.widgets.clock.showSeconds"),
                         true),
                 new EnumWidgetSetting<>("date_format",
-                        Text.translatable("widgets.widgets.clock.dateFormat"),
+                        Component.translatable("widgets.widgets.clock.dateFormat"),
                         DateOption.class,
                         DateOption.NO_DATE,
                         DateOption::getName),
                 new EnumWidgetSetting<>("week_format",
-                        Text.translatable("widgets.widgets.clock.weekFormat"),
+                        Component.translatable("widgets.widgets.clock.weekFormat"),
                         WeekOption.class,
                         WeekOption.NO_DAY_OF_WEEK,
                         WeekOption::getName)
@@ -135,12 +134,12 @@ public class ClockWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
-        return Text.translatable("widgets.widgets.clock");
+    public Component getName() {
+        return Component.translatable("widgets.widgets.clock");
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("widgets.widgets.clock.description");
+    public Component getDescription() {
+        return Component.translatable("widgets.widgets.clock.description");
     }
 }

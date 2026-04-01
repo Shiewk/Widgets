@@ -5,19 +5,18 @@ import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-
 import java.util.List;
 import java.util.Locale;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class DirectionWidget extends BasicTextWidget {
 
@@ -36,13 +35,13 @@ public class DirectionWidget extends BasicTextWidget {
             this.showsYaw = showsYaw;
         }
 
-        public Text format(int digits) {
+        public Component format(int digits) {
             String yaw = "0";
             String direction = "unknown";
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                yaw = WidgetUtils.reduceDigits(MathHelper.wrapDegrees(player.getYaw()), digits);
-                direction = player.getHorizontalFacing().name().toLowerCase(Locale.ROOT);
+                yaw = WidgetUtils.reduceDigits(Mth.wrapDegrees(player.getYRot()), digits);
+                direction = player.getDirection().name().toLowerCase(Locale.ROOT);
             }
             return switch (this){
                 case YAW_ONLY -> literal(yaw);
@@ -55,7 +54,7 @@ public class DirectionWidget extends BasicTextWidget {
             };
         }
 
-        public Text format(){
+        public Component format(){
             return format(1);
         }
     }
@@ -85,7 +84,7 @@ public class DirectionWidget extends BasicTextWidget {
     }
 
     @Override
-    public void renderScaled(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
         if (realtime) refresh();
         super.renderScaled(context, n, textRenderer, posX, posY);
     }
@@ -95,12 +94,12 @@ public class DirectionWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.direction");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.direction.description");
     }
 

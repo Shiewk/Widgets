@@ -7,13 +7,14 @@ import de.shiewk.widgets.color.GradientMode;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class GradientEditorScreen extends Screen implements WidgetVisibilityToggle {
 
@@ -54,35 +55,35 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
     }
 
     private int getTopBarHeight() {
-        return 8 + this.textRenderer.fontHeight * 2;
+        return 8 + this.font.lineHeight * 2;
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.render(context, mouseX, mouseY, deltaTicks);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        super.extractRenderState(context, mouseX, mouseY, deltaTicks);
 
-        Matrix3x2fStack matrices = context.getMatrices();
-        long timeNanos = Util.getMeasuringTimeNano();
+        Matrix3x2fStack matrices = context.pose();
+        long timeNanos = Util.getNanos();
 
         // Render top bar
         topBarGradient.fillHorizontal(context, timeNanos, 0, 0, this.width, this.getTopBarHeight());
 
-        Text topBarText = translatable("widgets.ui.gradientEditor");
-        int width = textRenderer.getWidth(topBarText);
+        Component topBarText = translatable("widgets.ui.gradientEditor");
+        int width = font.width(topBarText);
 
         matrices.pushMatrix().translate(this.width / 2f - width, 5).scale(2);
-        context.drawText(textRenderer, topBarText, 0, 0, 0xff_ff_ff_ff, true);
+        context.text(font, topBarText, 0, 0, 0xff_ff_ff_ff, true);
         matrices.popMatrix();
     }
 
     public void reloadComponents(){
-        clearChildren();
+        clearWidgets();
 
         double colorScrollY = 0;
         double settingsScrollY = 0;
         if (this.colorSection != null){
-            colorScrollY = colorSection.getScrollY();
-            settingsScrollY = settingsSection.getScrollY();
+            colorScrollY = colorSection.scrollAmount();
+            settingsScrollY = settingsSection.scrollAmount();
         }
         int topBarHeight = getTopBarHeight();
 
@@ -93,29 +94,29 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
         int mainAreaHeight = this.height - topBarHeight;
 
         // sidebar
-        this.colorSection = new GradientEditorColorSection(this, this.client, 0, topBarHeight, colorSectionWidth, mainAreaHeight, this.getCurrentColorIndex());
-        this.settingsSection = new GradientEditorSettingsSection(this, this.client, colorSectionWidth, topBarHeight, settingsSectionWidth, mainAreaHeight);
-        addDrawableChild(this.colorSection);
-        addDrawableChild(this.settingsSection);
-        colorSection.setScrollY(colorScrollY);
-        settingsSection.setScrollY(settingsScrollY);
+        this.colorSection = new GradientEditorColorSection(this, this.minecraft, 0, topBarHeight, colorSectionWidth, mainAreaHeight, this.getCurrentColorIndex());
+        this.settingsSection = new GradientEditorSettingsSection(this, this.minecraft, colorSectionWidth, topBarHeight, settingsSectionWidth, mainAreaHeight);
+        addRenderableWidget(this.colorSection);
+        addRenderableWidget(this.settingsSection);
+        colorSection.setScrollAmount(colorScrollY);
+        settingsSection.setScrollAmount(settingsScrollY);
 
         // main area
         int mainAreaX = colorSectionWidth + settingsSectionWidth;
         int mainAreaCenterX = mainAreaX + (mainAreaWidth / 2);
 
-        addDrawable(new WidgetDisplayWidget(this.widget, this.textRenderer, mainAreaCenterX, (mainAreaHeight) / 2 + topBarHeight));
+        addRenderableOnly(new WidgetDisplayWidget(this.widget, this.font, mainAreaCenterX, (mainAreaHeight) / 2 + topBarHeight));
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderBackground(context, mouseX, mouseY, deltaTicks);
+    public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        super.extractBackground(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         refreshSettingValue();
-        client.setScreen(parent);
+        minecraft.setScreen(parent);
     }
 
     private void refreshSettingValue() {

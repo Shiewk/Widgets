@@ -1,21 +1,21 @@
 package de.shiewk.widgets.client.screen;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.Anchor;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetManager;
 import de.shiewk.widgets.utils.WidgetUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2i;
 
 import java.awt.*;
@@ -29,15 +29,14 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     private final Consumer<ModWidget> onEdit;
 
     public EditWidgetPositionsScreen(Screen parent, Consumer<ModWidget> onEdit) {
-        super(Text.translatable("widgets.ui.editPositions"), parent, 500);
+        super(Component.translatable("widgets.ui.editPositions"), parent, 500);
         this.parent = parent;
         this.onEdit = onEdit;
     }
 
     @Override
-    public void close() {
-        assert client != null;
-        client.setScreen(parent);
+    public void onClose() {
+        minecraft.setScreen(parent);
     }
 
     @Override
@@ -58,21 +57,21 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     private int scaledWindowHeight = 1080;
 
     @Override
-    public void renderScreenContents(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.scaledWindowWidth = context.getScaledWindowWidth();
-        this.scaledWindowHeight = context.getScaledWindowHeight();
-        long mt = Util.getMeasuringTimeNano();
+    public void renderScreenContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        this.scaledWindowWidth = context.guiWidth();
+        this.scaledWindowHeight = context.guiHeight();
+        long mt = Util.getNanos();
         renderAnchorArea(context, mouseX, mouseY);
 
         for (ModWidget widget : WidgetManager.getEnabledWidgets()) {
             final int ww = (int) (widget.width() * widget.getScaleFactor());
-            int wx = MathHelper.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
+            int wx = Mth.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
             final int wh = (int) (widget.height() * widget.getScaleFactor());
-            int wy = MathHelper.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
+            int wy = Mth.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
             if (selectedWidget == widget){
                 AlignResult alignedX = alignX(widget);
                 if (alignedX != null){
-                    context.drawVerticalLine(
+                    context.verticalLine(
                             (int) Math.round(alignedX.result),
                             0,
                             scaledWindowHeight,
@@ -81,7 +80,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                 }
                 AlignResult alignedY = alignY(widget);
                 if (alignedY != null){
-                    context.drawHorizontalLine(
+                    context.horizontalLine(
                             0,
                             scaledWindowWidth,
                             (int) Math.round(alignedY.result),
@@ -99,14 +98,14 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                 }
             }
             if (selectedWidget == null ? hoveredWidget == widget : selectedWidget == widget){
-                context.drawStrokedRectangle(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
-                context.drawStrokedRectangle(wx, wy, ww, wh, SELECT_COLOR);
+                context.outline(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
+                context.outline(wx, wy, ww, wh, SELECT_COLOR);
             }
-            widget.render(context, mt, textRenderer, wx, wy);
+            widget.render(context, mt, font, wx, wy);
         }
 
         if (hoveredWidget != null){
-            context.setCursor(StandardCursors.RESIZE_ALL);
+            context.requestCursor(CursorTypes.RESIZE_ALL);
         }
     }
 
@@ -206,7 +205,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
         return null;
     }
 
-    private void renderAnchorArea(DrawContext context, int mouseX, int mouseY) {
+    private void renderAnchorArea(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         Anchor anchor = Anchor.getAnchor(
                 scaledWindowWidth,
                 scaledWindowHeight,
@@ -226,7 +225,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if (click.button() == 0 && selectedWidget != null){
             if (align){
                 AlignResult alignedX = alignX(selectedWidget);
@@ -253,7 +252,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (click.button() == 0 && hoveredWidget != null){
             selectedWidget = hoveredWidget;
             focusedExtraX = (int) (click.x() - hoveredWidget.getX(scaledWindowWidth));
@@ -262,30 +261,29 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
             int x = (int) click.x();
             int y = (int) click.y();
             ModWidget hovered = hoveredWidget;
-            WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
-            assert client != null;
+            WidgetUtils.playSound(SoundEvents.COPPER_BULB_TURN_ON);
             if (hovered != null){
-                client.setScreen(new ContextMenuScreen(
-                        Text.empty(),
+                minecraft.setScreen(new ContextMenuScreen(
+                        Component.empty(),
                         this,
                         x,
                         y,
                         List.of(
                                 new ContextMenuScreen.Option(
-                                        Text.translatable("widgets.ui.editPositions.menu.widgetSettings"),
-                                        () -> client.setScreen(new WidgetSettingsScreen(
+                                        Component.translatable("widgets.ui.editPositions.menu.widgetSettings"),
+                                        () -> minecraft.setScreen(new WidgetSettingsScreen(
                                                 this,
                                                 hovered,
                                                 this.onEdit
                                         ))
                                 ),
                                 new ContextMenuScreen.Option(
-                                        Text.translatable("widgets.ui.editPositions.menu.setAnchor"),
+                                        Component.translatable("widgets.ui.editPositions.menu.setAnchor"),
                                         () -> {
                                             List<ContextMenuScreen.Option> options = new ObjectArrayList<>(Anchor.values().length);
                                             for (Anchor anchor : Anchor.values()) {
                                                 options.add(new ContextMenuScreen.Option(
-                                                        Text.translatable("widgets.ui.anchor." + anchor.name().toLowerCase(Locale.ROOT)),
+                                                        Component.translatable("widgets.ui.anchor." + anchor.name().toLowerCase(Locale.ROOT)),
                                                         hovered.getSettings().anchor == anchor,
                                                         () -> {
                                                             hovered.setPos(
@@ -298,8 +296,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                                                 ));
                                             }
                                             // Add widget context menu
-                                            client.setScreen(new ContextMenuScreen(
-                                                    Text.empty(),
+                                            minecraft.setScreen(new ContextMenuScreen(
+                                                    Component.empty(),
                                                     this,
                                                     x,
                                                     y,
@@ -308,7 +306,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                                         }
                                 ),
                                 new ContextMenuScreen.Option(
-                                        Text.translatable("widgets.ui.editPositions.menu.removeWidget"),
+                                        Component.translatable("widgets.ui.editPositions.menu.removeWidget"),
                                         () -> {
                                             hovered.getSettings().toggleEnabled(hovered);
                                             onEdit.accept(hovered);
@@ -317,14 +315,14 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                         )
                 ));
             } else {
-                client.setScreen(new ContextMenuScreen(
-                        Text.empty(),
+                minecraft.setScreen(new ContextMenuScreen(
+                        Component.empty(),
                         this,
                         x,
                         y,
                         List.of(
                                 new ContextMenuScreen.Option(
-                                        Text.translatable("widgets.ui.editPositions.menu.addWidget"),
+                                        Component.translatable("widgets.ui.editPositions.menu.addWidget"),
                                         () -> {
                                             List<ContextMenuScreen.Option> options = new ObjectArrayList<>();
                                             for (ModWidget widget : WidgetManager.getAllWidgets()) {
@@ -340,8 +338,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                                                 }
                                             }
                                             // Add widget context menu
-                                            client.setScreen(new ContextMenuScreen(
-                                                    Text.empty(),
+                                            minecraft.setScreen(new ContextMenuScreen(
+                                                    Component.empty(),
                                                     this,
                                                     x,
                                                     y,
@@ -357,16 +355,15 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     }
 
     @Override
-    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+    public boolean mouseDragged(MouseButtonEvent click, double deltaX, double deltaY) {
         if (click.button() == 0){
-            assert client != null;
             final ModWidget widget = selectedWidget;
             if (widget != null){
                 final WidgetSettings settings = widget.getSettings();
                 final int ww = (int) (widget.width() * widget.getScaleFactor());
-                int wx = MathHelper.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
+                int wx = Mth.clamp(widget.getX(scaledWindowWidth), 0, this.width - ww);
                 final int wh = (int) (widget.height() * widget.getScaleFactor());
-                int wy = MathHelper.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
+                int wy = Mth.clamp(widget.getY(scaledWindowHeight), 0, this.height - wh);
                 if (click.x() <= wx + ww + deltaX && click.x() >= wx + deltaX){
                     if (click.y() <= wy + wh + deltaY && click.y() >= wy + deltaY){
                         Anchor anchor = Anchor.getAnchor(scaledWindowWidth, scaledWindowHeight, (int) click.x(), (int) click.y());
@@ -407,28 +404,28 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     @Override
     protected void init() {
         super.init();
-        this.addDrawableChild(
-                new ButtonWidget.Builder(
-                        Text.translatable(
+        this.addRenderableWidget(
+                new Button.Builder(
+                        Component.translatable(
                                 "widgets.ui.editPositions.snap",
                                 align ?
-                                        Text.translatable("gui.yes") :
-                                        Text.translatable("gui.no")
+                                        Component.translatable("gui.yes") :
+                                        Component.translatable("gui.no")
                         ), button -> {
                             align = !align;
                             button.setMessage(
-                                    Text.translatable(
+                                    Component.translatable(
                                             "widgets.ui.editPositions.snap",
                                             align ?
-                                                    Text.translatable("gui.yes")
-                                                    : Text.translatable("gui.no")
+                                                    Component.translatable("gui.yes")
+                                                    : Component.translatable("gui.no")
                                     )
                             );
-                        }).position(
+                        }).pos(
                                 this.width / 2 - 75,
                                 this.height / 2 - 10
                         ).tooltip(
-                                Tooltip.of(Text.translatable("widgets.ui.editPositions.snap.help"))
+                                Tooltip.create(Component.translatable("widgets.ui.editPositions.snap.help"))
                 ).build()
         );
     }

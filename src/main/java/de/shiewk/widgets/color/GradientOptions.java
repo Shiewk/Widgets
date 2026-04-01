@@ -1,9 +1,9 @@
 package de.shiewk.widgets.color;
 
 import de.shiewk.widgets.render.state.HorizontalGradientGuiRenderState;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         this(GradientMode.SWEEP, gradientSize, gradientSpeed, colors);
     }
 
-    public void fillHorizontal(DrawContext context, long timeNanos, int x, int y, int endX, int endY) {
+    public void fillHorizontal(GuiGraphicsExtractor context, long timeNanos, int x, int y, int endX, int endY) {
         if (colors.length == 1) {
             context.fill(x, y, endX, endY, colors[0]);
             return;
@@ -34,7 +34,7 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         }
     }
 
-    private void fillHorizonalSweep(DrawContext context, long timeNanos, int x, int y, int endX, int endY) {
+    private void fillHorizonalSweep(GuiGraphicsExtractor context, long timeNanos, int x, int y, int endX, int endY) {
         context.enableScissor(x, y, endX, endY);
 
         int width = endX - x;
@@ -47,7 +47,7 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         float timeSeconds = timeNanos / 1_000_000_000f;
         float offset = gradientSpeed == 0 ? 0 : (timeSeconds * speedPxPerSec + x) % totalGradientCycle;
 
-        Matrix3x2fStack matrices = context.getMatrices().pushMatrix();
+        Matrix3x2fStack matrices = context.pose().pushMatrix();
         matrices.translate(-offset, 0);
 
         int currentPos = 0;
@@ -70,7 +70,7 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         context.disableScissor();
     }
 
-    private void fillHorizonalPulse(DrawContext context, long timeNanos, int x, int y, int endX, int endY) {
+    private void fillHorizonalPulse(GuiGraphicsExtractor context, long timeNanos, int x, int y, int endX, int endY) {
         context.fill(x, y, endX, endY, getCurrentPulseColor(timeNanos));
     }
 
@@ -82,13 +82,13 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         return fadeColor(color1, color2, delta);
     }
 
-    public void drawHorizontalLine(DrawContext context, long mt, int posX, int endX, int posY) {
+    public void drawHorizontalLine(GuiGraphicsExtractor context, long mt, int posX, int endX, int posY) {
         this.fillHorizontal(context, mt, posX, posY, endX, posY + 1);
     }
 
-    public void drawText(DrawContext context, TextRenderer textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
+    public void drawText(GuiGraphicsExtractor context, Font textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
         if (colors.length == 1){
-            context.drawText(textRenderer, displayText, x, y, colors[0], shadow);
+            context.text(textRenderer, displayText, x, y, colors[0], shadow);
         } else {
             switch (mode){
                 case SWEEP -> drawTextSweep(context, textRenderer, timeNanos, displayText, x, y, shadow);
@@ -97,20 +97,20 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         }
     }
 
-    public void drawText(DrawContext context, TextRenderer textRenderer, long timeNanos, Text displayText, int x, int y, boolean shadow) {
+    public void drawText(GuiGraphicsExtractor context, Font textRenderer, long timeNanos, Component displayText, int x, int y, boolean shadow) {
         if (colors.length == 1){
-            context.drawText(textRenderer, displayText, x, y, colors[0], shadow);
+            context.text(textRenderer, displayText, x, y, colors[0], shadow);
         }
         this.drawText(context, textRenderer, timeNanos, displayText.getString(), x, y, shadow);
     }
 
-    private void drawTextSweep(DrawContext context, TextRenderer textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
+    private void drawTextSweep(GuiGraphicsExtractor context, Font textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
         int pos = 0;
         for (int i = 0; i < displayText.length(); i++) {
             String s = String.valueOf(displayText.charAt(i));
-            int w = textRenderer.getWidth(s);
+            int w = textRenderer.width(s);
             int col = computeSweepTextColorAt(gradientSpeed == 0 ? pos : pos + x, timeNanos);
-            context.drawText(textRenderer, s, x +pos, y, col, shadow);
+            context.text(textRenderer, s, x +pos, y, col, shadow);
             pos += w;
         }
     }
@@ -128,15 +128,15 @@ public record GradientOptions(GradientMode mode, float gradientSize, float gradi
         return fadeColor(color1, color2, off);
     }
 
-    private void drawTextPulse(DrawContext context, TextRenderer textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
-        context.drawText(textRenderer, displayText, x, y, getCurrentPulseColor(timeNanos), shadow);
+    private void drawTextPulse(GuiGraphicsExtractor context, Font textRenderer, long timeNanos, String displayText, int x, int y, boolean shadow) {
+        context.text(textRenderer, displayText, x, y, getCurrentPulseColor(timeNanos), shadow);
     }
 
     public static GradientOptions solidColor(int color) {
         return new GradientOptions(1, 0, new int[]{color});
     }
 
-    public void drawVerticalLine(DrawContext context, long timeNanos, int posX, int posY, int endY) {
+    public void drawVerticalLine(GuiGraphicsExtractor context, long timeNanos, int posX, int posY, int endY) {
         fillHorizontal(context, timeNanos, posX, posY, posX + 1, endY);
     }
 

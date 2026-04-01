@@ -3,17 +3,16 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import java.awt.*;
 import java.util.List;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class CoordinatesWidget extends ResizableWidget {
     public CoordinatesWidget(Identifier id) {
@@ -71,7 +70,7 @@ public class CoordinatesWidget extends ResizableWidget {
     protected DirectionWidget.DisplayFormat directionFormat;
 
     @Override
-    public void renderScaled(DrawContext context, long mt, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long mt, Font textRenderer, int posX, int posY) {
         this.backgroundColor.fillHorizontal(context, mt, posX, posY, posX + width(), posY + height());
         int y = this.paddingY + 1;
         if (showX){
@@ -97,8 +96,8 @@ public class CoordinatesWidget extends ResizableWidget {
 
     @Override
     public void tick() {
-        final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        final ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        final Font textRenderer = Minecraft.getInstance().font;
+        final LocalPlayer player = Minecraft.getInstance().player;
         if (hideCoordinates){
             textX = textHiddenX;
             textY = textHiddenY;
@@ -114,19 +113,19 @@ public class CoordinatesWidget extends ResizableWidget {
         }
         textDirection = directionFormat.format().getString();
 
-        txc = width() - textRenderer.getWidth(textX) - paddingX;
-        tyc = width() - textRenderer.getWidth(textY) - paddingX;
-        tzc = width() - textRenderer.getWidth(textZ) - paddingX;
-        tdc = width() - textRenderer.getWidth(textDirection) - paddingX;
+        txc = width() - textRenderer.width(textX) - paddingX;
+        tyc = width() - textRenderer.width(textY) - paddingX;
+        tzc = width() - textRenderer.width(textZ) - paddingX;
+        tdc = width() - textRenderer.width(textDirection) - paddingX;
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.coordinates");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.coordinates.description");
     }
 

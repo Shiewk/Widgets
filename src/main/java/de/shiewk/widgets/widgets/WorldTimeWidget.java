@@ -3,14 +3,14 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.*;
+import static net.minecraft.network.chat.Component.*;
 
 public class WorldTimeWidget extends BasicTextWidget {
 
@@ -30,11 +30,11 @@ public class WorldTimeWidget extends BasicTextWidget {
     protected boolean showDay;
     protected ClockWidget.TimeOption timeFormat;
 
-    public Text getDayLabel(long day) {
+    public Component getDayLabel(long day) {
         return translatable("widgets.widgets.worldtime.day", day);
     }
 
-    public Text getTimeLabel(long hour, long minute) {
+    public Component getTimeLabel(long hour, long minute) {
         return switch (timeFormat) {
             case NO_TIME -> empty();
             case HOUR_24 -> literal(hour + ":" + (minute < 10 ? "0" + minute : minute));
@@ -48,11 +48,11 @@ public class WorldTimeWidget extends BasicTextWidget {
 
     @Override
     public void tickWidget() {
-        final World world = MinecraftClient.getInstance().world;
+        final Level world = Minecraft.getInstance().level;
         if (world == null) {
             formatAndSetRenderText("?");
         } else {
-            long time = world.getTimeOfDay() + 6000;
+            long time = world.getGameTime() + 6000;
             long day = time / 24000;
             long hour = time / 1000 % 24;
             long minute = (long) ((time % 1000) / 16.6666);
@@ -76,12 +76,12 @@ public class WorldTimeWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.worldtime");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.worldtime.description");
     }
 

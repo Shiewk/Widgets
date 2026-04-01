@@ -2,15 +2,14 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.TextFieldWidgetSettingOption;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class PlainTextWidget extends BasicTextWidget {
     public PlainTextWidget(Identifier id) {
         super(id, List.of(
-                new TextFieldWidgetSettingOption("text", Text.translatable("widgets.widgets.plaintext.text"), Text.translatable("widgets.widgets.plaintext.initial"), Text.translatable("widgets.widgets.plaintext.placeholder"), true, 200)
+                new TextFieldWidgetSettingOption("text", Component.translatable("widgets.widgets.plaintext.text"), Component.translatable("widgets.widgets.plaintext.initial"), Component.translatable("widgets.widgets.plaintext.placeholder"), true, 200)
         ));
     }
 
@@ -18,13 +17,13 @@ public class PlainTextWidget extends BasicTextWidget {
     public void tickWidget() {}
 
     @Override
-    public Text getName() {
-        return Text.translatable("widgets.widgets.plaintext");
+    public Component getName() {
+        return Component.translatable("widgets.widgets.plaintext");
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("widgets.widgets.plaintext.description");
+    public Component getDescription() {
+        return Component.translatable("widgets.widgets.plaintext.description");
     }
 
     @Override

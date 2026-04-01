@@ -2,26 +2,28 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
-import de.shiewk.widgets.widgets.settings.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
+import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
+import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Locale;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class InventoryWidget extends ResizableWidget {
 
-    private static final Identifier VANILLA_INVENTORY = Identifier.of("widgets", "textures/vanilla_inventory.png");
-    private static final Identifier TEXTURE_PACK_INVENTORY = Identifier.ofVanilla("textures/gui/container/inventory.png");
+    private static final Identifier VANILLA_INVENTORY = Identifier.fromNamespaceAndPath("widgets", "textures/vanilla_inventory.png");
+    private static final Identifier TEXTURE_PACK_INVENTORY = Identifier.withDefaultNamespace("textures/gui/container/inventory.png");
 
     public enum InventoryMode {
         VANILLA,
@@ -40,7 +42,7 @@ public class InventoryWidget extends ResizableWidget {
             this.canDisableHotbar = canDisableHotbar;
         }
 
-        public Text display() {
+        public Component display() {
             return translatable("widgets.widgets.inventory.mode." + name().toLowerCase(Locale.ROOT));
         }
     }
@@ -58,13 +60,13 @@ public class InventoryWidget extends ResizableWidget {
     }
 
     private InventoryMode mode = InventoryMode.TEXTURE_PACK;
-    private PlayerInventory inventory;
+    private Inventory inventory;
 
     private GradientOptions gridColor, boxColor;
     private boolean showHotbar = false;
 
     @Override
-    public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         drawBackground(context, measuringTimeNano, posX, posY);
         if (inventory != null){
             drawItems(context, textRenderer, switch (mode){
@@ -79,15 +81,15 @@ public class InventoryWidget extends ResizableWidget {
         }
     }
 
-    private void drawBackground(DrawContext context, long mt, int posX, int posY) {
+    private void drawBackground(GuiGraphicsExtractor context, long mt, int posX, int posY) {
         switch (mode){
-            case VANILLA -> context.drawTexture(RenderPipelines.GUI_TEXTURED, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
+            case VANILLA -> context.blit(RenderPipelines.GUI_TEXTURED, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
             case TEXTURE_PACK -> {
                 context.enableScissor(posX, posY, posX + width(), posY + 6);
-                context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
+                context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
                 context.enableScissor(posX, posY + 6, posX + width(), posY + height());
-                context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
+                context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_PACK_INVENTORY, posX, posY - 75, 0, 0, 256, 256, 256, 256);
                 context.disableScissor();
             }
             case GRID -> {
@@ -127,40 +129,39 @@ public class InventoryWidget extends ResizableWidget {
         }
     }
 
-    private void drawItems(DrawContext context, TextRenderer textRenderer, int posX, int posY) {
+    private void drawItems(GuiGraphicsExtractor context, Font textRenderer, int posX, int posY) {
         for (int ry = 0; ry < 4; ry++) {
             if (ry == 0 && !showHotbar) continue;
             for (int rx = 0; rx < 9; rx++) {
 
                 int slot = ry * 9 + rx;
-                ItemStack stack = inventory.getStack(slot);
+                ItemStack stack = inventory.getItem(slot);
                 if (stack.isEmpty()) continue;
 
                 int itemY = ry == 0 ? posY + 58 : posY + (ry-1) * 18;
                 int itemX = posX + rx * 18;
 
-                context.drawItem(stack, itemX, itemY);
-                context.drawStackOverlay(textRenderer, stack, itemX, itemY);
+                context.item(stack, itemX, itemY);
+                context.itemDecorations(textRenderer, stack, itemX, itemY);
             }
         }
     }
 
     @Override
     public void tick() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            PlayerInventory clientPlayerEntityInventory = player.getInventory();
-            if (clientPlayerEntityInventory != null) inventory = clientPlayerEntityInventory;
+            inventory = player.getInventory();
         }
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.inventory");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.inventory.description");
     }
 

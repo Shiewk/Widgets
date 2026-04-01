@@ -4,21 +4,21 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class CPSWidget extends BasicTextWidget {
 
     public static class Click {
         public int ticks = 0;
-        public final long expiresAt = Util.getMeasuringTimeMs() + 1000;
+        public final long expiresAt = Util.getMillis() + 1000;
 
         @Deprecated(forRemoval = true, since = "1.2.1")
         public int tick(){
@@ -92,7 +92,7 @@ public class CPSWidget extends BasicTextWidget {
         int left = 0;
         int right = 0;
         int middle = 0;
-        long mtime = Util.getMeasuringTimeMs();
+        long mtime = Util.getMillis();
         if (countLeftClicks) {
             leftClicks.removeIf(click -> click.expiresAt <= mtime);
             left = leftClicks.size();
@@ -149,12 +149,12 @@ public class CPSWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.cps");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.cps.description");
     }
 }

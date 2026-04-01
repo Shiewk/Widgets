@@ -1,30 +1,28 @@
 package de.shiewk.widgets.client.screen.gradienteditor;
 
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.client.WidgetManager;
 import de.shiewk.widgets.client.screen.ContextMenuScreen;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.color.GradientPreset;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -32,16 +30,16 @@ import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 
 import static de.shiewk.widgets.utils.WidgetUtils.colorARGBToHexRGBA;
-import static net.minecraft.text.Text.empty;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.Component.translatable;
 
-public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget<GradientEditorSettingsSection.ListEntry> {
+public class GradientEditorSettingsSection extends ObjectSelectionList<GradientEditorSettingsSection.ListEntry> {
 
     private final GradientEditorScreen editor;
     private final HexValueInputEntry hexInput;
     private final ColorPickerHueSliderEntry hueSlider;
 
-    public GradientEditorSettingsSection(GradientEditorScreen editor, MinecraftClient client, int x, int y, int width, int height) {
+    public GradientEditorSettingsSection(GradientEditorScreen editor, Minecraft client, int x, int y, int width, int height) {
         super(client, width, height, y, 110);
         setX(x);
         this.editor = editor;
@@ -77,18 +75,18 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
     }
 
     @Override
-    protected void drawMenuListBackground(DrawContext context) {
+    protected void extractListBackground(GuiGraphicsExtractor context) {
         context.fill(getX(), getY(), getX()+getWidth(), getY()+getHeight(), 0x20_00_00_00);
     }
 
-    @Override protected void drawHeaderAndFooterSeparators(DrawContext context) {}
-    @Override protected void drawSelectionHighlight(DrawContext context, ListEntry entry, int color) {}
-    @Override protected void drawScrollbar(DrawContext context, int mouseX, int mouseY) {}
+    @Override protected void extractListSeparators(@NonNull GuiGraphicsExtractor context) {}
+    @Override protected void extractSelection(@NonNull GuiGraphicsExtractor context, @NonNull ListEntry entry, int color) {}
+    @Override protected void extractScrollbar(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY) {}
 
     public abstract static class ListEntry extends Entry<ListEntry> {
 
         @Override
-        public Text getNarration() {
+        public @NonNull Component getNarration() {
             return empty();
         }
     }
@@ -111,59 +109,59 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
 
     private class HeadingEntry extends ListEntry {
 
-        private final Text text;
+        private final Component text;
 
-        private HeadingEntry(Text text) {
+        private HeadingEntry(Component text) {
             this.text = text;
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             int y = this.getContentY() + 2;
             int rowWidth = 110;
 
-            int textWidth = client.textRenderer.getWidth(text);
+            int textWidth = minecraft.font.width(text);
             int textX = getX() + (rowWidth - textWidth) / 2;
-            context.drawText(client.textRenderer, text, textX, y, 0xffffffff, true);
+            context.text(minecraft.font, text, textX, y, 0xffffffff, true);
         }
     }
 
     private class SliderEntry extends ListEntry {
 
-        private final SliderWidget slider;
+        private final AbstractSliderButton slider;
 
-        private SliderEntry(int min, int max, int initial, IntFunction<Text> textGetter, IntConsumer onUpdateValue) {
+        private SliderEntry(int min, int max, int initial, IntFunction<Component> textGetter, IntConsumer onUpdateValue) {
             double value = (double) (initial - min) / (max - min);
             slider = new Slider(textGetter, value, onUpdateValue, min, max);
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             slider.active = editor.colors.size() > 1;
-            slider.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            slider.render(context, mouseX, mouseY, deltaTicks);
+            slider.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            slider.extractRenderState(context, mouseX, mouseY, deltaTicks);
             if (hovered && !slider.active) {
-                context.setCursor(StandardCursors.NOT_ALLOWED);
-                slider.setTooltip(Tooltip.of(translatable("widgets.ui.gradientEditor.gradientSettings.addMoreColors")));
+                context.requestCursor(CursorTypes.NOT_ALLOWED);
+                slider.setTooltip(Tooltip.create(translatable("widgets.ui.gradientEditor.gradientSettings.addMoreColors")));
             } else {
                 slider.setTooltip(null);
             }
         }
 
-        @Override public boolean mouseClicked(Click click, boolean doubled) { return slider.mouseClicked(click, doubled); }
-        @Override public boolean mouseDragged(Click click, double offsetX, double offsetY) { return slider.mouseDragged(click, offsetX, offsetY); }
-        @Override public boolean mouseReleased(Click click) { return slider.mouseReleased(click); }
+        @Override public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) { return slider.mouseClicked(click, doubled); }
+        @Override public boolean mouseDragged(@NonNull MouseButtonEvent click, double offsetX, double offsetY) { return slider.mouseDragged(click, offsetX, offsetY); }
+        @Override public boolean mouseReleased(@NonNull MouseButtonEvent click) { return slider.mouseReleased(click); }
         @Override public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) { return slider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount); }
         @Override public void mouseMoved(double mouseX, double mouseY) { slider.mouseMoved(mouseX, mouseY); }
 
-        private static class Slider extends SliderWidget {
+        private static class Slider extends AbstractSliderButton {
 
-            private final IntFunction<Text> textGetter;
+            private final IntFunction<Component> textGetter;
             private final IntConsumer onUpdateValue;
             private final int min;
             private final int max;
 
-            public Slider(IntFunction<Text> textGetter, double value, IntConsumer onUpdateValue, int min, int max) {
+            public Slider(IntFunction<Component> textGetter, double value, IntConsumer onUpdateValue, int min, int max) {
                 super(0, 0, 0, 0, empty(), value);
                 this.textGetter = textGetter;
                 this.onUpdateValue = onUpdateValue;
@@ -191,13 +189,13 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
 
     private class ToggleModeButtonEntry extends ListEntry {
 
-        private final ButtonWidget button = new ButtonWidget.Builder(empty(), this::press).build();
+        private final Button button = new Button.Builder(empty(), this::press).build();
 
         public ToggleModeButtonEntry() {
             refreshButtonValues();
         }
 
-        private void press(ButtonWidget button) {
+        private void press(Button button) {
             editor.cycleMode();
             refreshButtonValues();
         }
@@ -205,34 +203,34 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         private void refreshButtonValues() {
             button.setMessage(translatable("widgets.ui.gradientEditor.mode", editor.mode.name));
             if (editor.colors.size() > 1){
-                button.setTooltip(Tooltip.of(editor.mode.description));
+                button.setTooltip(Tooltip.create(editor.mode.description));
             } else {
-                button.setTooltip(Tooltip.of(translatable("widgets.ui.gradientEditor.gradientSettings.addMoreColors")));
+                button.setTooltip(Tooltip.create(translatable("widgets.ui.gradientEditor.gradientSettings.addMoreColors")));
             }
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.active = editor.colors.size() > 1;
-            button.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.render(context, mouseX, mouseY, deltaTicks);
+            button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return button.mouseClicked(click, doubled);
         }
     }
 
     private class ImportButtonEntry extends ListEntry {
 
-        private final ButtonWidget button = new ButtonWidget.Builder(translatable("widgets.ui.gradientEditor.importOther"), this::press).build();
+        private final Button button = new Button.Builder(translatable("widgets.ui.gradientEditor.importOther"), this::press).build();
 
-        private void press(ButtonWidget button) {
-            Screen currentScreen = client.currentScreen;
-            int menuX = (int) client.mouse.getScaledX(client.getWindow());
-            int menuY = (int) client.mouse.getScaledY(client.getWindow());
-            client.setScreen(new ContextMenuScreen(
+        private void press(Button button) {
+            Screen currentScreen = minecraft.screen;
+            int menuX = (int) minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
+            int menuY = (int) minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
+            minecraft.setScreen(new ContextMenuScreen(
                     button.getMessage(),
                     currentScreen,
                     menuX, menuY,
@@ -240,7 +238,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
                             .stream()
                             .map(widget -> new ContextMenuScreen.Option(
                                     widget.getName(),
-                                    () -> client.setScreen(new ContextMenuScreen(
+                                    () -> minecraft.setScreen(new ContextMenuScreen(
                                             widget.getName(),
                                             currentScreen,
                                             menuX,
@@ -258,26 +256,26 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            button.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.render(context, mouseX, mouseY, deltaTicks);
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return button.mouseClicked(click, doubled);
         }
     }
 
     private class UsePresetButtonEntry extends ListEntry {
 
-        private final ButtonWidget button = new ButtonWidget.Builder(translatable("widgets.ui.gradientEditor.usePreset"), this::press).build();
+        private final Button button = new Button.Builder(translatable("widgets.ui.gradientEditor.usePreset"), this::press).build();
 
-        private void press(ButtonWidget button) {
-            Screen currentScreen = client.currentScreen;
-            int menuX = (int) client.mouse.getScaledX(client.getWindow());
-            int menuY = (int) client.mouse.getScaledY(client.getWindow());
-            client.setScreen(new ContextMenuScreen(
+        private void press(Button button) {
+            Screen currentScreen = minecraft.screen;
+            int menuX = (int) minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
+            int menuY = (int) minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
+            minecraft.setScreen(new ContextMenuScreen(
                     translatable("widgets.ui.gradientEditor.usePreset"),
                     currentScreen,
                     menuX, menuY,
@@ -289,13 +287,13 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            button.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.render(context, mouseX, mouseY, deltaTicks);
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return button.mouseClicked(click, doubled);
         }
 
@@ -316,7 +314,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             double sliderProg = getComponentValue() / 255d;
 
             GradientOptions bg = new GradientOptions(100, 0, new int[]{getBackgroundStartColor(), getBackgroundEndColor()});
@@ -327,14 +325,14 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
 
             bg.fillHorizontal(context, 0, contentX, contentY + 1, contentX + contentWidth, contentY + contentHeight - 1);
 
-            context.drawVerticalLine((int) (contentX + (contentWidth * sliderProg)), contentY - 1, contentY + contentHeight, 0xff_ff_ff_ff);
+            context.verticalLine((int) (contentX + (contentWidth * sliderProg)), contentY - 1, contentY + contentHeight, 0xff_ff_ff_ff);
             if (showLabel){
                 String label = getLabelWithValue();
-                int w = client.textRenderer.getWidth(label);
-                context.drawText(client.textRenderer, label, contentX + (contentWidth - w) / 2, contentY + 5, 0xffffffff, true);
+                int w = minecraft.font.width(label);
+                context.text(minecraft.font, label, contentX + (contentWidth - w) / 2, contentY + 5, 0xffffffff, true);
             }
             if (hovered){
-                context.setCursor(StandardCursors.RESIZE_EW);
+                context.requestCursor(CursorTypes.RESIZE_EW);
             }
         }
 
@@ -350,7 +348,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
             double mouseX = click.x();
             int newComponentValue = (int) ((mouseX - getContentX()) / getContentWidth() * 255);
             setComponentValue(newComponentValue);
@@ -358,12 +356,12 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return mouseDragged(click, 0, 0);
         }
 
         @Override
-        public boolean keyPressed(KeyInput input) {
+        public boolean keyPressed(KeyEvent input) {
             if (input.isLeft()) {
                 setComponentValue(getComponentValue() - 1);
             } else if (input.isRight()) {
@@ -373,7 +371,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         private void setComponentValue(int val) {
-            val = MathHelper.clamp(val, 0, 255);
+            val = Mth.clamp(val, 0, 255);
             final int currentColor = editor.getCurrentColor();
             int newColor = switch (component){
                 case 0 -> (currentColor & 0xff_00_ff_ff) | val << 16;
@@ -420,29 +418,29 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
 
     private class RemoveColorButtonEntry extends ListEntry {
 
-        private final ButtonWidget button = new ButtonWidget.Builder(translatable("widgets.ui.gradientEditor.removeColor"), this::press).build();
+        private final Button button = new Button.Builder(translatable("widgets.ui.gradientEditor.removeColor"), this::press).build();
 
-        private void press(ButtonWidget button) {
+        private void press(Button button) {
             button.active = false;
             editor.removeCurrentColor();
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.active = editor.colors.size() > 1;
-            button.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.render(context, mouseX, mouseY, deltaTicks);
+            button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return button.mouseClicked(click, doubled);
         }
     }
 
     private class HexValueInputEntry extends ListEntry {
 
-        private final TextFieldWidget inputField = new TextFieldWidget(client.textRenderer, 0, 0, empty());
+        private final EditBox inputField = new EditBox(minecraft.font, 0, 0, empty());
 
         public HexValueInputEntry() {
             this.refreshText();
@@ -470,21 +468,21 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
                 } catch (NumberFormatException ignored) {}
             }
 
-            inputField.setEditableColor(valid ? 0xffffffff : 0xffff0000);
+            inputField.setTextColor(valid ? 0xffffffff : 0xffff0000);
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            inputField.setDimensionsAndPosition(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            inputField.render(context, mouseX, mouseY, deltaTicks);
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            inputField.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
+            inputField.extractRenderState(context, mouseX, mouseY, deltaTicks);
         }
 
         public void refreshText(){
-            inputField.setChangedListener(null);
-            inputField.setText('#' + colorARGBToHexRGBA(editor.getCurrentColor()));
-            inputField.setCursorToStart(false);
-            inputField.setEditableColor(0xffffffff);
-            inputField.setChangedListener(this::onChangeInputField);
+            inputField.setResponder(_ -> {});
+            inputField.setValue('#' + colorARGBToHexRGBA(editor.getCurrentColor()));
+            inputField.moveCursorToStart(false);
+            inputField.setTextColor(0xffffffff);
+            inputField.setResponder(this::onChangeInputField);
         }
 
         @Override
@@ -492,20 +490,20 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
             inputField.setFocused(focused);
         }
 
-        @Override public boolean mouseClicked(Click click, boolean doubled) { return inputField.mouseClicked(click, doubled); }
-        @Override public boolean mouseDragged(Click click, double offsetX, double offsetY) { return inputField.mouseDragged(click, offsetX, offsetY); }
-        @Override public boolean mouseReleased(Click click) { return inputField.mouseReleased(click); }
+        @Override public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) { return inputField.mouseClicked(click, doubled); }
+        @Override public boolean mouseDragged(@NonNull MouseButtonEvent click, double offsetX, double offsetY) { return inputField.mouseDragged(click, offsetX, offsetY); }
+        @Override public boolean mouseReleased(@NonNull MouseButtonEvent click) { return inputField.mouseReleased(click); }
         @Override public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) { return inputField.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount); }
         @Override public void mouseMoved(double mouseX, double mouseY) { inputField.mouseMoved(mouseX, mouseY); }
-        @Override public boolean charTyped(CharInput input) { return inputField.charTyped(input); }
-        @Override public boolean keyReleased(KeyInput input) { return inputField.keyReleased(input); }
-        @Override public boolean keyPressed(KeyInput input) { return inputField.keyPressed(input); }
+        @Override public boolean charTyped(@NonNull CharacterEvent input) { return inputField.charTyped(input); }
+        @Override public boolean keyReleased(@NonNull KeyEvent input) { return inputField.keyReleased(input); }
+        @Override public boolean keyPressed(@NonNull KeyEvent input) { return inputField.keyPressed(input); }
     }
 
     private class ColorPickerEntry extends ListEntry {
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             context.fill(
                     getContentX(),
                     getContentY(),
@@ -513,7 +511,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
                     getContentY() + getContentHeight(),
                     getBackgroundFillColor()
             );
-            context.drawTexture(
+            context.blit(
                     RenderPipelines.GUI_TEXTURED,
                     getOverlayTextureIdentifier(),
                     getContentX(), getContentY(),
@@ -537,12 +535,12 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
             );
 
             if (hovered){
-                context.setCursor(StandardCursors.ARROW);
+                context.requestCursor(CursorTypes.ARROW);
             }
         }
 
         @Override
-        public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
             double x = click.x() - getContentX();
             double y = click.y() - getContentY();
             float saturation = (float) Math.clamp(x / getContentWidth(), 0d, 1d);
@@ -556,7 +554,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return mouseDragged(click, 0, 0);
         }
 
@@ -568,16 +566,16 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
 
         public Identifier getOverlayTextureIdentifier(){
             if (OVERLAY_TEXTURE_ID == null){
-                NativeImageBackedTexture texture = generateOverlayTexture();
-                OVERLAY_TEXTURE_ID = Identifier.of(WidgetsMod.MOD_ID, "textures/gui/generated/color-picker-overlay");
-                client.getTextureManager().registerTexture(OVERLAY_TEXTURE_ID, texture);
+                DynamicTexture texture = generateOverlayTexture();
+                OVERLAY_TEXTURE_ID = Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "textures/gui/generated/color-picker-overlay");
+                minecraft.getTextureManager().register(OVERLAY_TEXTURE_ID, texture);
             }
             return OVERLAY_TEXTURE_ID;
         }
 
-        private NativeImageBackedTexture generateOverlayTexture() {
-            NativeImageBackedTexture texture = new NativeImageBackedTexture("widgets:textures/gui/generated/color-picker-overlay", 256, 256, false);
-            NativeImage image = texture.getImage();
+        private DynamicTexture generateOverlayTexture() {
+            DynamicTexture texture = new DynamicTexture("widgets:textures/gui/generated/color-picker-overlay", 256, 256, false);
+            NativeImage image = texture.getPixels();
 
             for (int x = 0; x < 256; x++) {
                 for (int y = 0; y < 256; y++) {
@@ -588,7 +586,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
                     int rgb = (int) Math.round(outAlpha > 0 ? (255d * alphaWhite * (1d - alphaBlack)) / outAlpha : 0);
                     int a = (int) Math.round(outAlpha * 255.0);
 
-                    image.setColorArgb(x, y, new Color(rgb, rgb, rgb, a).getRGB());
+                    image.setPixel(x, y, new Color(rgb, rgb, rgb, a).getRGB());
                 }
             }
 
@@ -612,17 +610,17 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             sliderGradient.fillHorizontal(context, 0, getContentX(), getContentY() + 1, getContentX() + getContentWidth(), getContentY() + getContentHeight() - 1);
-            context.drawVerticalLine((int) (getContentX() + (getContentWidth() * sliderProgress)), getContentY() - 1, getContentY() + getContentHeight(), 0xff_ff_ff_ff);
+            context.verticalLine( (int) (getContentX() + (getContentWidth() * sliderProgress)), getContentY() - 1, getContentY() + getContentHeight(), 0xff_ff_ff_ff);
 
             if (hovered){
-                context.setCursor(StandardCursors.RESIZE_EW);
+                context.requestCursor(CursorTypes.RESIZE_EW);
             }
         }
 
         @Override
-        public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
             double x = click.x() - getContentX();
             float newHue = (float) Math.clamp(x / getContentWidth(), 0, 1);
             this.sliderProgress = newHue;
@@ -639,7 +637,7 @@ public class GradientEditorSettingsSection extends AlwaysSelectedEntryListWidget
         }
 
         @Override
-        public boolean mouseClicked(Click click, boolean doubled) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
             return this.mouseDragged(click, 0, 0);
         }
 

@@ -4,21 +4,20 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
-
+import net.minecraft.util.debugchart.LocalSampleLogger;
 import java.util.List;
 
 public class PingWidget extends BasicTextWidget {
 
     public PingWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.ping.dynamicColor"), true),
-                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false)
+                new ToggleWidgetSetting("dynamic_color", Component.translatable("widgets.widgets.ping.dynamicColor"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", Component.translatable("widgets.widgets.common.hideInSingleplayer"), false)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
@@ -32,14 +31,14 @@ public class PingWidget extends BasicTextWidget {
     public void tickWidget() {
         shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
         if (!shouldRender) return;
-        final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        final ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
         if (networkHandler != null){
-            if (lastPingQuery < Util.getMeasuringTimeMs() - 5000){
-                networkHandler.pingMeasurer.ping();
-                lastPingQuery = Util.getMeasuringTimeMs();
+            if (lastPingQuery < Util.getMillis() - 5000){
+                networkHandler.pingDebugMonitor.tick();
+                lastPingQuery = Util.getMillis();
             }
-            final MultiValueDebugSampleLogImpl pingLog = networkHandler.pingMeasurer.log;
-            final int logLength = pingLog.getLength();
+            final LocalSampleLogger pingLog = networkHandler.pingDebugMonitor.delayTimer;
+            final int logLength = pingLog.size();
             final int avgCompileLength = 3;
             long ping = 0;
             int valuesRead = 0;
@@ -75,12 +74,12 @@ public class PingWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
-        return Text.translatable("widgets.widgets.ping");
+    public Component getName() {
+        return Component.translatable("widgets.widgets.ping");
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("widgets.widgets.ping.description");
+    public Component getDescription() {
+        return Component.translatable("widgets.widgets.ping.description");
     }
 }

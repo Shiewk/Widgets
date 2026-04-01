@@ -1,21 +1,22 @@
 package de.shiewk.widgets.client.screen.components;
 
 import de.shiewk.widgets.ModWidget;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.NonNull;
 
-public class WidgetDisplayWidget extends ClickableWidget {
+public class WidgetDisplayWidget extends AbstractWidget {
 
     protected final ModWidget widget;
-    protected final TextRenderer textRenderer;
+    protected final Font textRenderer;
     protected final int centerX;
     protected final int centerY;
 
-    public WidgetDisplayWidget(ModWidget widget, TextRenderer textRenderer, int centerX, int centerY) {
+    public WidgetDisplayWidget(ModWidget widget, Font textRenderer, int centerX, int centerY) {
         super(0, 0, (int) widget.scaledWidth(), (int) widget.scaledHeight(), widget.getName());
         this.widget = widget;
         this.textRenderer = textRenderer;
@@ -44,12 +45,12 @@ public class WidgetDisplayWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        widget.render(context, Util.getMeasuringTimeNano(), textRenderer, getX(), getY());
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        widget.render(context, Util.getNanos(), textRenderer, getX(), getY());
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.HINT, widget.getName());
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
+        builder.add(NarratedElementType.HINT, widget.getName());
     }
 }

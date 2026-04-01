@@ -1,21 +1,20 @@
 package de.shiewk.widgets.widgets;
 
-import de.shiewk.widgets.color.GradientOptions;
-import de.shiewk.widgets.widgets.settings.*;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.client.WidgetRenderer;
+import de.shiewk.widgets.color.GradientOptions;
+import de.shiewk.widgets.widgets.settings.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
 
-import java.awt.*;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import static net.minecraft.text.Text.*;
+import static net.minecraft.network.chat.Component.*;
 
 public abstract class BasicTextWidget extends ResizableWidget {
 
@@ -30,7 +29,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
             this.key = key;
         }
 
-        public Text displayText(){
+        public Component displayText(){
             return translatable("widgets.widgets.basictext.alignment." + key);
         }
     }
@@ -41,28 +40,28 @@ public abstract class BasicTextWidget extends ResizableWidget {
         PARENTHESES("parentheses", t -> surround("(", t, ")"));
 
         public final String key;
-        public final UnaryOperator<Text> operator;
+        public final UnaryOperator<Component> operator;
 
-        TextStyle(String key, UnaryOperator<Text> operator) {
+        TextStyle(String key, UnaryOperator<Component> operator) {
             this.key = key;
             this.operator = operator;
         }
 
-        public Text displayText(){
+        public Component displayText(){
             return translatable("widgets.widgets.basictext.style." + key);
         }
 
-        public static Text surround(String prefix, Text subject, String suffix){
+        public static Component surround(String prefix, Component subject, String suffix){
             return literal(prefix).append(subject).append(literal(suffix));
         }
     }
 
-    protected Text renderText = empty();
+    protected Component renderText = empty();
     protected boolean shouldRender = true;
     private float textX = 0;
     private float textY = 0;
     private int padding = 0;
-    private TextRenderer renderer = null;
+    private Font renderer = null;
     private boolean textShadow = true;
 
     private static ObjectArrayList<WidgetSettingOption<?>> getCustomSettings(List<WidgetSettingOption<?>> otherCustomOptions) {
@@ -102,11 +101,11 @@ public abstract class BasicTextWidget extends ResizableWidget {
     }
 
     @Override
-    public void renderScaled(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
         if (!shouldRender) return;
         renderer = textRenderer;
         this.backgroundColor.fillHorizontal(context, n, posX, posY, posX + width(), posY + height());
-        Matrix3x2fStack matrices = context.getMatrices()
+        Matrix3x2fStack matrices = context.pose()
                 .pushMatrix();
         matrices.translate(posX + textX, posY + textY, matrices);
         this.textColor.drawText(context, textRenderer, n, renderText, 0, 0, textShadow);
@@ -117,7 +116,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
     public final void tick() {
         tickWidget();
         if (renderer != null){
-            int textWidth = renderer.getWidth(renderText);
+            int textWidth = renderer.width(renderText);
             switch (textAlignment){
                 case LEFT -> textX = padding;
                 case CENTER -> {
@@ -138,7 +137,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
         }
     }
 
-    protected void formatAndSetRenderText(Text renderText) {
+    protected void formatAndSetRenderText(Component renderText) {
         if (textStyle != TextStyle.PLAIN){
             this.renderText = textStyle.operator.apply(renderText);
         } else {

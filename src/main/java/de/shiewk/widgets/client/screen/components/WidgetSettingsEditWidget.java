@@ -2,28 +2,29 @@ package de.shiewk.widgets.client.screen.components;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractScrollArea;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
-public class WidgetSettingsEditWidget extends ScrollableWidget {
+public class WidgetSettingsEditWidget extends AbstractScrollArea {
     private static final int COLOR_FG = Color.WHITE.getRGB(), COLOR_BG = new Color(0, 0, 0, 60).getRGB();
-    private final TextRenderer textRenderer;
+    private final Font textRenderer;
     private final ModWidget widget;
     private final Runnable onChange;
     private WidgetSettingOption<?> focus = null;
     private int contentsHeight = 10;
 
-    public WidgetSettingsEditWidget(int x, int y, int width, int height, TextRenderer textRenderer, ModWidget widget, Runnable onChange) {
-        super(x, y, width, height, Text.empty());
+    public WidgetSettingsEditWidget(int x, int y, int width, int height, Font textRenderer, ModWidget widget, Runnable onChange) {
+        super(x, y, width, height, Component.empty(), AbstractScrollArea.defaultSettings(20));
         this.widget = widget;
         this.textRenderer = textRenderer;
         this.onChange = onChange;
@@ -43,39 +44,34 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected int getContentsHeightWithPadding() {
+    protected int contentHeight() {
         return this.contentsHeight;
     }
 
     @Override
-    protected double getDeltaYPerScroll() {
-        return 20;
-    }
-
-    @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
-        Matrix3x2fStack matrices = context.getMatrices().pushMatrix();
-        matrices.translate(0, (float) -getScrollY(), matrices);
+        Matrix3x2fStack matrices = context.pose().pushMatrix();
+        matrices.translate(0, (float) -scrollAmount(), matrices);
         matrices.pushMatrix();
         matrices.scale(2, 2, matrices);
-        matrices.translate(0, (float) -getScrollY(), matrices);
-        context.drawText(textRenderer, widget.getName(), this.width / 4 - textRenderer.getWidth(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
+        matrices.translate(0, (float) -scrollAmount(), matrices);
+        context.text(textRenderer, widget.getName(), this.width / 4 - textRenderer.width(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
         matrices.popMatrix();
-        int y = textRenderer.fontHeight * 2 + this.height / 50 + 5;
+        int y = textRenderer.lineHeight * 2 + this.height / 50 + 5;
         for (WidgetSettingOption<?> setting : widget.getSettings().getCustomSettings()) {
             if (!setting.shouldShow()) continue;
-            if (this.width - setting.getWidth() > textRenderer.getWidth(setting.getName()) + 20){
+            if (this.width - setting.getWidth() > textRenderer.width(setting.getName()) + 20){
                 setting.setX(this.getX() + this.width - setting.getWidth() - 5);
                 setting.setY(y);
-                context.drawText(textRenderer, setting.getName(), getX() + 10, y + (setting.getHeight() / 2), COLOR_FG, true);
+                context.text(textRenderer, setting.getName(), getX() + 10, y + (setting.getHeight() / 2), COLOR_FG, true);
             } else {
                 setting.setX(this.getX() + this.width / 2 - setting.getWidth() / 2);
                 setting.setY(y + 9 + 5);
-                context.drawText(textRenderer, setting.getName(), getX() + getWidth() / 2 - textRenderer.getWidth(setting.getName()) / 2, y, COLOR_FG, true);
+                context.text(textRenderer, setting.getName(), getX() + getWidth() / 2 - textRenderer.width(setting.getName()) / 2, y, COLOR_FG, true);
                 y += 9 + 5;
             }
-            setting.render(context, mouseX, (int) (mouseY + getScrollY()), delta);
+            setting.extractRenderState(context, mouseX, (int) (mouseY + scrollAmount()), delta);
             y += setting.getHeight();
             y += 5;
         }
@@ -84,16 +80,16 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         double mouseY = click.y();
         double mouseX = click.x();
-        mouseY += getScrollY();
+        mouseY += scrollAmount();
         for (WidgetSettingOption<?> customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
             if (customSetting.isHovered(mouseX, mouseY)){
                 focus = customSetting;
                 customSetting.setFocused(true);
-                if (customSetting.mouseClicked(new Click(mouseX, mouseY + getScrollY(), click.buttonInfo()), doubled)){
+                if (customSetting.mouseClicked(new MouseButtonEvent(mouseX, mouseY + scrollAmount(), click.buttonInfo()), doubled)){
                     onChange.run();
                     return true;
                 }
@@ -101,14 +97,14 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
                 customSetting.setFocused(false);
             }
         }
-        return checkScrollbarDragged(click);
+        return updateScrolling(click);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(@NonNull MouseButtonEvent click) {
         for (WidgetSettingOption<?> customSetting : widget.getSettings().getCustomSettings()) {
             if (!customSetting.shouldShow()) continue;
-            if (customSetting.mouseReleased(new Click(click.x(), click.y() + getScrollY(), click.buttonInfo()))){
+            if (customSetting.mouseReleased(new MouseButtonEvent(click.x(), click.y() + scrollAmount(), click.buttonInfo()))){
                 onChange.run();
                 return true;
             }
@@ -117,7 +113,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(@NonNull CharacterEvent input) {
         if (this.focus != null){
             if (this.focus.charTyped(input)){
                 onChange.run();
@@ -128,7 +124,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(@NonNull KeyEvent input) {
         if (this.focus != null){
             if (this.focus.keyPressed(input)){
                 onChange.run();
@@ -139,7 +135,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
+    public boolean keyReleased(@NonNull KeyEvent input) {
         if (this.focus != null){
             if (this.focus.keyReleased(input)){
                 onChange.run();
@@ -150,7 +146,7 @@ public class WidgetSettingsEditWidget extends ScrollableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput builder) {
 
     }
 }

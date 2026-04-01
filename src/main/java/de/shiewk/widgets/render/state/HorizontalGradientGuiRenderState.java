@@ -1,25 +1,26 @@
 package de.shiewk.widgets.render.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.render.state.SimpleGuiElementRenderState;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.texture.TextureSetup;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+import net.minecraft.client.renderer.RenderPipelines;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
+import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
-public final class HorizontalGradientGuiRenderState implements SimpleGuiElementRenderState {
+public final class HorizontalGradientGuiRenderState implements GuiElementRenderState {
 
     private final RenderPipeline pipeline;
     private final TextureSetup textureSetup;
     private final Matrix3x2f pose;
-    private final ScreenRect scissorArea;
-    private final ScreenRect bounds;
+    private final ScreenRectangle scissorArea;
+    private final ScreenRectangle bounds;
 
     private final int x;
     private final int y;
@@ -34,7 +35,7 @@ public final class HorizontalGradientGuiRenderState implements SimpleGuiElementR
             RenderPipeline pipeline,
             TextureSetup textureSetup,
             Matrix3x2f pose,
-            ScreenRect scissorArea,
+            ScreenRectangle scissorArea,
             int x,
             int y,
             int endX,
@@ -54,46 +55,46 @@ public final class HorizontalGradientGuiRenderState implements SimpleGuiElementR
     }
 
     @Override
-    public void setupVertices(VertexConsumer vertices) {
-        vertices.vertex(pose, x, y).color(colorLeft);
-        vertices.vertex(pose, x, endY).color(colorLeft);
-        vertices.vertex(pose, endX, endY).color(colorRight);
-        vertices.vertex(pose, endX, y).color(colorRight);
+    public void buildVertices(VertexConsumer vertices) {
+        vertices.addVertexWith2DPose(pose, x, y).setColor(colorLeft);
+        vertices.addVertexWith2DPose(pose, x, endY).setColor(colorLeft);
+        vertices.addVertexWith2DPose(pose, endX, endY).setColor(colorRight);
+        vertices.addVertexWith2DPose(pose, endX, y).setColor(colorRight);
     }
 
     @Override
-    public RenderPipeline pipeline() {
+    public @NonNull RenderPipeline pipeline() {
         return pipeline;
     }
 
     @Override
-    public TextureSetup textureSetup() {
+    public @NonNull TextureSetup textureSetup() {
         return textureSetup;
     }
 
     @Override
-    public @Nullable ScreenRect scissorArea() {
+    public @Nullable ScreenRectangle scissorArea() {
         return scissorArea;
     }
 
     @Nullable
-    private static ScreenRect createBounds(int x0, int y0, int x1, int y1, Matrix3x2f pose, @Nullable ScreenRect scissorArea) {
-        ScreenRect screenRect = (new ScreenRect(x0, y0, x1 - x0 + 1, y1 - y0)).transformEachVertex(pose);
+    private static ScreenRectangle createBounds(int x0, int y0, int x1, int y1, Matrix3x2f pose, @Nullable ScreenRectangle scissorArea) {
+        ScreenRectangle screenRect = (new ScreenRectangle(x0, y0, x1 - x0 + 1, y1 - y0)).transformMaxBounds(pose);
         return scissorArea != null ? scissorArea.intersection(screenRect) : screenRect;
     }
 
     @Override
-    public @Nullable ScreenRect bounds() {
+    public @Nullable ScreenRectangle bounds() {
         return bounds;
     }
 
-    public static void draw(DrawContext context, int x, int y, int endX, int endY, int colorLeft, int colorRight) {
-        context.state.addSimpleElement(
+    public static void draw(GuiGraphicsExtractor context, int x, int y, int endX, int endY, int colorLeft, int colorRight) {
+        context.guiRenderState.addGuiElement(
                 new HorizontalGradientGuiRenderState(
                         RenderPipelines.GUI,
-                        TextureSetup.empty(),
-                        new Matrix3x2f(context.getMatrices()),
-                        context.scissorStack.peekLast(),
+                        TextureSetup.noTexture(),
+                        new Matrix3x2f(context.pose()),
+                        context.scissorStack.peek(),
                         x, y, endX, endY,
                         colorLeft, colorRight
                 )

@@ -1,26 +1,27 @@
 package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.client.screen.gradienteditor.GradientEditorScreen;
 import de.shiewk.widgets.color.GradientMode;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.NonNull;
 
 import static de.shiewk.widgets.client.WidgetManager.gson;
 import static de.shiewk.widgets.utils.WidgetUtils.colorARGBToHexRGBA;
 
 public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> {
 
-    public GradientWidgetSetting(String id, Text name, GradientMode defaultMode, int defaultGradientSize, int defaultGradientSpeed, int defaultColor) {
+    public GradientWidgetSetting(String id, Component name, GradientMode defaultMode, int defaultGradientSize, int defaultGradientSpeed, int defaultColor) {
         super(id, name);
         this.value = new GradientOptions(
                 defaultMode,
@@ -30,7 +31,7 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
         );
     }
 
-    public GradientWidgetSetting(String id, Text name, int defaultColor) {
+    public GradientWidgetSetting(String id, Component name, int defaultColor) {
         this(id, name, GradientMode.SWEEP, 40, 10, defaultColor);
     }
 
@@ -61,9 +62,9 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        final long n = Util.getMeasuringTimeNano();
+    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        final Font textRenderer = Minecraft.getInstance().font;
+        final long n = Util.getNanos();
         GradientOptions gradient = this.getValue();
         gradient.fillHorizontal(
                 context,
@@ -81,15 +82,15 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
             displayText = "#" + colorARGBToHexRGBA(colors[0]);
         } else {
             outlineColor = 0xff_ff_ff_ff;
-            displayText = Text.translatable("widgets.ui.widgetSettings.colors", colors.length).getString();
+            displayText = Component.translatable("widgets.ui.widgetSettings.colors", colors.length).getString();
         }
-        context.drawHorizontalLine(getX(), getX()+getWidth(), getY(), outlineColor);
-        context.drawHorizontalLine(getX(), getX()+getWidth(), getY()+getHeight(), outlineColor);
-        context.drawVerticalLine(getX(), getY(), getY() + getHeight(), outlineColor);
-        context.drawVerticalLine(getX() + getWidth(), getY(), getY() + getHeight(), outlineColor);
+        context.horizontalLine(getX(), getX()+getWidth(), getY(), outlineColor);
+        context.horizontalLine(getX(), getX()+getWidth(), getY()+getHeight(), outlineColor);
+        context.verticalLine(getX(), getY(), getY() + getHeight(), outlineColor);
+        context.verticalLine(getX() + getWidth(), getY(), getY() + getHeight(), outlineColor);
 
-        int width = textRenderer.getWidth(displayText);
-        context.drawText(
+        int width = textRenderer.width(displayText);
+        context.text(
                 textRenderer,
                 displayText,
                 getX() + (getWidth() / 2 - (width / 2)),
@@ -99,7 +100,7 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
         );
 
         if (this.isHovered(mouseX, mouseY)){
-            context.setCursor(StandardCursors.POINTING_HAND);
+            context.requestCursor(CursorTypes.POINTING_HAND);
         }
     }
 
@@ -114,11 +115,11 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.currentScreen instanceof WidgetSettingsScreen screen) {
-            WidgetUtils.playSound(SoundEvents.BLOCK_COPPER_BULB_TURN_ON);
-            client.setScreen(new GradientEditorScreen(client.currentScreen, screen.getWidget(), this, screen.getOnChange()));
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.screen instanceof WidgetSettingsScreen screen) {
+            WidgetUtils.playSound(SoundEvents.COPPER_BULB_TURN_ON);
+            client.setScreen(new GradientEditorScreen(client.screen, screen.getWidget(), this, screen.getOnChange()));
         }
         return true;
     }

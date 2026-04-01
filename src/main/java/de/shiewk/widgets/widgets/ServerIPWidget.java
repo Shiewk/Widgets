@@ -3,14 +3,13 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class ServerIPWidget extends BasicTextWidget {
     public ServerIPWidget(Identifier id) {
@@ -31,16 +30,16 @@ public class ServerIPWidget extends BasicTextWidget {
     public void tickWidget() {
         shouldRender = !(this.hideInSingleplayer && WidgetUtils.isInSingleplayer());
         if (!shouldRender) return;
-        final ServerInfo serverEntry = MinecraftClient.getInstance().getCurrentServerEntry();
+        final ServerData serverEntry = Minecraft.getInstance().getCurrentServer();
         if (serverEntry != null){
-            formatAndSetRenderText(serverEntry.address);
+            formatAndSetRenderText(serverEntry.ip);
         } else {
             formatAndSetRenderText(translatable("menu.singleplayer"));
         }
         t++;
         if (dynamicWidth && t >= 20){
             t = 0;
-            this.width = MinecraftClient.getInstance().textRenderer.getWidth(this.renderText) + 20;
+            this.width = Minecraft.getInstance().font.width(this.renderText) + 20;
         }
     }
 
@@ -50,12 +49,12 @@ public class ServerIPWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.serverIP");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.serverIP.description");
     }
 

@@ -1,13 +1,12 @@
 package de.shiewk.widgets;
 
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public abstract class ModWidget {
 
@@ -31,10 +30,10 @@ public abstract class ModWidget {
     public final WidgetSettings getSettings() {
         return settings;
     }
-    public abstract void render(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY);
+    public abstract void render(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY);
     public abstract void tick();
-    public abstract Text getName();
-    public abstract Text getDescription();
+    public abstract Component getName();
+    public abstract Component getDescription();
     public abstract void onSettingsChanged(WidgetSettings settings);
 
     public void onSettingsChanged() {

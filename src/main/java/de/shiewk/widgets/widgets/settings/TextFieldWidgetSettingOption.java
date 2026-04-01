@@ -3,20 +3,21 @@ package de.shiewk.widgets.widgets.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetsMod;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
 
     private TextField textField = null;
-    private final Text initialValue;
-    private final Text placeholder;
+    private final Component initialValue;
+    private final Component placeholder;
     private final boolean trim;
     private final int maxLength;
     private String value = "";
@@ -25,11 +26,11 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
         this.value = value;
     }
 
-    public class TextField extends TextFieldWidget {
+    public class TextField extends EditBox {
 
-        public TextField(TextRenderer textRenderer, int width, int height, Text text) {
+        public TextField(Font textRenderer, int width, int height, Component text) {
             super(textRenderer, width, height, text);
-            this.setChangedListener(value -> TextFieldWidgetSettingOption.this.setValue(TextFieldWidgetSettingOption.this.trim ? value.trim() : value));
+            this.setResponder(value -> TextFieldWidgetSettingOption.this.setValue(TextFieldWidgetSettingOption.this.trim ? value.trim() : value));
         }
 
         @Override
@@ -38,7 +39,7 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
         }
     }
 
-    public TextFieldWidgetSettingOption(String id, Text name, Text initialValue, Text placeholder, boolean trim, int maxLength) {
+    public TextFieldWidgetSettingOption(String id, Component name, Component initialValue, Component placeholder, boolean trim, int maxLength) {
         super(id, name);
         this.initialValue = initialValue;
         this.placeholder = placeholder;
@@ -48,10 +49,10 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
 
     private void initializeTextField() {
         if (textField != null) return;
-        textField = new TextField(MinecraftClient.getInstance().textRenderer, this.getWidth(), this.getHeight(), Text.empty());
-        textField.setPlaceholder(placeholder);
+        textField = new TextField(Minecraft.getInstance().font, this.getWidth(), this.getHeight(), Component.empty());
+        textField.setHint(placeholder);
         textField.setMaxLength(maxLength);
-        textField.setText(value.isEmpty() ? initialValue.getString() : value);
+        textField.setValue(value.isEmpty() ? initialValue.getString() : value);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
     @Override
     public void loadState(JsonElement state) {
         if (state.isJsonPrimitive() && state.getAsJsonPrimitive().isString()){
-            if (textField != null) textField.setText(state.getAsString());
+            if (textField != null) textField.setValue(state.getAsString());
             this.value = state.getAsString();
         } else {
             WidgetsMod.LOGGER.warn("Failed to load text field widget setting option for state {}", state);
@@ -89,33 +90,33 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         initializeTextField();
-        textField.render(context, mouseX, mouseY, delta);
+        textField.extractRenderState(context, mouseX, mouseY, delta);
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         return isFocused() && textField.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         return isFocused() && textField.mouseReleased(click);
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         return isFocused() && textField.charTyped(input);
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         return isFocused() && textField.keyPressed(input);
     }
 
     @Override
-    public boolean keyReleased(KeyInput input) {
+    public boolean keyReleased(KeyEvent input) {
         return isFocused() && textField.keyReleased(input);
     }
 

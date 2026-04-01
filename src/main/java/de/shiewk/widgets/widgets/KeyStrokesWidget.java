@@ -4,12 +4,12 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.Objects;
 public class KeyStrokesWidget extends ResizableWidget {
     public KeyStrokesWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("showjump", Text.translatable("widgets.widgets.keystrokes.showJumpKey"), true),
-                new GradientWidgetSetting("bgpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundPressed"), 0x50ffffff),
-                new GradientWidgetSetting("bgunpressed", Text.translatable("widgets.widgets.keystrokes.colorBackgroundUnpressed"), 0x50000000),
-                new GradientWidgetSetting("keypressed", Text.translatable("widgets.widgets.keystrokes.colorKeyPressed"), 0xffffffff),
-                new GradientWidgetSetting("keyunpressed", Text.translatable("widgets.widgets.keystrokes.colorKeyUnpressed"), 0xffffffff)
+                new ToggleWidgetSetting("showjump", Component.translatable("widgets.widgets.keystrokes.showJumpKey"), true),
+                new GradientWidgetSetting("bgpressed", Component.translatable("widgets.widgets.keystrokes.colorBackgroundPressed"), 0x50ffffff),
+                new GradientWidgetSetting("bgunpressed", Component.translatable("widgets.widgets.keystrokes.colorBackgroundUnpressed"), 0x50000000),
+                new GradientWidgetSetting("keypressed", Component.translatable("widgets.widgets.keystrokes.colorKeyPressed"), 0xffffffff),
+                new GradientWidgetSetting("keyunpressed", Component.translatable("widgets.widgets.keystrokes.colorKeyUnpressed"), 0xffffffff)
         ));
     }
 
@@ -30,11 +30,11 @@ public class KeyStrokesWidget extends ResizableWidget {
     private boolean showJumpKey = true;
 
     protected static class Key {
-        protected final KeyBinding binding;
+        protected final KeyMapping binding;
         protected boolean isPressed;
         protected long lastChanged;
 
-        private Key(KeyBinding binding) {
+        private Key(KeyMapping binding) {
             Objects.requireNonNull(binding);
             this.binding = binding;
         }
@@ -44,7 +44,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         protected String boundToKey;
         protected int boundToLength;
 
-        private KeyLarge(KeyBinding binding) {
+        private KeyLarge(KeyMapping binding) {
             super(binding);
         }
     }
@@ -53,7 +53,7 @@ public class KeyStrokesWidget extends ResizableWidget {
     private Key KEY_JUMP;
 
     @Override
-    public void renderScaled(DrawContext context, long measuringTimeNano, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         if (KEY_JUMP == null) return;
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 22, posY, KEY_FWD);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX, posY + 22, KEY_LEFT);
@@ -62,7 +62,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         if (showJumpKey) renderSpaceBar(context, measuringTimeNano, posX, posY + 44, KEY_JUMP);
     }
 
-    protected void renderSpaceBar(final DrawContext context, long mt, int posX, int posY, Key key){
+    protected void renderSpaceBar(final GuiGraphicsExtractor context, long mt, int posX, int posY, Key key){
         long l = mt - key.lastChanged;
         if (l < 100000000){
             double alpha = 0.00000001d * l;
@@ -74,7 +74,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         (key.isPressed ? colorKeyPressed : colorKeyUnpressed).fillHorizontal(context, mt, posX + 5, posY + 4, posX + 59, posY + 5);
     }
 
-    protected void renderKeyStroke(DrawContext context, TextRenderer textRenderer, long mt, int posX, int posY, KeyLarge key){
+    protected void renderKeyStroke(GuiGraphicsExtractor context, Font textRenderer, long mt, int posX, int posY, KeyLarge key){
         long l = mt - key.lastChanged;
         if (l < 100000000){
             double alpha = 0.00000001d * l;
@@ -88,43 +88,43 @@ public class KeyStrokesWidget extends ResizableWidget {
 
     @Override
     public void tick() {
-        if (KEY_FWD == null) KEY_FWD = new KeyLarge(MinecraftClient.getInstance().options.forwardKey);
-        if (KEY_BWD == null) KEY_BWD = new KeyLarge(MinecraftClient.getInstance().options.backKey);
-        if (KEY_LEFT == null) KEY_LEFT = new KeyLarge(MinecraftClient.getInstance().options.leftKey);
-        if (KEY_RIGHT == null) KEY_RIGHT = new KeyLarge(MinecraftClient.getInstance().options.rightKey);
-        if (KEY_JUMP == null) KEY_JUMP = new Key(MinecraftClient.getInstance().options.jumpKey);
-        TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
+        if (KEY_FWD == null) KEY_FWD = new KeyLarge(Minecraft.getInstance().options.keyUp);
+        if (KEY_BWD == null) KEY_BWD = new KeyLarge(Minecraft.getInstance().options.keyDown);
+        if (KEY_LEFT == null) KEY_LEFT = new KeyLarge(Minecraft.getInstance().options.keyLeft);
+        if (KEY_RIGHT == null) KEY_RIGHT = new KeyLarge(Minecraft.getInstance().options.keyRight);
+        if (KEY_JUMP == null) KEY_JUMP = new Key(Minecraft.getInstance().options.keyJump);
+        Font renderer = Minecraft.getInstance().font;
         for (Key key : new Key[]{KEY_FWD, KEY_BWD, KEY_LEFT, KEY_RIGHT, KEY_JUMP}){
             if (key instanceof KeyLarge keyLarge){
                 keyLarge.boundToKey = getKeyName(key);
-                keyLarge.boundToLength = renderer.getWidth(keyLarge.boundToKey);
+                keyLarge.boundToLength = renderer.width(keyLarge.boundToKey);
             }
-            final boolean pressed = key.binding.isPressed();
+            final boolean pressed = key.binding.isDown();
             if (pressed != key.isPressed){
                 key.isPressed = pressed;
-                key.lastChanged = Util.getMeasuringTimeNano();
+                key.lastChanged = Util.getNanos();
             }
         }
     }
 
     private static String getKeyName(Key key) {
-        return switch (key.binding.getBoundKeyTranslationKey()) {
+        return switch (key.binding.saveString()) {
             case "key.keyboard.up" -> "\u2191";
             case "key.keyboard.down" -> "\u2193";
             case "key.keyboard.left" -> "\u2190";
             case "key.keyboard.right" -> "\u2192";
-            default -> key.binding.getBoundKeyLocalizedText().getString();
+            default -> key.binding.getTranslatedKeyMessage().getString();
         };
     }
 
     @Override
-    public Text getName() {
-        return Text.translatable("widgets.widgets.keystrokes");
+    public Component getName() {
+        return Component.translatable("widgets.widgets.keystrokes");
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("widgets.widgets.keystrokes.description");
+    public Component getDescription() {
+        return Component.translatable("widgets.widgets.keystrokes.description");
     }
 
     @Override

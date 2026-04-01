@@ -1,27 +1,26 @@
 package de.shiewk.widgets.client.screen.components;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-public class WidgetWidget extends ClickableWidget {
-
-
+public class WidgetWidget extends AbstractWidget {
 
     protected static final int COLOR_BG = new Color(0, 0, 0, 80).getRGB(),
             COLOR_BG_HOVER = new Color(40, 40, 40, 80).getRGB(),
@@ -32,14 +31,14 @@ public class WidgetWidget extends ClickableWidget {
             COLOR_ENABLED_HOVER = new Color(0, 255, 0, 200).getRGB(),
             COLOR_BORDER = 0x80_ff_ff_ff;
 
-    private final MinecraftClient client;
+    private final Minecraft client;
     private final ModWidget widget;
-    private final TextRenderer textRenderer;
+    private final Font textRenderer;
     private final Consumer<ModWidget> onEdit;
 
     private long toggleTime = 0;
 
-    public WidgetWidget(int x, int y, int width, int height, MinecraftClient client, ModWidget widget, TextRenderer textRenderer, Consumer<ModWidget> onEdit) {
+    public WidgetWidget(int x, int y, int width, int height, Minecraft client, ModWidget widget, Font textRenderer, Consumer<ModWidget> onEdit) {
         super(x, y, width, height, widget.getName());
         this.client = client;
         this.widget = widget;
@@ -53,36 +52,36 @@ public class WidgetWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         boolean hover = this.isMouseOver(mouseX, mouseY);
         boolean widgetEnabled = widget.getSettings().isEnabled();
         context.fill(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), hover ? COLOR_BG_HOVER : COLOR_BG);
-        Matrix3x2fStack stack = context.getMatrices().pushMatrix();
+        Matrix3x2fStack stack = context.pose().pushMatrix();
         stack.scale(2, 2, stack);
-        int titleSize = textRenderer.getWidth(widget.getName());
-        context.drawText(textRenderer, widget.getName(), getX() / 2 + getWidth() / 4 - titleSize / 2, getY() / 2 + 4, COLOR_FG, false);
+        int titleSize = textRenderer.width(widget.getName());
+        context.text(textRenderer, widget.getName(), getX() / 2 + getWidth() / 4 - titleSize / 2, getY() / 2 + 4, COLOR_FG, false);
         stack.popMatrix();
-        int y = this.getY() + 12 + textRenderer.fontHeight * 2;
-        for (Iterator<OrderedText> it = textRenderer.wrapLines(widget.getDescription(), this.getWidth() - 10).iterator(); it.hasNext(); y += 9) {
-            OrderedText t = it.next();
-            context.drawText(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.getWidth(t) / 2), y, COLOR_FG, false);
+        int y = this.getY() + 12 + textRenderer.lineHeight * 2;
+        for (Iterator<FormattedCharSequence> it = textRenderer.split(widget.getDescription(), this.getWidth() - 10).iterator(); it.hasNext(); y += 9) {
+            FormattedCharSequence t = it.next();
+            context.text(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.width(t) / 2), y, COLOR_FG, false);
         }
         this.renderToggleButton(context, mouseX, mouseY, widgetEnabled);
 
         if (hover || isMouseOverToggle(mouseX, mouseY)){
-            context.setCursor(StandardCursors.POINTING_HAND);
+            context.requestCursor(CursorTypes.POINTING_HAND);
         }
 
-        context.drawHorizontalLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
-        context.drawHorizontalLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
-        context.drawVerticalLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
-        context.drawVerticalLine(getX() + getWidth() - 1, getY(), getY() + getHeight() - 1, COLOR_BORDER);
+        context.horizontalLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
+        context.horizontalLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
+        context.verticalLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
+        context.verticalLine(getX() + getWidth() - 1, getY(), getY() + getHeight() - 1, COLOR_BORDER);
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (isMouseOver(click.x(), click.y())){
-            client.setScreen(new WidgetSettingsScreen(client.currentScreen, widget, onEdit));
+            client.setScreen(new WidgetSettingsScreen(client.screen, widget, onEdit));
             return true;
         } else if (isMouseOverToggle(click.x(), click.y())){
             this.toggleWidget();
@@ -93,11 +92,11 @@ public class WidgetWidget extends ClickableWidget {
 
     private void toggleWidget() {
         widget.getSettings().toggleEnabled(widget);
-        toggleTime = Util.getMeasuringTimeNano();
+        toggleTime = Util.getNanos();
         onEdit.accept(widget);
     }
 
-    private void renderToggleButton(DrawContext context, int mouseX, int mouseY, boolean widgetEnabled){
+    private void renderToggleButton(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean widgetEnabled){
         boolean hoverToggle = this.isMouseOverToggle(mouseX, mouseY);
         final int toggleColor;
         final int toggleColorInvert;
@@ -118,13 +117,13 @@ public class WidgetWidget extends ClickableWidget {
                 toggleColorInvert = COLOR_ENABLED;
             }
         }
-        if (toggleTime > Util.getMeasuringTimeNano() - 250000000){
+        if (toggleTime > Util.getNanos() - 250000000){
             context.fill(this.getX(), this.getY() + this.getHeight() - 24, this.getX() + this.getWidth(), this.getY() + this.getHeight(), toggleColorInvert);
-            context.fill(this.getX(), this.getY() + this.getHeight() - 24, (int) (WidgetUtils.computeEasing((Util.getMeasuringTimeNano() - toggleTime) / 250000000d) * this.getWidth() + this.getX()), this.getY() + this.getHeight(), toggleColor);
+            context.fill(this.getX(), this.getY() + this.getHeight() - 24, (int) (WidgetUtils.computeEasing((Util.getNanos() - toggleTime) / 250000000d) * this.getWidth() + this.getX()), this.getY() + this.getHeight(), toggleColor);
         } else {
             context.fill(this.getX(), this.getY() + this.getHeight() - 24, this.getX() + this.getWidth(), this.getY() + this.getHeight(), toggleColor);
         }
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable(widgetEnabled ? "widgets.ui.enabled" : "widgets.ui.disabled"), this.getX() + (this.getWidth() / 2), this.getY() + this.getHeight() - 16, COLOR_FG);
+        context.centeredText(textRenderer, Component.translatable(widgetEnabled ? "widgets.ui.enabled" : "widgets.ui.disabled"), this.getX() + (this.getWidth() / 2), this.getY() + this.getHeight() - 16, COLOR_FG);
     }
 
     private boolean isMouseOverToggle(double mouseX, double mouseY) {
@@ -132,7 +131,7 @@ public class WidgetWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput builder) {
 
     }
 

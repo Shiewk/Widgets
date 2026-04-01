@@ -1,0 +1,4 @@
+classTweaker v1 official
+
+accessible field net/minecraft/client/multiplayer/ClientPacketListener pingDebugMonitor Lnet/minecraft/client/multiplayer/PingDebugMonitor;
+accessible field net/minecraft/client/multiplayer/PingDebugMonitor delayTimer Lnet/minecraft/util/debugchart/LocalSampleLogger;

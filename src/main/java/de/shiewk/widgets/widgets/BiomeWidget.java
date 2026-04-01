@@ -2,17 +2,16 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.biome.Biome;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class BiomeWidget extends BasicTextWidget {
 
@@ -28,17 +27,17 @@ public class BiomeWidget extends BasicTextWidget {
     @Override
     public void tickWidget() {
         if (++tickCounter % 20 == 0){
-            MinecraftClient client = MinecraftClient.getInstance();
-            ClientPlayerEntity player = client.player;
-            ClientWorld world = client.world;
+            Minecraft client = Minecraft.getInstance();
+            LocalPlayer player = client.player;
+            ClientLevel world = client.level;
             if (world != null && player != null){
-                RegistryEntry<Biome> biome = world.getBiome(player.getBlockPos());
-                String text = biome.getKeyOrValue().map(
+                Holder<Biome> biome = world.getBiome(player.blockPosition());
+                String text = biome.unwrap().map(
                         (biomeKey) -> {
                             if (showLabel){
-                                return translatable("widgets.widgets.biome.label", translatable(biomeKey.getValue().toTranslationKey("biome"))).getString();
+                                return translatable("widgets.widgets.biome.label", translatable(biomeKey.identifier().toLanguageKey("biome"))).getString();
                             } else {
-                                return translatable(biomeKey.getValue().toTranslationKey("biome")).getString();
+                                return translatable(biomeKey.identifier().toLanguageKey("biome")).getString();
                             }
                         },
                         (b) -> "[unregistered " + b + "]"
@@ -55,12 +54,12 @@ public class BiomeWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.biome");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.biome.description");
     }
 

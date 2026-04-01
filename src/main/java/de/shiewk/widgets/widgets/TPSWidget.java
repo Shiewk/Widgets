@@ -5,15 +5,14 @@ import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.server.ServerTickManager;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.ServerTickRateManager;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class TPSWidget extends BasicTextWidget {
     private TPSWidget(Identifier id) {
@@ -25,7 +24,7 @@ public class TPSWidget extends BasicTextWidget {
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
 
-    public static final TPSWidget INSTANCE = new TPSWidget(Identifier.of(WidgetsMod.MOD_ID, "tps"));
+    public static final TPSWidget INSTANCE = new TPSWidget(Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "tps"));
 
     private static long[] lastUpdates = new long[5];
     private static int updatePointer = 0;
@@ -40,13 +39,13 @@ public class TPSWidget extends BasicTextWidget {
     }
 
     public static void worldTimeUpdated(long nanoTime) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.isInSingleplayer()){
-            IntegratedServer server = client.getServer();
+        Minecraft client = Minecraft.getInstance();
+        if (client.isLocalServer()){
+            IntegratedServer server = client.getSingleplayerServer();
             if (server != null) {
-                ServerTickManager tickManager = server.getTickManager();
-                float tps = 1000f / server.getAverageTickTime();
-                float targetTickRate = tickManager.getTickRate();
+                ServerTickRateManager tickManager = server.tickRateManager();
+                float tps = 1000f / server.getCurrentSmoothedTickTime();
+                float targetTickRate = tickManager.tickrate();
                 if (tickManager.isSprinting()){
                     INSTANCE.updateTPS(tps, targetTickRate, true);
                 } else {
@@ -70,8 +69,8 @@ public class TPSWidget extends BasicTextWidget {
             float ticksPerSecond = 1000f / mspt;
 
             boolean loadingFinished = updatesSinceWorldChange > lastUpdates.length;
-            if (client.world != null) {
-                INSTANCE.updateTPS(ticksPerSecond, client.world.getTickManager().getTickRate(), loadingFinished);
+            if (client.level != null) {
+                INSTANCE.updateTPS(ticksPerSecond, client.level.tickRateManager().tickrate(), loadingFinished);
             } else {
                 INSTANCE.updateTPS(ticksPerSecond, 20, loadingFinished);
             }
@@ -111,12 +110,12 @@ public class TPSWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.tps");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.tps.description");
     }
 

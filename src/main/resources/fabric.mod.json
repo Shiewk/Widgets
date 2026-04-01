@@ -11,7 +11,7 @@
   },
   "license": "LGPL-3.0-only",
   "icon": "assets/widgets/icon.png",
-  "accessWidener": "widgets.accesswidener",
+  "accessWidener": "widgets.classtweaker",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -29,7 +29,7 @@
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "fabric": "*",
+    "fabric-api": "*",
     "minecraft": "~${minecraft_version}"
   }
 }

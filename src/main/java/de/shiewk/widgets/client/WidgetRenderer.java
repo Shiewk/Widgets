@@ -8,19 +8,20 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.jspecify.annotations.NonNull;
 
 public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
 
-    public static final Identifier LAYER_ID = Identifier.of(WidgetsMod.MOD_ID, "widgets-hud-layer");
-    private static MinecraftClient client;
+    public static final Identifier LAYER_ID = Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "widgets-hud-layer");
+    private static Minecraft client;
     public static int guiScale = 1;
 
     public WidgetRenderer(){
@@ -30,15 +31,15 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         );
     }
 
-    public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {
-        if (client.options.hudHidden) return;
-        if (client.currentScreen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
-        final Profiler profiler = Profilers.get();
+    public void renderWidgets(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) {
+        if (client.options.hideGui) return;
+        if (client.screen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
+        final ProfilerFiller profiler = Profiler.get();
         profiler.push("widgets");
-        final TextRenderer textRenderer = client.textRenderer;
-        final long timeNano = Util.getMeasuringTimeNano();
-        final int windowWidth = drawContext.getScaledWindowWidth();
-        final int windowHeight = drawContext.getScaledWindowHeight();
+        final Font textRenderer = client.font;
+        final long timeNano = Util.getNanos();
+        final int windowWidth = drawContext.guiWidth();
+        final int windowHeight = drawContext.guiHeight();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
         for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
@@ -57,11 +58,11 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
     }
 
     @Override
-    public void onStartTick(MinecraftClient client) {
+    public void onStartTick(Minecraft client) {
         WidgetRenderer.client = client;
-        final Profiler profiler = Profilers.get();
+        final ProfilerFiller profiler = Profiler.get();
         profiler.push("widgets");
-        guiScale = client.getWindow().getScaleFactor();
+        guiScale = client.getWindow().getGuiScale();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
         for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
@@ -73,13 +74,13 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
         profiler.pop();
 
-        if (WidgetsModClient.configKeyBinding.wasPressed()){
-            client.setScreen(new WidgetConfigScreen(client.currentScreen));
+        if (WidgetsModClient.configKeyBinding.consumeClick()){
+            client.setScreen(new WidgetConfigScreen(client.screen));
         }
     }
 
     @Override
-    public void onClientStarted(MinecraftClient client) {
+    public void onClientStarted(@NonNull Minecraft client) {
         for (ModWidget widget : WidgetManager.getAllWidgets()) {
             widget.onSettingsChanged();
         }

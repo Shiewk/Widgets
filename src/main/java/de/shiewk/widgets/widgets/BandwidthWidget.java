@@ -5,16 +5,15 @@ import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.MultiValueDebugSampleLogImpl;
-
 import java.util.List;
 import java.util.function.LongFunction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.debugchart.LocalSampleLogger;
 
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class BandwidthWidget extends BasicTextWidget {
 
@@ -48,9 +47,9 @@ public class BandwidthWidget extends BasicTextWidget {
 
     public BandwidthWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("dynamic_color", Text.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
-                new ToggleWidgetSetting("hide_in_singleplayer", Text.translatable("widgets.widgets.common.hideInSingleplayer"), false),
-                new EnumWidgetSetting<>("unit", Text.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name)),
+                new ToggleWidgetSetting("dynamic_color", Component.translatable("widgets.widgets.bandwidth.dynamicColor"), true),
+                new ToggleWidgetSetting("hide_in_singleplayer", Component.translatable("widgets.widgets.common.hideInSingleplayer"), false),
+                new EnumWidgetSetting<>("unit", Component.translatable("widgets.widgets.bandwidth.unit"), Unit.class, Unit.KB, unit -> literal(unit.name)),
                 new ToggleWidgetSetting("fastupdate", translatable("widgets.widgets.bandwidth.fastupdate"), false)
         ));
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
@@ -70,7 +69,7 @@ public class BandwidthWidget extends BasicTextWidget {
         t++;
         if (t >= tickRate || fastUpdate){
             t = 0;
-            long avgBytesPerSecond = getAvgBytesPerSecond(MinecraftClient.getInstance(), tickRate);
+            long avgBytesPerSecond = getAvgBytesPerSecond(Minecraft.getInstance(), tickRate);
             formatAndSetRenderText(unit.sizeFormatter.apply(avgBytesPerSecond));
             if (this.dynamicColor){
                 if (avgBytesPerSecond < 100000){
@@ -84,9 +83,9 @@ public class BandwidthWidget extends BasicTextWidget {
         }
     }
 
-    private static long getAvgBytesPerSecond(MinecraftClient client, float tickRate) {
-        final MultiValueDebugSampleLogImpl packetSizeLog = client.getDebugHud().getPacketSizeLog();
-        final int logLength = packetSizeLog.getLength();
+    private static long getAvgBytesPerSecond(Minecraft client, float tickRate) {
+        final LocalSampleLogger packetSizeLog = client.getDebugOverlay().getBandwidthLogger();
+        final int logLength = packetSizeLog.size();
         final int avgCompileLength = (int) (3 * tickRate);
         long size = 0;
         for (int i = logLength-1; i > logLength-avgCompileLength; i--) {
@@ -106,12 +105,12 @@ public class BandwidthWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
-        return Text.translatable("widgets.widgets.bandwidth");
+    public Component getName() {
+        return Component.translatable("widgets.widgets.bandwidth");
     }
 
     @Override
-    public Text getDescription() {
-        return Text.translatable("widgets.widgets.bandwidth.description");
+    public Component getDescription() {
+        return Component.translatable("widgets.widgets.bandwidth.description");
     }
 }

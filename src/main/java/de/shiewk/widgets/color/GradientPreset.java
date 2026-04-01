@@ -1,10 +1,10 @@
 package de.shiewk.widgets.color;
 
-import net.minecraft.text.Text;
+import static net.minecraft.network.chat.Component.translatable;
 
-import static net.minecraft.text.Text.translatable;
+import net.minecraft.network.chat.Component;
 
-public record GradientPreset(Text name, GradientOptions gradient) {
+public record GradientPreset(Component name, GradientOptions gradient) {
 
     public static final GradientPreset[] presets = new GradientPreset[]{
             new GradientPreset(

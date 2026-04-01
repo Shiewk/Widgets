@@ -3,15 +3,14 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import static net.minecraft.text.Text.literal;
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class PlayerCountWidget extends BasicTextWidget{
     public PlayerCountWidget(Identifier id) {
@@ -28,18 +27,18 @@ public class PlayerCountWidget extends BasicTextWidget{
     public void tickWidget() {
         shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
         if (!shouldRender) return;
-        final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        String online = networkHandler == null ? "?" : String.valueOf(networkHandler.getListedPlayerListEntries().size());
+        final ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
+        String online = networkHandler == null ? "?" : String.valueOf(networkHandler.getListedOnlinePlayers().size());
         formatAndSetRenderText(showLabel ? literal(translatable("widgets.widgets.playerCount.online", online).getString()) : literal(online));
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.playerCount");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.playerCount.description");
     }
 

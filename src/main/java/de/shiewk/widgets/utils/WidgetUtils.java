@@ -1,12 +1,11 @@
 package de.shiewk.widgets.utils;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.tick.TickManager;
-
 import java.util.function.BooleanSupplier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.TickRateManager;
 
 public class WidgetUtils {
 
@@ -17,30 +16,30 @@ public class WidgetUtils {
     }
 
     public static boolean isInSingleplayer(){
-        return MinecraftClient.getInstance().isInSingleplayer();
+        return Minecraft.getInstance().isLocalServer();
     }
 
     public static float getClientTickRate(){
         float tickRate = 20f;
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null) {
-            TickManager tickManager = client.world.getTickManager();
+        Minecraft client = Minecraft.getInstance();
+        if (client.level != null) {
+            TickRateManager tickManager = client.level.tickRateManager();
             if (!tickManager.isFrozen()){
-                tickRate = Math.min(tickManager.getTickRate(), 20);
+                tickRate = Math.min(tickManager.tickrate(), 20);
             }
         }
         return tickRate;
     }
 
     public static void playSound(SoundEvent ev){
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.ui(ev, 1f, 1f));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(ev, 1f, 1f));
     }
 
     public static int fadeColor(int color1, int color2, double delta) {
-        int alpha = (int) MathHelper.lerp(delta, (color1 >> 24) & 0xff, (color2 >> 24) & 0xff);
-        int red = (int) MathHelper.lerp(delta, (color1 >> 16) & 0xff, (color2 >> 16) & 0xff);
-        int green = (int) MathHelper.lerp(delta, (color1 >> 8) & 0xff, (color2 >> 8) & 0xff);
-        int blue = (int) MathHelper.lerp(delta, color1 & 0xff, color2 & 0xff);
+        int alpha = (int) Mth.lerp(delta, (color1 >> 24) & 0xff, (color2 >> 24) & 0xff);
+        int red = (int) Mth.lerp(delta, (color1 >> 16) & 0xff, (color2 >> 16) & 0xff);
+        int green = (int) Mth.lerp(delta, (color1 >> 8) & 0xff, (color2 >> 8) & 0xff);
+        int blue = (int) Mth.lerp(delta, color1 & 0xff, color2 & 0xff);
         return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 

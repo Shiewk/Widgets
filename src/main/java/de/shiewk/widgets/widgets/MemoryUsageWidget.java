@@ -2,14 +2,13 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class MemoryUsageWidget extends BasicTextWidget {
 
@@ -26,7 +25,7 @@ public class MemoryUsageWidget extends BasicTextWidget {
     }
 
     @Override
-    public void renderScaled(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
         if (realtime) refresh();
         super.renderScaled(context, n, textRenderer, posX, posY);
     }
@@ -58,12 +57,12 @@ public class MemoryUsageWidget extends BasicTextWidget {
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.memory");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.memory.description");
     }
 

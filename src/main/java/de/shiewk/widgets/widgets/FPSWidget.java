@@ -2,16 +2,15 @@ package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-import static net.minecraft.text.Text.translatable;
+import static net.minecraft.network.chat.Component.translatable;
 
 public class FPSWidget extends BasicTextWidget {
 
@@ -25,7 +24,7 @@ public class FPSWidget extends BasicTextWidget {
     }
 
     @Override
-    public void renderScaled(DrawContext context, long n, TextRenderer textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
         if (realtime){
             timedFrames.add(n);
             while (timedFrames.getFirst() < n - 500_000_100L){
@@ -39,17 +38,17 @@ public class FPSWidget extends BasicTextWidget {
     @Override
     public void tickWidget() {
         if (!realtime){
-            formatAndSetRenderText(MinecraftClient.getInstance().getCurrentFps() + " FPS");
+            formatAndSetRenderText(Minecraft.getInstance().getFps() + " FPS");
         }
     }
 
     @Override
-    public Text getName() {
+    public Component getName() {
         return translatable("widgets.widgets.fps");
     }
 
     @Override
-    public Text getDescription() {
+    public Component getDescription() {
         return translatable("widgets.widgets.fps.description");
     }
 
