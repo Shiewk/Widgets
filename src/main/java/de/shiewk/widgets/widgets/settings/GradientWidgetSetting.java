@@ -117,9 +117,9 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         Minecraft client = Minecraft.getInstance();
-        if (client.screen instanceof WidgetSettingsScreen screen) {
+        if (client.gui.screen() instanceof WidgetSettingsScreen screen) {
             WidgetUtils.playSound(SoundEvents.COPPER_BULB_TURN_ON);
-            client.setScreen(new GradientEditorScreen(client.screen, screen.getWidget(), this, screen.getOnChange()));
+            client.gui.setScreen(new GradientEditorScreen(client.gui.screen(), screen.getWidget(), this, screen.getOnChange()));
         }
         return true;
     }

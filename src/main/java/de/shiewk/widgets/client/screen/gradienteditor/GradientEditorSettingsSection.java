@@ -227,10 +227,10 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         private final Button button = new Button.Builder(translatable("widgets.ui.gradientEditor.importOther"), this::press).build();
 
         private void press(Button button) {
-            Screen currentScreen = minecraft.screen;
+            Screen currentScreen = minecraft.gui.screen();
             int menuX = (int) minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
             int menuY = (int) minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
-            minecraft.setScreen(new ContextMenuScreen(
+            minecraft.gui.setScreen(new ContextMenuScreen(
                     button.getMessage(),
                     currentScreen,
                     menuX, menuY,
@@ -238,7 +238,7 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
                             .stream()
                             .map(widget -> new ContextMenuScreen.Option(
                                     widget.getName(),
-                                    () -> minecraft.setScreen(new ContextMenuScreen(
+                                    () -> minecraft.gui.setScreen(new ContextMenuScreen(
                                             widget.getName(),
                                             currentScreen,
                                             menuX,
@@ -272,10 +272,10 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         private final Button button = new Button.Builder(translatable("widgets.ui.gradientEditor.usePreset"), this::press).build();
 
         private void press(Button button) {
-            Screen currentScreen = minecraft.screen;
+            Screen currentScreen = minecraft.gui.screen();
             int menuX = (int) minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
             int menuY = (int) minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
-            minecraft.setScreen(new ContextMenuScreen(
+            minecraft.gui.setScreen(new ContextMenuScreen(
                     translatable("widgets.ui.gradientEditor.usePreset"),
                     currentScreen,
                     menuX, menuY,

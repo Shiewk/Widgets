@@ -81,7 +81,7 @@ public class WidgetWidget extends AbstractWidget {
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (isMouseOver(click.x(), click.y())){
-            client.setScreen(new WidgetSettingsScreen(client.screen, widget, onEdit));
+            client.gui.setScreen(new WidgetSettingsScreen(client.gui.screen(), widget, onEdit));
             return true;
         } else if (isMouseOverToggle(click.x(), click.y())){
             this.toggleWidget();

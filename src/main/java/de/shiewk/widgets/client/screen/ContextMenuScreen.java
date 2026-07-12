@@ -72,7 +72,7 @@ public class ContextMenuScreen extends Screen implements WidgetVisibilityToggle 
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     @Override

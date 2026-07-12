@@ -41,7 +41,7 @@ public class WidgetConfigScreen extends Screen {
         for (ModWidget widget : widgetsEdited) {
             widget.onSettingsChanged();
         }
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     int widgetListWidth;
@@ -85,7 +85,7 @@ public class WidgetConfigScreen extends Screen {
 
     private void switchToEditPositions(Button widget) {
         widget.active = false;
-        minecraft.setScreen(new EditWidgetPositionsScreen(this, this.onWidgetEdit));
+        minecraft.gui.setScreen(new EditWidgetPositionsScreen(this, this.onWidgetEdit));
     }
 
     @Override

@@ -36,7 +36,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
             ModWidget hovered = hoveredWidget;
             WidgetUtils.playSound(SoundEvents.COPPER_BULB_TURN_ON);
             if (hovered != null){
-                minecraft.setScreen(new ContextMenuScreen(
+                minecraft.gui.setScreen(new ContextMenuScreen(
                         Component.empty(),
                         this,
                         x,
@@ -271,7 +271,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                         List.of(
                                 new ContextMenuScreen.Option(
                                         Component.translatable("widgets.ui.editPositions.menu.widgetSettings"),
-                                        () -> minecraft.setScreen(new WidgetSettingsScreen(
+                                        () -> minecraft.gui.setScreen(new WidgetSettingsScreen(
                                                 this,
                                                 hovered,
                                                 this.onEdit
@@ -296,7 +296,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                                                 ));
                                             }
                                             // Add widget context menu
-                                            minecraft.setScreen(new ContextMenuScreen(
+                                            minecraft.gui.setScreen(new ContextMenuScreen(
                                                     Component.empty(),
                                                     this,
                                                     x,
@@ -315,7 +315,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                         )
                 ));
             } else {
-                minecraft.setScreen(new ContextMenuScreen(
+                minecraft.gui.setScreen(new ContextMenuScreen(
                         Component.empty(),
                         this,
                         x,
@@ -338,7 +338,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                                                 }
                                             }
                                             // Add widget context menu
-                                            minecraft.setScreen(new ContextMenuScreen(
+                                            minecraft.gui.setScreen(new ContextMenuScreen(
                                                     Component.empty(),
                                                     this,
                                                     x,

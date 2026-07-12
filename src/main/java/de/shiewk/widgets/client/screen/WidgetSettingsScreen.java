@@ -50,7 +50,7 @@ public class WidgetSettingsScreen extends AnimatedScreen implements WidgetVisibi
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     @Override

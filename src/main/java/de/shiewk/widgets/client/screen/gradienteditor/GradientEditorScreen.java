@@ -116,7 +116,7 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
     @Override
     public void onClose() {
         refreshSettingValue();
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     private void refreshSettingValue() {

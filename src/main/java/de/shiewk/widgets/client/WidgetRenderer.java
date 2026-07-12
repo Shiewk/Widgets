@@ -32,8 +32,8 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
     }
 
     public void renderWidgets(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) {
-        if (client.options.hideGui) return;
-        if (client.screen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
+        if (client.gui.hud.isHidden()) return;
+        if (client.gui.screen() instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
         final ProfilerFiller profiler = Profiler.get();
         profiler.push("widgets");
         final Font textRenderer = client.font;
@@ -42,8 +42,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         final int windowHeight = drawContext.guiHeight();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
-        for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
-            final ModWidget widget = enabled.get(i);
+        for (final ModWidget widget : enabled) {
             profiler.push(widget.getId().toString());
             widget.render(
                     drawContext,
@@ -65,8 +64,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         guiScale = client.getWindow().getGuiScale();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
-        for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
-            final ModWidget widget = enabled.get(i);
+        for (final ModWidget widget : enabled) {
             profiler.push(widget.getId().toString());
             widget.tick();
             profiler.pop();
@@ -75,7 +73,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         profiler.pop();
 
         if (WidgetsModClient.configKeyBinding.consumeClick()){
-            client.setScreen(new WidgetConfigScreen(client.screen));
+            client.gui.setScreen(new WidgetConfigScreen(client.gui.screen()));
         }
     }
 

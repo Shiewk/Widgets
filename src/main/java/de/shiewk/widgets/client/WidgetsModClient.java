@@ -40,7 +40,7 @@ public class WidgetsModClient implements ClientModInitializer {
                 dispatcher.register(ClientCommands.literal("widgetsmod").executes(ctx -> {
                     WidgetsMod.LOGGER.info("Ran in-game command");
                     final Minecraft client = ctx.getSource().getClient();
-                    client.schedule(() -> client.setScreen(new WidgetConfigScreen(client.screen)));
+                    client.schedule(() -> client.gui.setScreen(new WidgetConfigScreen(client.gui.screen())));
                     return 0;
                 })
             )
