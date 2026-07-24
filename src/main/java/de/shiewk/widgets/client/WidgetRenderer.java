@@ -33,6 +33,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
     public void renderWidgets(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) {
         if (client.gui.hud.isHidden()) return;
+        if (client.debugEntries.isOverlayVisible()) return;
         if (client.gui.screen() instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
         final ProfilerFiller profiler = Profiler.get();
         profiler.push("widgets");
