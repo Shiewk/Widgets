@@ -26,8 +26,9 @@ public class CoordinatesWidget extends ResizableWidget {
                         translatable("widgets.widgets.coordinates.directionFormat"),
                         DirectionWidget.DisplayFormat.class,
                         DirectionWidget.DisplayFormat.DIRECTION_YAW,
-                        DirectionWidget.DisplayFormat::format
+                        DirectionWidget.DisplayFormat::formatDefault
                 ),
+                new ToggleWidgetSetting("directionIntermediate", translatable("widgets.widgets.direction.intermediate"), false),
                 new ToggleWidgetSetting("hideCoordinates", translatable("widgets.widgets.coordinates.hideCoordinates"), false),
                 new TextFieldWidgetSettingOption(
                         "hiddenX",
@@ -57,7 +58,12 @@ public class CoordinatesWidget extends ResizableWidget {
                 new IntSliderWidgetSetting("paddingY", translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
                 new ToggleWidgetSetting("shadow", translatable("widgets.widgets.basictext.textshadow"), true)
         ));
+        getSettings().optionById("directionIntermediate").setShowCondition(() -> this.showDirection);
         getSettings().optionById("directionFormat").setShowCondition(() -> this.showDirection);
+        //noinspection unchecked (always works)
+        ((EnumWidgetSetting<DirectionWidget.DisplayFormat>) getSettings().optionById("directionFormat"))
+                .setNameFunction(f -> f.format(this.intermediateDirections));
+
         getSettings().optionById("hiddenX").setShowCondition(() -> this.hideCoordinates);
         getSettings().optionById("hiddenY").setShowCondition(() -> this.hideCoordinates);
         getSettings().optionById("hiddenZ").setShowCondition(() -> this.hideCoordinates);
@@ -66,7 +72,7 @@ public class CoordinatesWidget extends ResizableWidget {
     protected String textX = "X", textY = "Y", textZ = "Z", textDirection = "direction";
     protected String textHiddenX, textHiddenY, textHiddenZ;
     protected int txc = 0, tyc = 0, tzc = 0, tdc = 0;
-    protected boolean shadow = true, hideCoordinates = false;
+    protected boolean shadow = true, hideCoordinates = false, intermediateDirections = false;
     protected DirectionWidget.DisplayFormat directionFormat;
 
     @Override
@@ -111,7 +117,7 @@ public class CoordinatesWidget extends ResizableWidget {
             textY = String.valueOf(player.getBlockY());
             textZ = String.valueOf(player.getBlockZ());
         }
-        textDirection = directionFormat.format().getString();
+        textDirection = directionFormat.format(intermediateDirections).getString();
 
         txc = width() - textRenderer.width(textX) - paddingX;
         tyc = width() - textRenderer.width(textY) - paddingX;
@@ -144,6 +150,7 @@ public class CoordinatesWidget extends ResizableWidget {
         this.showY = (boolean) settings.optionById("y").getValue();
         this.showZ = (boolean) settings.optionById("z").getValue();
         this.showDirection = (boolean) settings.optionById("direction").getValue();
+        this.intermediateDirections = (boolean) settings.optionById("directionIntermediate").getValue();
         this.directionFormat = (DirectionWidget.DisplayFormat) settings.optionById("directionFormat").getValue();
         this.hideCoordinates = (boolean) settings.optionById("hideCoordinates").getValue();
         this.textHiddenX = (String) settings.optionById("hiddenX").getValue();
