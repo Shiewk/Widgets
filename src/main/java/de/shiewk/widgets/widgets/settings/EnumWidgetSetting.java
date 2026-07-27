@@ -18,16 +18,16 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T>
 
     private final Class<T> enumClass;
     private T value;
-    private final Function<T, Text> enumNameGetter;
+    private Function<T, Text> nameFunction;
     private int height = 0;
     private boolean mouseClick = false;
     private boolean changed = false;
 
-    public EnumWidgetSetting(String id, Text name, Class<T> enumClass, T defaultValue, Function<T, Text> enumNameGetter) {
+    public EnumWidgetSetting(String id, Text name, Class<T> enumClass, T defaultValue, Function<T, Text> nameFunction) {
         super(id, name);
         this.enumClass = enumClass;
         this.value = defaultValue;
-        this.enumNameGetter = enumNameGetter;
+        this.nameFunction = nameFunction;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T>
         int nx = 5;
         final int bx = getX() + getWidth();
         for (T constant : enumClass.getEnumConstants()) {
-            final Text name = enumNameGetter.apply(constant);
+            final Text name = nameFunction.apply(constant);
             final int textRendererWidth = textRenderer.getWidth(name);
             if (nx != 5 && nx + textRendererWidth + 20 > this.getWidth()){
                 y += 24;
@@ -110,5 +110,9 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T>
     @Override
     public int getHeight() {
         return height;
+    }
+
+    public void setNameFunction(Function<T, Text> nameFunction) {
+        this.nameFunction = nameFunction;
     }
 }

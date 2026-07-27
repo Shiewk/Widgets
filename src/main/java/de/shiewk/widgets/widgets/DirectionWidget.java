@@ -36,13 +36,32 @@ public class DirectionWidget extends BasicTextWidget {
             this.showsYaw = showsYaw;
         }
 
-        public Text format(int digits) {
+        public Text format(int digits, boolean intermediateDirections) {
             String yaw = "0";
             String direction = "unknown";
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                yaw = WidgetUtils.reduceDigits(MathHelper.wrapDegrees(player.getYaw()), digits);
-                direction = player.getHorizontalFacing().name().toLowerCase(Locale.ROOT);
+                float numYaw = MathHelper.wrapDegrees(player.getYaw());
+                yaw = WidgetUtils.reduceDigits(numYaw, digits);
+                if (intermediateDirections){
+                    // ---- 180/-180 ----  45 degrees per direction (360/8)
+                    // -       N        -  N: -180 until -157.5
+                    // -    NW    NE    -  NE: until -112.5; E: until -67.5
+                    // 90 W    +     E -90 SE: until -22.5; S: until 22.5
+                    // -    SW    SE    -  SW: until 67.5; W: until 112.5
+                    // -       S        -  NW: until 157.5; N: the rest
+                    // ------- 0 --------
+                    numYaw += 180; // Start (N) is now at 0; end at 360
+                    numYaw += 22.5f; // because north is short
+                    String[] directions = {
+                            "north", "northeast", "east", "southeast",
+                            "south", "southwest", "west", "northwest",
+                            "north"
+                    };
+                    direction = directions[(int) (numYaw / 45)];
+                } else {
+                    direction = player.getHorizontalFacing().name().toLowerCase(Locale.ROOT);
+                }
             }
             return switch (this){
                 case YAW_ONLY -> literal(yaw);
@@ -55,28 +74,39 @@ public class DirectionWidget extends BasicTextWidget {
             };
         }
 
-        public Text format(){
-            return format(1);
+        public Text format(boolean intermediateDirections){
+            return format(1, intermediateDirections);
         }
+
+        public Text formatDefault(){
+            return format(false);
+        }
+
     }
 
     protected DisplayFormat displayFormat;
     protected int digits = 1;
     protected boolean realtime = false;
+    protected boolean intermediate = false;
 
     public DirectionWidget(Identifier id) {
         super(id, List.of(
+                new ToggleWidgetSetting("intermediate", translatable("widgets.widgets.direction.intermediate"), false),
                 new EnumWidgetSetting<>(
                         "format",
                         translatable("widgets.widgets.direction.display"),
                         DisplayFormat.class,
                         DisplayFormat.DIRECTION_YAW,
-                        DisplayFormat::format
+                        DisplayFormat::formatDefault
                 ),
                 new IntSliderWidgetSetting("digits", translatable("widgets.widgets.direction.digits"), 0, 1, 3),
                 new ToggleWidgetSetting("realtime", translatable("widgets.widgets.common.realtime"), false)
         ));
         getSettings().optionById("digits").setShowCondition(() -> displayFormat.showsYaw);
+
+        //noinspection unchecked (always works)
+        ((EnumWidgetSetting<DisplayFormat>) getSettings().optionById("format"))
+                .setNameFunction(f -> f.format(this.intermediate));
     }
 
     @Override
@@ -91,7 +121,7 @@ public class DirectionWidget extends BasicTextWidget {
     }
 
     private void refresh() {
-        formatAndSetRenderText(displayFormat.format(digits).getString());
+        formatAndSetRenderText(displayFormat.format(digits, this.intermediate).getString());
     }
 
     @Override
@@ -110,5 +140,6 @@ public class DirectionWidget extends BasicTextWidget {
         this.displayFormat = (DisplayFormat) settings.optionById("format").getValue();
         this.realtime = (boolean) settings.optionById("realtime").getValue();
         this.digits = (int) settings.optionById("digits").getValue();
+        this.intermediate = (boolean) settings.optionById("intermediate").getValue();
     }
 }

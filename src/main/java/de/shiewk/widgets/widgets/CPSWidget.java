@@ -1,9 +1,13 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
+import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -16,23 +20,14 @@ import static net.minecraft.text.Text.translatable;
 
 public class CPSWidget extends BasicTextWidget {
 
-    public static class Click {
-        public int ticks = 0;
-        public final long expiresAt = Util.getMeasuringTimeMs() + 1000;
-
-        @Deprecated(forRemoval = true, since = "1.2.1")
-        public int tick(){
-            return ticks++;
-        }
-    }
-
     private static boolean countLeftClicks = true;
     private static boolean countMiddleClicks = true;
     private static boolean countRightClicks = true;
 
-    private static final ObjectArrayList<Click> leftClicks = new ObjectArrayList<>();
-    private static final ObjectArrayList<Click> middleClicks = new ObjectArrayList<>();
-    private static final ObjectArrayList<Click> rightClicks = new ObjectArrayList<>();
+    // These contain the timestamp of the clicks, NOT the expiry time
+    private static final LongArrayList leftClicks = new LongArrayList();
+    private static final LongArrayList middleClicks = new LongArrayList();
+    private static final LongArrayList rightClicks = new LongArrayList();
 
     public static int getCPSLeft() {
         return leftClicks.size();
@@ -46,6 +41,8 @@ public class CPSWidget extends BasicTextWidget {
 
     private Appearance appearance = Appearance.UNIFIED;
     private boolean showLabel = true;
+    protected GradientOptions setTextColor;
+    protected GradientOptions clickColor;
 
     public enum Appearance {
         SPLIT_PIPE("pipe"),
@@ -65,44 +62,52 @@ public class CPSWidget extends BasicTextWidget {
                 new EnumWidgetSetting<>("appearance", translatable("widgets.widgets.cps.appearance"), Appearance.class, Appearance.UNIFIED, appearance -> translatable("widgets.widgets.cps.appearance."+appearance.key)),
                 new ToggleWidgetSetting("left", translatable("widgets.widgets.cps.left"), true),
                 new ToggleWidgetSetting("middle", translatable("widgets.widgets.cps.middle"), false),
-                new ToggleWidgetSetting("right", translatable("widgets.widgets.cps.right"), true)
+                new ToggleWidgetSetting("right", translatable("widgets.widgets.cps.right"), true),
+                new GradientWidgetSetting("clickcolor", translatable("widgets.widgets.cps.clickcolor"), 0xff_ff_ff_ff)
         ));
     }
 
     public static void clickLeft() {
         if (countLeftClicks){
-            leftClicks.add(new Click());
+            leftClicks.add(Util.getMeasuringTimeMs());
         }
     }
 
     public static void clickMiddle() {
         if (countMiddleClicks){
-            middleClicks.add(new Click());
+            middleClicks.add(Util.getMeasuringTimeMs());
         }
     }
 
     public static void clickRight() {
         if (countRightClicks){
-            rightClicks.add(new Click());
+            rightClicks.add(Util.getMeasuringTimeMs());
         }
     }
 
     @Override
     public void tickWidget() {
+        this.textColor = isClicking() ? this.clickColor : this.setTextColor;
         int left = 0;
         int right = 0;
         int middle = 0;
         long mtime = Util.getMeasuringTimeMs();
         if (countLeftClicks) {
-            leftClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!leftClicks.isEmpty() && leftClicks.getFirst() + 1000 < mtime) {
+                leftClicks.removeFirst();
+            }
             left = leftClicks.size();
         }
         if (countRightClicks) {
-            rightClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!rightClicks.isEmpty() && rightClicks.getFirst() + 1000 < mtime) {
+                rightClicks.removeFirst();
+            }
             right = rightClicks.size();
         }
         if (countMiddleClicks) {
-            middleClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!middleClicks.isEmpty() && middleClicks.getFirst() + 1000 < mtime) {
+                middleClicks.removeFirst();
+            }
             middle = middleClicks.size();
         }
         if (showLabel){
@@ -116,6 +121,13 @@ public class CPSWidget extends BasicTextWidget {
                 case SPLIT_PIPE, SPLIT_SLASH -> literal(getClickText(left, middle, right).toString());
             });
         }
+    }
+
+    private boolean isClicking() {
+        Mouse mouseHandler = MinecraftClient.getInstance().mouse;
+        return (countLeftClicks && mouseHandler.wasLeftButtonClicked())
+                || (countRightClicks && mouseHandler.wasRightButtonClicked())
+                || (countMiddleClicks && mouseHandler.wasMiddleButtonClicked());
     }
 
     private @NotNull StringBuilder getClickText(int left, int middle, int right) {
@@ -146,6 +158,8 @@ public class CPSWidget extends BasicTextWidget {
         countRightClicks = (boolean) settings.optionById("right").getValue();
         appearance = (Appearance) settings.optionById("appearance").getValue();
         showLabel = (boolean) settings.optionById("show_label").getValue();
+        setTextColor = (GradientOptions) settings.optionById("textcolor").getValue();
+        clickColor = (GradientOptions) settings.optionById("clickcolor").getValue();
     }
 
     @Override

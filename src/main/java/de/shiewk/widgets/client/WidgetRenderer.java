@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
+import org.jspecify.annotations.NonNull;
 
 public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
 
@@ -32,6 +33,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
     public void renderWidgets(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (client.options.hudHidden) return;
+        if (client.debugHudEntryList.isF3Enabled()) return;
         if (client.currentScreen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
         final Profiler profiler = Profilers.get();
         profiler.push("widgets");
@@ -41,8 +43,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         final int windowHeight = drawContext.getScaledWindowHeight();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
-        for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
-            final ModWidget widget = enabled.get(i);
+        for (final ModWidget widget : enabled) {
             profiler.push(widget.getId().toString());
             widget.render(
                     drawContext,
@@ -64,8 +65,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         guiScale = client.getWindow().getScaleFactor();
 
         final ObjectArrayList<ModWidget> enabled = WidgetManager.enabled;
-        for (int i = 0, enabledSize = enabled.size(); i < enabledSize; i++) {
-            final ModWidget widget = enabled.get(i);
+        for (final ModWidget widget : enabled) {
             profiler.push(widget.getId().toString());
             widget.tick();
             profiler.pop();
@@ -79,7 +79,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
     }
 
     @Override
-    public void onClientStarted(MinecraftClient client) {
+    public void onClientStarted(@NonNull MinecraftClient client) {
         for (ModWidget widget : WidgetManager.getAllWidgets()) {
             widget.onSettingsChanged();
         }
