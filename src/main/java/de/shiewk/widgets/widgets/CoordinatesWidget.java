@@ -3,6 +3,7 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.*;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,12 +16,59 @@ import java.util.List;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class CoordinatesWidget extends ResizableWidget {
+
+    @SuppressWarnings("unused") // used through reflection
+    public enum Layout {
+        XZ("XZ", new char[][]{{'X', 'Z'}}),
+        XYZ("XYZ", new char[][]{{'X', 'Y', 'Z'}}),
+        XZD("XZD", new char[][]{{'X', 'Z', 'D'}}),
+        XYZD("XYZD", new char[][]{{'X', 'Y', 'Z', 'D'}}),
+        X_Z("X / Z", new char[][]{{'X'}, {'Z'}}),
+        X_Y_Z("X / Y / Z", new char[][]{{'X'}, {'Y'}, {'Z'}}),
+        X_Z_D("X / Z / D", new char[][]{{'X'}, {'Z'}, {'D'}}),
+        X_Y_Z_D("X / Y / Z / D", new char[][]{{'X'}, {'Y'}, {'Z'}, {'D'}}),
+        XZ_D("XZ / D", new char[][]{{'X', 'Z'}, {'D'}}),
+        XYZ_D("XYZ / D", new char[][]{{'X', 'Y', 'Z'}, {'D'}});
+
+        public final String displayName;
+        public final char[][] layout;
+
+        Layout(String displayName, char[][] layout) {
+            this.displayName = displayName;
+            this.layout = layout;
+        }
+
+        public Component displayName(){
+            return Component.literal(displayName);
+        }
+
+        public int lineCount(){
+            return layout.length;
+        }
+
+        public boolean hasComponent(char comp){
+            for (char[] chars : this.layout) {
+                for (char c : chars) {
+                    if (c == comp) return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasDirection(){
+            return hasComponent('D');
+        }
+    }
+
     public CoordinatesWidget(Identifier id) {
         super(id, List.of(
-                new ToggleWidgetSetting("x", translatable("widgets.widgets.coordinates.showX"), true),
-                new ToggleWidgetSetting("y", translatable("widgets.widgets.coordinates.showY"), true),
-                new ToggleWidgetSetting("z", translatable("widgets.widgets.coordinates.showZ"), true),
-                new ToggleWidgetSetting("direction", translatable("widgets.widgets.coordinates.showDirection"), false),
+                new EnumWidgetSetting<>(
+                        "layout",
+                        translatable("widgets.widgets.coordinates.layout"),
+                        Layout.class,
+                        Layout.X_Y_Z,
+                        Layout::displayName
+                ),
                 new EnumWidgetSetting<>(
                         "directionFormat",
                         translatable("widgets.widgets.coordinates.directionFormat"),
@@ -58,8 +106,8 @@ public class CoordinatesWidget extends ResizableWidget {
                 new IntSliderWidgetSetting("paddingY", translatable("widgets.widgets.basictext.paddingY"), 0, 5, 20),
                 new ToggleWidgetSetting("shadow", translatable("widgets.widgets.basictext.textshadow"), true)
         ));
-        getSettings().optionById("directionIntermediate").setShowCondition(() -> this.showDirection);
-        getSettings().optionById("directionFormat").setShowCondition(() -> this.showDirection);
+        getSettings().optionById("directionIntermediate").setShowCondition(() -> this.layout.hasDirection());
+        getSettings().optionById("directionFormat").setShowCondition(() -> this.layout.hasDirection());
         //noinspection unchecked (always works)
         ((EnumWidgetSetting<DirectionWidget.DisplayFormat>) getSettings().optionById("directionFormat"))
                 .setNameFunction(f -> f.format(this.intermediateDirections));
@@ -69,34 +117,19 @@ public class CoordinatesWidget extends ResizableWidget {
         getSettings().optionById("hiddenZ").setShowCondition(() -> this.hideCoordinates);
     }
 
-    protected String textX = "X", textY = "Y", textZ = "Z", textDirection = "direction";
-    protected String textHiddenX, textHiddenY, textHiddenZ;
-    protected int txc = 0, tyc = 0, tzc = 0, tdc = 0;
-    protected boolean shadow = true, hideCoordinates = false, intermediateDirections = false;
-    protected DirectionWidget.DisplayFormat directionFormat;
+    public record Line(String label, String value, int xLabel, int xValue) {}
+
+    // these are computed by the tick() method and used by the rendering
+    protected List<Line> lines = new ObjectArrayList<>(0);
 
     @Override
     public void renderScaled(GuiGraphicsExtractor context, long mt, Font textRenderer, int posX, int posY) {
         this.backgroundColor.fillHorizontal(context, mt, posX, posY, posX + width(), posY + height());
         int y = this.paddingY + 1;
-        if (showX){
-            this.textColor.drawText(context, textRenderer, mt, "X:", posX + paddingX, posY + y, shadow);
-            this.textColor.drawText(context, textRenderer, mt, textX, posX + txc, posY + y, shadow);
+        for (Line line : lines) {
+            this.textColor.drawText(context, textRenderer, mt, line.label, posX + line.xLabel, posY + y, shadow);
+            this.textColor.drawText(context, textRenderer, mt, line.value, posX + line.xValue, posY + y, shadow);
             y += 11;
-        }
-        if (showY){
-            this.textColor.drawText(context, textRenderer, mt, "Y:", posX + paddingX, posY + y, shadow);
-            this.textColor.drawText(context, textRenderer, mt, textY, posX + tyc, posY + y, shadow);
-            y += 11;
-        }
-        if (showZ){
-            this.textColor.drawText(context, textRenderer, mt, "Z:", posX + paddingX, posY + y, shadow);
-            this.textColor.drawText(context, textRenderer, mt, textZ, posX + tzc, posY + y, shadow);
-            y += 11;
-        }
-        if (showDirection){
-            this.textColor.drawText(context, textRenderer, mt, "D:", posX + paddingX, posY + y, shadow);
-            this.textColor.drawText(context, textRenderer, mt, textDirection, posX + tdc, posY + y, shadow);
         }
     }
 
@@ -104,25 +137,59 @@ public class CoordinatesWidget extends ResizableWidget {
     public void tick() {
         final Font textRenderer = Minecraft.getInstance().font;
         final LocalPlayer player = Minecraft.getInstance().player;
-        if (hideCoordinates){
-            textX = textHiddenX;
-            textY = textHiddenY;
-            textZ = textHiddenZ;
-        } else if (player == null){
-            textX = "?";
-            textY = "?";
-            textZ = "?";
-        } else {
-            textX = String.valueOf(player.getBlockX());
-            textY = String.valueOf(player.getBlockY());
-            textZ = String.valueOf(player.getBlockZ());
-        }
-        textDirection = directionFormat.format(intermediateDirections).getString();
 
-        txc = width() - textRenderer.width(textX) - paddingX;
-        tyc = width() - textRenderer.width(textY) - paddingX;
-        tzc = width() - textRenderer.width(textZ) - paddingX;
-        tdc = width() - textRenderer.width(textDirection) - paddingX;
+        ObjectArrayList<Line> lines = new ObjectArrayList<>(layout.lineCount());
+        for (char[] lineContent : layout.layout) {
+            StringBuilder label = new StringBuilder(5);
+            StringBuilder value = new StringBuilder(64);
+
+            for (int i = 0; i < lineContent.length; i++) {
+                char c = lineContent[i];
+                label.append(c);
+                if (i != 0){
+                    value.append(", ");
+                }
+                value.append(
+                    switch (c) {
+                        case 'X' -> {
+                            if (hideCoordinates){
+                                yield textHiddenX;
+                            } else if (player == null){
+                                yield "?";
+                            } else {
+                                yield player.getBlockX();
+                            }
+                        }
+                        case 'Y' -> {
+                            if (hideCoordinates){
+                                yield textHiddenY;
+                            } else if (player == null){
+                                yield "?";
+                            } else {
+                                yield player.getBlockY();
+                            }
+                        }
+                        case 'Z' -> {
+                            if (hideCoordinates){
+                                yield textHiddenZ;
+                            } else if (player == null){
+                                yield "?";
+                            } else {
+                                yield player.getBlockY();
+                            }
+                        }
+                        case 'D' -> directionFormat.format(intermediateDirections).getString();
+                        default -> throw new IllegalStateException("Unexpected layout element: " + c);
+                    }
+                );
+            }
+
+            label.append(':');
+            String finalValue = value.toString();
+            lines.add(new Line(label.toString(), finalValue, this.paddingX, width() - textRenderer.width(finalValue) - paddingX));
+        }
+
+        this.lines = lines;
     }
 
     @Override
@@ -139,17 +206,17 @@ public class CoordinatesWidget extends ResizableWidget {
 
     protected GradientOptions backgroundColor, textColor;
     protected int paddingX = PADDING, paddingY = PADDING, width = WIDTH;
-    protected boolean showX = true, showY = true, showZ = true, showDirection = false;
+    protected boolean intermediateDirections, hideCoordinates, shadow;
+    protected String textHiddenX, textHiddenY, textHiddenZ;
+    protected DirectionWidget.DisplayFormat directionFormat;
+    protected Layout layout;
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.backgroundColor = (GradientOptions) settings.optionById("backgroundcolor").getValue();
         this.textColor = (GradientOptions) settings.optionById("textcolor").getValue();
-        this.showX = (boolean) settings.optionById("x").getValue();
-        this.showY = (boolean) settings.optionById("y").getValue();
-        this.showZ = (boolean) settings.optionById("z").getValue();
-        this.showDirection = (boolean) settings.optionById("direction").getValue();
+        this.layout = (Layout) settings.optionById("layout").getValue();
         this.intermediateDirections = (boolean) settings.optionById("directionIntermediate").getValue();
         this.directionFormat = (DirectionWidget.DisplayFormat) settings.optionById("directionFormat").getValue();
         this.hideCoordinates = (boolean) settings.optionById("hideCoordinates").getValue();
@@ -169,11 +236,6 @@ public class CoordinatesWidget extends ResizableWidget {
 
     @Override
     public int height() {
-        int height = 2 * paddingY;
-        if (showX) height += 11;
-        if (showY) height += 11;
-        if (showZ) height += 11;
-        if (showDirection) height += 11;
-        return height;
+        return 2 * paddingY + (layout.lineCount() * 11) - 1;
     }
 }
