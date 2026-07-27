@@ -3,7 +3,7 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -16,23 +16,14 @@ import static net.minecraft.network.chat.Component.translatable;
 
 public class CPSWidget extends BasicTextWidget {
 
-    public static class Click {
-        public int ticks = 0;
-        public final long expiresAt = Util.getMillis() + 1000;
-
-        @Deprecated(forRemoval = true, since = "1.2.1")
-        public int tick(){
-            return ticks++;
-        }
-    }
-
     private static boolean countLeftClicks = true;
     private static boolean countMiddleClicks = true;
     private static boolean countRightClicks = true;
 
-    private static final ObjectArrayList<Click> leftClicks = new ObjectArrayList<>();
-    private static final ObjectArrayList<Click> middleClicks = new ObjectArrayList<>();
-    private static final ObjectArrayList<Click> rightClicks = new ObjectArrayList<>();
+    // These contain the timestamp of the clicks, NOT the expiry time
+    private static final LongArrayList leftClicks = new LongArrayList();
+    private static final LongArrayList middleClicks = new LongArrayList();
+    private static final LongArrayList rightClicks = new LongArrayList();
 
     public static int getCPSLeft() {
         return leftClicks.size();
@@ -71,19 +62,19 @@ public class CPSWidget extends BasicTextWidget {
 
     public static void clickLeft() {
         if (countLeftClicks){
-            leftClicks.add(new Click());
+            leftClicks.add(Util.getMillis());
         }
     }
 
     public static void clickMiddle() {
         if (countMiddleClicks){
-            middleClicks.add(new Click());
+            middleClicks.add(Util.getMillis());
         }
     }
 
     public static void clickRight() {
         if (countRightClicks){
-            rightClicks.add(new Click());
+            rightClicks.add(Util.getMillis());
         }
     }
 
@@ -94,15 +85,21 @@ public class CPSWidget extends BasicTextWidget {
         int middle = 0;
         long mtime = Util.getMillis();
         if (countLeftClicks) {
-            leftClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!leftClicks.isEmpty() && leftClicks.getFirst() + 1000 < mtime) {
+                leftClicks.removeFirst();
+            }
             left = leftClicks.size();
         }
         if (countRightClicks) {
-            rightClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!rightClicks.isEmpty() && rightClicks.getFirst() + 1000 < mtime) {
+                rightClicks.removeFirst();
+            }
             right = rightClicks.size();
         }
         if (countMiddleClicks) {
-            middleClicks.removeIf(click -> click.expiresAt <= mtime);
+            while (!middleClicks.isEmpty() && middleClicks.getFirst() + 1000 < mtime) {
+                middleClicks.removeFirst();
+            }
             middle = middleClicks.size();
         }
         if (showLabel){
