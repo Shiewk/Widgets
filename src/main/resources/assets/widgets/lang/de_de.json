@@ -110,6 +110,7 @@
   "widgets.widgets.cps.appearance.pipe": "Getrennt (Senkrechter Strich)",
   "widgets.widgets.cps.appearance.slash": "Getrennt (Schrägstrich)",
   "widgets.widgets.cps.appearance.unified": "Vereinheitlicht",
+  "widgets.widgets.cps.clickcolor": "Textfarbe (während Klick)",
   "widgets.widgets.cps.description": "Zeigt deine Klicks pro Sekunde an",
   "widgets.widgets.cps.left": "Zeigt/Zählt Links-Klicks",
   "widgets.widgets.cps.middle": "Zeigt/Zählt Mittel-Klicks",

@@ -110,6 +110,7 @@
   "widgets.widgets.cps.appearance.pipe": "Split (Pipe)",
   "widgets.widgets.cps.appearance.slash": "Split (Slash)",
   "widgets.widgets.cps.appearance.unified": "Unified",
+  "widgets.widgets.cps.clickcolor": "Text color (when clicking)",
   "widgets.widgets.cps.description": "Shows your clicks per second.",
   "widgets.widgets.cps.left": "Display/Count left clicks",
   "widgets.widgets.cps.middle": "Display/Count middle clicks",
