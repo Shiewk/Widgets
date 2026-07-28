@@ -1,8 +1,8 @@
-package de.shiewk.widgets.client.screen.gradienteditor;
+package de.shiewk.widgets.screen.gradienteditor;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
-import de.shiewk.widgets.client.screen.components.WidgetDisplayWidget;
+import de.shiewk.widgets.screen.WidgetVisibilityToggle;
+import de.shiewk.widgets.screen.components.WidgetDisplayWidget;
 import de.shiewk.widgets.color.GradientMode;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;

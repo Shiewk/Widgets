@@ -1,7 +1,7 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.client.screen.components.WidgetSettingsEditWidget;
+import de.shiewk.widgets.screen.components.WidgetSettingsEditWidget;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;

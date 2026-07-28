@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

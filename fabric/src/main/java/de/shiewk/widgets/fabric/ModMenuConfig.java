@@ -2,7 +2,7 @@ package de.shiewk.widgets.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import de.shiewk.widgets.client.screen.WidgetConfigScreen;
+import de.shiewk.widgets.screen.WidgetConfigScreen;
 
 public final class ModMenuConfig implements ModMenuApi {
 

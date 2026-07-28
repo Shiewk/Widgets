@@ -2,9 +2,7 @@ package de.shiewk.widgets;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.Command;
-import de.shiewk.widgets.client.WidgetManager;
-import de.shiewk.widgets.client.WidgetRenderer;
-import de.shiewk.widgets.client.screen.WidgetConfigScreen;
+import de.shiewk.widgets.screen.WidgetConfigScreen;
 import de.shiewk.widgets.platform.PlatformInterface;
 import de.shiewk.widgets.widgets.*;
 import net.minecraft.client.KeyMapping;

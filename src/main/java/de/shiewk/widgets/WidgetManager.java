@@ -1,11 +1,9 @@
-package de.shiewk.widgets.client;
+package de.shiewk.widgets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
-import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetsMod;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
 

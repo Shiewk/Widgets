@@ -1,7 +1,7 @@
 package de.shiewk.widgets.neoforge;
 
 import de.shiewk.widgets.WidgetsMod;
-import de.shiewk.widgets.client.WidgetRenderer;
+import de.shiewk.widgets.WidgetRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.neoforged.api.distmarker.Dist;

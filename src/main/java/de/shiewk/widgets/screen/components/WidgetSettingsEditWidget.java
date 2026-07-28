@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen.components;
+package de.shiewk.widgets.screen.components;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;

@@ -1,7 +1,7 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.client.WidgetRenderer;
+import de.shiewk.widgets.WidgetRenderer;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

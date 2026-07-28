@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen.gradienteditor;
+package de.shiewk.widgets.screen.gradienteditor;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.WidgetsMod;

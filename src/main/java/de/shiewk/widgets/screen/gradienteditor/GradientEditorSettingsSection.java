@@ -1,10 +1,10 @@
-package de.shiewk.widgets.client.screen.gradienteditor;
+package de.shiewk.widgets.screen.gradienteditor;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.WidgetsMod;
-import de.shiewk.widgets.client.WidgetManager;
-import de.shiewk.widgets.client.screen.ContextMenuScreen;
+import de.shiewk.widgets.WidgetManager;
+import de.shiewk.widgets.screen.ContextMenuScreen;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.color.GradientPreset;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;

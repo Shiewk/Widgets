@@ -2,8 +2,8 @@ package de.shiewk.widgets.widgets.settings;
 
 import com.google.gson.JsonElement;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
-import de.shiewk.widgets.client.screen.gradienteditor.GradientEditorScreen;
+import de.shiewk.widgets.screen.WidgetSettingsScreen;
+import de.shiewk.widgets.screen.gradienteditor.GradientEditorScreen;
 import de.shiewk.widgets.color.GradientMode;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
@@ -16,7 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
-import static de.shiewk.widgets.client.WidgetManager.gson;
+import static de.shiewk.widgets.WidgetManager.gson;
 import static de.shiewk.widgets.utils.WidgetUtils.colorARGBToHexRGBA;
 
 public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> {

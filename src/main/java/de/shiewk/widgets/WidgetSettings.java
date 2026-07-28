@@ -3,7 +3,6 @@ package de.shiewk.widgets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import de.shiewk.widgets.client.WidgetManager;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.Objects;
 import net.minecraft.resources.Identifier;
 
 import static de.shiewk.widgets.WidgetsMod.LOGGER;
-import static de.shiewk.widgets.client.WidgetManager.gson;
+import static de.shiewk.widgets.WidgetManager.gson;
 
 public class WidgetSettings {
     public Anchor anchor = Anchor.TOP_LEFT;
