@@ -5,10 +5,6 @@ import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
 import de.shiewk.widgets.client.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,22 +12,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.jspecify.annotations.NonNull;
 
-public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecycleEvents.ClientStarted {
+public class WidgetRenderer {
 
     public static final Identifier LAYER_ID = Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "widgets-hud-layer");
     private static Minecraft client;
     public static int guiScale = 1;
 
-    public WidgetRenderer(){
-        HudElementRegistry.addLast(
-                LAYER_ID,
-                this::renderWidgets
-        );
-    }
-
-    public void renderWidgets(GuiGraphicsExtractor drawContext, DeltaTracker tickCounter) {
+    // Should be registered as a hud layer
+    public void renderWidgets(GuiGraphicsExtractor drawContext) {
         if (client.gui.hud.isHidden()) return;
         if (client.debugEntries.isOverlayVisible()) return;
         if (client.gui.screen() instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;
@@ -57,8 +46,7 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
         profiler.pop();
     }
 
-    @Override
-    public void onStartTick(Minecraft client) {
+    public void tickWidgets(Minecraft client) {
         WidgetRenderer.client = client;
         final ProfilerFiller profiler = Profiler.get();
         profiler.push("widgets");
@@ -73,13 +61,12 @@ public class WidgetRenderer implements ClientTickEvents.StartTick, ClientLifecyc
 
         profiler.pop();
 
-        if (WidgetsModClient.configKeyBinding.consumeClick()){
+        if (WidgetsMod.platform().getRegisteredSettingsKeyMapping().consumeClick()){
             client.gui.setScreen(new WidgetConfigScreen(client.gui.screen()));
         }
     }
 
-    @Override
-    public void onClientStarted(@NonNull Minecraft client) {
+    public void refreshAllSettings() {
         for (ModWidget widget : WidgetManager.getAllWidgets()) {
             widget.onSettingsChanged();
         }

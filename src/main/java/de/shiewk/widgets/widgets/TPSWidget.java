@@ -1,7 +1,6 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
@@ -15,7 +14,7 @@ import net.minecraft.server.ServerTickRateManager;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class TPSWidget extends BasicTextWidget {
-    private TPSWidget(Identifier id) {
+    public TPSWidget(Identifier id) {
         super(id, List.of(
                 new ToggleWidgetSetting("show_label", translatable("widgets.widgets.common.showLabel"), true),
                 new ToggleWidgetSetting("dynamic_color", translatable("widgets.widgets.tps.dynamicColor"), true),
@@ -24,21 +23,19 @@ public class TPSWidget extends BasicTextWidget {
         getSettings().optionById("textcolor").setShowCondition(() -> !this.dynamicColor);
     }
 
-    public static final TPSWidget INSTANCE = new TPSWidget(Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "tps"));
-
-    private static long[] lastUpdates = new long[5];
-    private static int updatePointer = 0;
-    private static int updatesSinceWorldChange = 0;
+    private long[] lastUpdates = new long[5];
+    private int updatePointer = 0;
+    private int updatesSinceWorldChange = 0;
 
     private boolean dynamicColor = true;
     private boolean showLabel = true;
 
-    public static void worldChanged(){
+    public void worldChanged(){
         updatesSinceWorldChange = 0;
-        INSTANCE.updateTPS(1, 1, false);
+        this.updateTPS(1, 1, false);
     }
 
-    public static void worldTimeUpdated(long nanoTime) {
+    public void worldTimeUpdated(long nanoTime) {
         Minecraft client = Minecraft.getInstance();
         if (client.isLocalServer()){
             IntegratedServer server = client.getSingleplayerServer();
@@ -47,9 +44,9 @@ public class TPSWidget extends BasicTextWidget {
                 float tps = 1000f / server.getCurrentSmoothedTickTime();
                 float targetTickRate = tickManager.tickrate();
                 if (tickManager.isSprinting()){
-                    INSTANCE.updateTPS(tps, targetTickRate, true);
+                    this.updateTPS(tps, targetTickRate, true);
                 } else {
-                    INSTANCE.updateTPS(Math.min(tps, targetTickRate), targetTickRate, true);
+                    this.updateTPS(Math.min(tps, targetTickRate), targetTickRate, true);
                 }
             }
         } else {
@@ -70,9 +67,9 @@ public class TPSWidget extends BasicTextWidget {
 
             boolean loadingFinished = updatesSinceWorldChange > lastUpdates.length;
             if (client.level != null) {
-                INSTANCE.updateTPS(ticksPerSecond, client.level.tickRateManager().tickrate(), loadingFinished);
+                this.updateTPS(ticksPerSecond, client.level.tickRateManager().tickrate(), loadingFinished);
             } else {
-                INSTANCE.updateTPS(ticksPerSecond, 20, loadingFinished);
+                this.updateTPS(ticksPerSecond, 20, loadingFinished);
             }
         }
     }

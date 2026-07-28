@@ -2,8 +2,7 @@ package de.shiewk.widgets.render.state;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import de.shiewk.widgets.WidgetsMod;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
 public final class HorizontalGradientGuiRenderState implements GuiElementRenderState {
 
     private final RenderPipeline pipeline;
@@ -89,12 +87,13 @@ public final class HorizontalGradientGuiRenderState implements GuiElementRenderS
     }
 
     public static void draw(GuiGraphicsExtractor context, int x, int y, int endX, int endY, int colorLeft, int colorRight) {
-        context.guiRenderState.addGuiElement(
+        WidgetsMod.platform().accessors().addGuiElement(
+                context,
                 new HorizontalGradientGuiRenderState(
                         RenderPipelines.GUI,
                         TextureSetup.noTexture(),
                         new Matrix3x2f(context.pose()),
-                        context.scissorStack.peek(),
+                        WidgetsMod.platform().accessors().peekScissor(context),
                         x, y, endX, endY,
                         colorLeft, colorRight
                 )

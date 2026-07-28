@@ -5,59 +5,31 @@ plugins {
 version = "${project.mod_version}-${project.minecraft_version}"
 group = project.maven_group
 
-base {
-    archivesName = project.archives_base_name
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/widgets.classtweaker")
-}
-
-repositories {
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
+allprojects {
+    repositories {
+        // Fabric Maven
+        maven {
+            name = "Fabric Repository"
+            url = "https://maven.fabricmc.net/"
         }
-        filter {
-            includeGroup "maven.modrinth"
+        // Modrinth Maven
+        maven {
+            name = "Modrinth"
+            url = "https://api.modrinth.com/maven"
+            content {
+                includeGroup "maven.modrinth"
+            }
         }
     }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    implementation "maven.modrinth:modmenu:${project.modmenu_version}"
-}
-
-processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
-    filteringCharset = "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
-    }
+    implementation "net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7"
 }
 
 def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         it.options.release.set(targetJavaVersion)
@@ -68,11 +40,5 @@ java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${archives_base_name}" }
     }
 }

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": ["${mod_authors}"],
+  "contact": {
+    "sources": "${mod_repository}",
+    "issues": "${mod_issue_tracker}"
+  },
+  "license": "${mod_license}",
+  "accessWidener": "widgets.classtweaker",
+  "icon": "assets/widgets/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "de.shiewk.widgets.fabric.WidgetsFabric"
+    ],
+    "main": [],
+    "modmenu": [
+      "de.shiewk.widgets.fabric.ModMenuConfig"
+    ]
+  },
+  "mixins": [
+    "widgets.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": ">=${minecraft_version}"
+  }
+}
