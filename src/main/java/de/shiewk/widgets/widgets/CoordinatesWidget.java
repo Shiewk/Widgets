@@ -175,7 +175,7 @@ public class CoordinatesWidget extends ResizableWidget {
                             } else if (player == null){
                                 yield "?";
                             } else {
-                                yield player.getBlockY();
+                                yield player.getBlockZ();
                             }
                         }
                         case 'D' -> directionFormat.format(intermediateDirections).getString();
