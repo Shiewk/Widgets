@@ -26,7 +26,7 @@ public class EffectsWidget extends ResizableWidget {
     protected ActiveEffect[] effects = new ActiveEffect[0];
     protected GradientOptions backgroundColor, textColor;
     protected int paddingIn, paddingOutX, paddingOutY, width;
-    protected boolean showIcons, textShadow;
+    protected boolean showIcons, textShadow, visible;
 
     public EffectsWidget(Identifier id) {
         super(id, List.of(
@@ -43,38 +43,40 @@ public class EffectsWidget extends ResizableWidget {
 
     @Override
     public void renderScaled(GuiGraphicsExtractor context, long timeNanos, Font textRenderer, int posX, int posY) {
-        Minecraft client = Minecraft.getInstance();
-        this.backgroundColor.fillHorizontal(context, timeNanos, posX, posY, posX + width(), posY + height());
-        int ox = this.paddingOutX;
-        int oy = this.paddingOutY;
-        for (ActiveEffect effect : this.effects) {
-            if (showIcons){
-                context.blitSprite(
-                        RenderPipelines.GUI_TEXTURED,
-                        effect.iconSprite,
-                        posX + ox, posY + oy,
-                        24, 24
+        if (visible){
+            Minecraft client = Minecraft.getInstance();
+            this.backgroundColor.fillHorizontal(context, timeNanos, posX, posY, posX + width(), posY + height());
+            int ox = this.paddingOutX;
+            int oy = this.paddingOutY;
+            for (ActiveEffect effect : this.effects) {
+                if (showIcons){
+                    context.blitSprite(
+                            RenderPipelines.GUI_TEXTURED,
+                            effect.iconSprite,
+                            posX + ox, posY + oy,
+                            24, 24
+                    );
+                }
+                this.textColor.drawText(
+                        context,
+                        client.font,
+                        timeNanos,
+                        effect.name,
+                        posX + ox + (showIcons ? 29 : 0),
+                        posY + oy + 3,
+                        this.textShadow
                 );
+                this.textColor.drawText(
+                        context,
+                        client.font,
+                        timeNanos,
+                        effect.duration,
+                        posX + ox + (showIcons ? 29 : 0),
+                        posY + oy + 14,
+                        this.textShadow
+                );
+                oy += 24 + this.paddingIn;
             }
-            this.textColor.drawText(
-                    context,
-                    client.font,
-                    timeNanos,
-                    effect.name,
-                    posX + ox + (showIcons ? 29 : 0),
-                    posY + oy + 3,
-                    this.textShadow
-            );
-            this.textColor.drawText(
-                    context,
-                    client.font,
-                    timeNanos,
-                    effect.duration,
-                    posX + ox + (showIcons ? 29 : 0),
-                    posY + oy + 14,
-                    this.textShadow
-            );
-            oy += 24 + this.paddingIn;
         }
     }
 
@@ -96,6 +98,7 @@ public class EffectsWidget extends ResizableWidget {
             }
             this.effects = modEffects;
         }
+        this.visible = this.effects.length != 0;
     }
 
     public static @NonNull String getDurationString(int durationTicks) {
