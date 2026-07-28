@@ -192,16 +192,6 @@ public class CoordinatesWidget extends ResizableWidget {
         this.lines = lines;
     }
 
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.coordinates");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.coordinates.description");
-    }
-
     protected static final int WIDTH = 80, PADDING = 6;
 
     protected GradientOptions backgroundColor, textColor;

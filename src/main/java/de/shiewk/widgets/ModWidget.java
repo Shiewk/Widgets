@@ -8,6 +8,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import static net.minecraft.network.chat.Component.translatable;
+
 public abstract class ModWidget {
 
     private final Identifier id;
@@ -32,8 +34,15 @@ public abstract class ModWidget {
     }
     public abstract void render(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY);
     public abstract void tick();
-    public abstract Component getName();
-    public abstract Component getDescription();
+
+    public Component getName() {
+        return translatable("widgets." + id.getNamespace() + "." + id.getPath());
+    }
+
+    public Component getDescription() {
+        return translatable("widgets." + id.getNamespace() + "." + id.getPath() + ".description");
+    }
+
     public abstract void onSettingsChanged(WidgetSettings settings);
 
     public void onSettingsChanged() {

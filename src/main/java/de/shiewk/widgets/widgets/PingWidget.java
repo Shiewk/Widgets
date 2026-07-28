@@ -76,13 +76,4 @@ public class PingWidget extends BasicTextWidget {
         this.hideInSingleplayer = (boolean) settings.optionById("hide_in_singleplayer").getValue();
     }
 
-    @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.ping");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.ping.description");
-    }
 }

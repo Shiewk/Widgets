@@ -75,14 +75,4 @@ public class WorldTimeWidget extends BasicTextWidget {
         this.timeFormat = (ClockWidget.TimeOption) settings.optionById("time_format").getValue();
     }
 
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.worldtime");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.worldtime.description");
-    }
-
 }

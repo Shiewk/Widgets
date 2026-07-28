@@ -17,6 +17,7 @@ import static net.minecraft.network.chat.Component.translatable;
 
 public class BandwidthWidget extends BasicTextWidget {
 
+    @SuppressWarnings("unused") // Used as setting
     public enum Unit {
         @SuppressWarnings("IntegerDivisionInFloatingPointContext")
         KB("kB", bytes -> {
@@ -104,13 +105,4 @@ public class BandwidthWidget extends BasicTextWidget {
         this.fastUpdate = (boolean) settings.optionById("fastupdate").getValue();
     }
 
-    @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.bandwidth");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.bandwidth.description");
-    }
 }

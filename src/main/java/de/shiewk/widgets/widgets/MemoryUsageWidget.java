@@ -5,7 +5,6 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import java.util.List;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import static net.minecraft.network.chat.Component.translatable;
@@ -54,16 +53,6 @@ public class MemoryUsageWidget extends BasicTextWidget {
 
     private long mib(long bytes) {
         return bytes / 0x100000;
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.memory");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.memory.description");
     }
 
     @Override

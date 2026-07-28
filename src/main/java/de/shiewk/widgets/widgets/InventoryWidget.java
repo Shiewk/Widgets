@@ -156,16 +156,6 @@ public class InventoryWidget extends ResizableWidget {
     }
 
     @Override
-    public Component getName() {
-        return translatable("widgets.widgets.inventory");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.inventory.description");
-    }
-
-    @Override
     public int width() {
         return switch (mode){
             case VANILLA, TEXTURE_PACK -> 176;

@@ -7,7 +7,6 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import static net.minecraft.network.chat.Component.translatable;
@@ -40,16 +39,6 @@ public class FPSWidget extends BasicTextWidget {
         if (!realtime){
             formatAndSetRenderText(Minecraft.getInstance().getFps() + " FPS");
         }
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.fps");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.fps.description");
     }
 
     @Override

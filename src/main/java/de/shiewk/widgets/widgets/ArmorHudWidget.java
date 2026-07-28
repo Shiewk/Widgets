@@ -25,12 +25,12 @@ public class ArmorHudWidget extends ResizableWidget {
 
     public ArmorHudWidget(Identifier id) {
         super(id, List.of(
-                new IntSliderWidgetSetting("padding", translatable("widgets.widgets.armorHud.padding"), 0, 2, 5),
-                new ToggleWidgetSetting("show_durability", translatable("widgets.widgets.armorHud.showDurability"), true),
+                new IntSliderWidgetSetting("padding", translatable("widgets.widgets.armor.padding"), 0, 2, 5),
+                new ToggleWidgetSetting("show_durability", translatable("widgets.widgets.armor.showDurability"), true),
                 new IntSliderWidgetSetting("width", translatable("widgets.widgets.basictext.width"), 16, 42, 128),
                 new EnumWidgetSetting<>("alignment", translatable("widgets.widgets.basictext.alignment"), BasicTextWidget.TextAlignment.class, BasicTextWidget.TextAlignment.CENTER, BasicTextWidget.TextAlignment::displayText),
                 new GradientWidgetSetting("backgroundcolor", translatable("widgets.widgets.basictext.background"), 0x50_00_00_00),
-                new EnumWidgetSetting<>("durability_style", translatable("widgets.widgets.armorHud.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
+                new EnumWidgetSetting<>("durability_style", translatable("widgets.widgets.armor.durabilityStyle"), DurabilityStyle.class, DurabilityStyle.NUMBER, DurabilityStyle::getDisplayName),
                 new GradientWidgetSetting("textcolor", translatable("widgets.widgets.basictext.textcolor"), 0xff_ff_ff_ff)
         ));
         getSettings().optionById("width").setShowCondition(() -> this.showDurability);
@@ -43,7 +43,7 @@ public class ArmorHudWidget extends ResizableWidget {
         PERCENT;
 
         public Component getDisplayName() {
-            return translatable("widgets.widgets.armorHud.durabilityStyle." + name().toLowerCase(Locale.ROOT));
+            return translatable("widgets.widgets.armor.durabilityStyle." + name().toLowerCase(Locale.ROOT));
         }
     }
 
@@ -124,16 +124,6 @@ public class ArmorHudWidget extends ResizableWidget {
         } else {
             helmet = chestplate = leggings = boots = null;
         }
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.armorHud");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.armorHud.description");
     }
 
     @Override

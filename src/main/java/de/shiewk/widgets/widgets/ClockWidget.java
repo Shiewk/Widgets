@@ -29,6 +29,7 @@ public class ClockWidget extends BasicTextWidget {
         }
     }
 
+    @SuppressWarnings("unused") // Used as setting
     public enum DateOption {
         NO_DATE(null),
         FULL_MONTH_DAY("MMMM dd"),
@@ -55,6 +56,7 @@ public class ClockWidget extends BasicTextWidget {
         }
     }
 
+    @SuppressWarnings("unused") // Used as setting
     public enum WeekOption {
         NO_DAY_OF_WEEK(null),
         ABBREVIATED("E"),
@@ -133,13 +135,4 @@ public class ClockWidget extends BasicTextWidget {
         dateFormat = new SimpleDateFormat(datePattern);
     }
 
-    @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.clock");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.clock.description");
-    }
 }

@@ -17,16 +17,6 @@ public class PlainTextWidget extends BasicTextWidget {
     public void tickWidget() {}
 
     @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.plaintext");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.plaintext.description");
-    }
-
-    @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         formatAndSetRenderText((String) settings.optionById("text").getValue());

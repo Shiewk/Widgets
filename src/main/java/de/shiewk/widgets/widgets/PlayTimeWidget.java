@@ -3,7 +3,6 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.EnumWidgetSetting;
 import java.util.List;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import static net.minecraft.network.chat.Component.literal;
@@ -57,16 +56,6 @@ public class PlayTimeWidget extends BasicTextWidget {
 
     private String formatTimeNumber(long l) {
         return l < 10 ? "0" + l : String.valueOf(l);
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.playtime");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.playtime.description");
     }
 
     @Override

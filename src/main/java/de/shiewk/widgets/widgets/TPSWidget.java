@@ -7,7 +7,6 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.server.IntegratedServer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.ServerTickRateManager;
 
@@ -104,16 +103,6 @@ public class TPSWidget extends BasicTextWidget {
     @Override
     public void tickWidget() {
 
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.tps");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.tps.description");
     }
 
     @Override

@@ -118,16 +118,6 @@ public class KeyStrokesWidget extends ResizableWidget {
     }
 
     @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.keystrokes");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.keystrokes.description");
-    }
-
-    @Override
     public int width() {
         return 64;
     }
