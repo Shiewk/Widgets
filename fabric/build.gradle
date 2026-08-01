@@ -1,0 +1,49 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = rootProject.version
+
+base {
+    archivesName = mod_id + "-fabric"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/widgets.classtweaker")
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "maven.modrinth:modmenu:${project.modmenu_version}"
+    // include common classes from root project
+    implementation project(":")
+}
+
+tasks.named('jar', Jar) {
+    dependsOn project(':').tasks.named('classes')
+    // include compiled output from root project
+    from project(':').sourceSets.main.output.classesDirs
+}
+
+processResources {
+    filteringCharset = "UTF-8"
+
+    // include resources from root
+    dependsOn project(':').tasks.named('classes')
+    from project(':').sourceSets.main.resources
+
+    filesMatching("fabric.mod.json") {
+        expand "mod_version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version,
+                "mod_id": project.mod_id,
+                "mod_name": project.mod_name,
+                "mod_description": project.mod_description,
+                "mod_authors": project.mod_authors,
+                "mod_repository": project.mod_repository,
+                "mod_issue_tracker": project.mod_issue_tracker,
+                "mod_license": project.mod_license
+    }
+}

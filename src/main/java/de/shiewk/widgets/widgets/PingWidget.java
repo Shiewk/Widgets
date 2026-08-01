@@ -1,11 +1,13 @@
 package de.shiewk.widgets.widgets;
 
 import de.shiewk.widgets.WidgetSettings;
+import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.PingDebugMonitor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -31,15 +33,16 @@ public class PingWidget extends BasicTextWidget {
     public void tickWidget() {
         shouldRender = !(hideInSingleplayer && WidgetUtils.isInSingleplayer());
         if (!shouldRender) return;
-        final ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
+        ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
         if (networkHandler != null){
+            PingDebugMonitor pingMonitor = WidgetsMod.platform().accessors().getPingMonitor(networkHandler);
             if (lastPingQuery < Util.getMillis() - 5000){
-                networkHandler.pingDebugMonitor.tick();
+                pingMonitor.tick();
                 lastPingQuery = Util.getMillis();
             }
-            final LocalSampleLogger pingLog = networkHandler.pingDebugMonitor.delayTimer;
-            final int logLength = pingLog.size();
-            final int avgCompileLength = 3;
+            LocalSampleLogger pingLog = WidgetsMod.platform().accessors().getPingLog(pingMonitor);
+            int logLength = pingLog.size();
+            int avgCompileLength = 3;
             long ping = 0;
             int valuesRead = 0;
             for (int i = logLength-1; i > logLength-avgCompileLength-1; i--) {

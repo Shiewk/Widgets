@@ -3,23 +3,14 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
 import static net.minecraft.network.chat.Component.translatable;
 
-public class ComboWidget extends BasicTextWidget implements AttackEntityCallback {
+public class ComboWidget extends BasicTextWidget {
 
     public ComboWidget(Identifier id) {
         super(id, List.of(
@@ -39,13 +30,7 @@ public class ComboWidget extends BasicTextWidget implements AttackEntityCallback
     private int ticksSinceUpdate = 0;
     private int displayThreshold = 0;
 
-    @Override
-    public @NonNull InteractionResult interact(@NonNull Player playerEntity, @NonNull Level world, @NonNull InteractionHand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
-        clientHitEntity(entity.getId());
-        return InteractionResult.PASS;
-    }
-
-    private void clientHitEntity(int targetEntityId) {
+    public void clientHitEntity(int targetEntityId) {
         int oldTarget = this.targetEntityId;
         if (oldTarget != targetEntityId){
             resetCombo();

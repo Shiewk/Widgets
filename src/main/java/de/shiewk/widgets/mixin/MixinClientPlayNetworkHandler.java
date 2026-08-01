@@ -1,7 +1,7 @@
 package de.shiewk.widgets.mixin;
 
+import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.widgets.ComboWidget;
-import de.shiewk.widgets.widgets.TPSWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,7 +20,7 @@ public class MixinClientPlayNetworkHandler {
     public void onWorldTimeUpdate(ClientboundSetTimePacket packet, CallbackInfo ci){
         if (Minecraft.getInstance().isSameThread()) return; // run this on the networking thread as soon as possible
         // server sends this packet every 20 ticks
-        TPSWidget.worldTimeUpdated(System.nanoTime());
+        WidgetsMod.INSTANCE.getTpsWidget().worldTimeUpdated(System.nanoTime());
     }
 
     @Inject(at = @At("HEAD"), method = "handleHurtAnimation")
