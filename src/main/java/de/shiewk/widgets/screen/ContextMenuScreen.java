@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.utils.WidgetUtils;

@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 
@@ -51,16 +50,6 @@ public class BiomeWidget extends BasicTextWidget {
                 }
             }
         }
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.biome");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.biome.description");
     }
 
     @Override

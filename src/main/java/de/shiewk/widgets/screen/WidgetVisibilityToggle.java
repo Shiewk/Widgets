@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 public interface WidgetVisibilityToggle {
 

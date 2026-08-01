@@ -8,7 +8,6 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
@@ -162,13 +161,4 @@ public class CPSWidget extends BasicTextWidget {
         clickColor = (GradientOptions) settings.optionById("clickcolor").getValue();
     }
 
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.cps");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.cps.description");
-    }
 }

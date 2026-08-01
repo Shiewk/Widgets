@@ -1,4 +1,4 @@
-package de.shiewk.widgets.client.screen.components;
+package de.shiewk.widgets.screen.components;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

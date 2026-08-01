@@ -1,10 +1,10 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.Anchor;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetSettings;
-import de.shiewk.widgets.client.WidgetManager;
+import de.shiewk.widgets.WidgetManager;
 import de.shiewk.widgets.utils.WidgetUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

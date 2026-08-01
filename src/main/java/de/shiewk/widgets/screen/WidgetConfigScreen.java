@@ -1,9 +1,9 @@
-package de.shiewk.widgets.client.screen;
+package de.shiewk.widgets.screen;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.client.WidgetManager;
-import de.shiewk.widgets.client.screen.components.ScaledTextWidget;
-import de.shiewk.widgets.client.screen.components.WidgetListWidget;
+import de.shiewk.widgets.WidgetManager;
+import de.shiewk.widgets.screen.components.ScaledTextWidget;
+import de.shiewk.widgets.screen.components.WidgetListWidget;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;

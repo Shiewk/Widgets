@@ -85,16 +85,6 @@ public class SpeedWidget extends BasicTextWidget {
     }
 
     @Override
-    public Component getName() {
-        return Component.translatable("widgets.widgets.speed");
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.translatable("widgets.widgets.speed.description");
-    }
-
-    @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.unit = (Unit) settings.optionById("unit").getValue();

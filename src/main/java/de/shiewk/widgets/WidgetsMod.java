@@ -2,9 +2,7 @@ package de.shiewk.widgets;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.Command;
-import de.shiewk.widgets.client.WidgetManager;
-import de.shiewk.widgets.client.WidgetRenderer;
-import de.shiewk.widgets.client.screen.WidgetConfigScreen;
+import de.shiewk.widgets.screen.WidgetConfigScreen;
 import de.shiewk.widgets.platform.PlatformInterface;
 import de.shiewk.widgets.widgets.*;
 import net.minecraft.client.KeyMapping;
@@ -31,26 +29,27 @@ public final class WidgetsMod {
 
         LOGGER.info("Initialize Widgets on platform {}", platform.getPlatformName());
 
-        WidgetManager.register(new FPSWidget(createId("fps")));
-        WidgetManager.register(new ClockWidget(createId("clock")));
-        WidgetManager.register(new CoordinatesWidget(createId("coordinates")));
-        WidgetManager.register(new BandwidthWidget(createId("bandwidth")));
-        WidgetManager.register(new PingWidget(createId("ping")));
-        WidgetManager.register(new ServerIPWidget(createId("server_ip")));
-        WidgetManager.register(new PlayerCountWidget(createId("player_count")));
-        WidgetManager.register(new CPSWidget(createId("cps")));
-        WidgetManager.register(new PlayTimeWidget(createId("playtime")));
-        WidgetManager.register(new MemoryUsageWidget(createId("memory")));
-        WidgetManager.register(new KeyStrokesWidget(createId("keystrokes")));
-        WidgetManager.register(new PlainTextWidget(createId("plaintext")));
-        WidgetManager.register(new BiomeWidget(createId("biome")));
-        WidgetManager.register(new SpeedWidget(createId("speed")));
         WidgetManager.register(new ArmorHudWidget(createId("armor")));
-        WidgetManager.register(new InventoryWidget(createId("inventory")));
-        WidgetManager.register(new WorldTimeWidget(createId("worldtime")));
-        WidgetManager.register(new DirectionWidget(createId("direction")));
-        WidgetManager.register(this.tpsWidget = new TPSWidget(createId("tps")));
+        WidgetManager.register(new BandwidthWidget(createId("bandwidth")));
+        WidgetManager.register(new BiomeWidget(createId("biome")));
+        WidgetManager.register(new ClockWidget(createId("clock")));
         WidgetManager.register(this.comboWidget = new ComboWidget(createId("combo")));
+        WidgetManager.register(new CoordinatesWidget(createId("coordinates")));
+        WidgetManager.register(new CPSWidget(createId("cps")));
+        WidgetManager.register(new DirectionWidget(createId("direction")));
+        WidgetManager.register(new EffectsWidget(createId("effects")));
+        WidgetManager.register(new FPSWidget(createId("fps")));
+        WidgetManager.register(new InventoryWidget(createId("inventory")));
+        WidgetManager.register(new KeyStrokesWidget(createId("keystrokes")));
+        WidgetManager.register(new MemoryUsageWidget(createId("memory")));
+        WidgetManager.register(new PingWidget(createId("ping")));
+        WidgetManager.register(new PlainTextWidget(createId("plaintext")));
+        WidgetManager.register(new PlayerCountWidget(createId("player_count")));
+        WidgetManager.register(new PlayTimeWidget(createId("playtime")));
+        WidgetManager.register(new ServerIPWidget(createId("server_ip")));
+        WidgetManager.register(new SpeedWidget(createId("speed")));
+        WidgetManager.register(this.tpsWidget = new TPSWidget(createId("tps")));
+        WidgetManager.register(new WorldTimeWidget(createId("worldtime")));
     }
 
     public static Identifier createId(String path){

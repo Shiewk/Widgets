@@ -2,10 +2,10 @@ plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
 }
 
-version = rootProject.version
+version = "${project.mod_version}-${project.minecraft_version}-fabric"
 
 base {
-    archivesName = mod_id + "-fabric"
+    archivesName = mod_id
 }
 
 loom {

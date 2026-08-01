@@ -1,7 +1,7 @@
-package de.shiewk.widgets.client.screen.components;
+package de.shiewk.widgets.screen.components;
 
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.client.WidgetManager;
+import de.shiewk.widgets.WidgetManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

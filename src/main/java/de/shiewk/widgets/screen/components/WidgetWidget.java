@@ -1,8 +1,8 @@
-package de.shiewk.widgets.client.screen.components;
+package de.shiewk.widgets.screen.components;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.client.screen.WidgetSettingsScreen;
+import de.shiewk.widgets.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

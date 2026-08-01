@@ -3,7 +3,6 @@ package de.shiewk.widgets.widgets;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
@@ -76,16 +75,6 @@ public class ComboWidget extends BasicTextWidget {
         } else {
             formatAndSetRenderText(""+combo);
         }
-    }
-
-    @Override
-    public Component getName() {
-        return translatable("widgets.widgets.combo");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.combo.description");
     }
 
     @Override

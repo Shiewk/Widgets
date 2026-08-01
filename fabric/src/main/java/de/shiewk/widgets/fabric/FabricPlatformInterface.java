@@ -2,7 +2,7 @@ package de.shiewk.widgets.fabric;
 
 import com.mojang.brigadier.CommandDispatcher;
 import de.shiewk.widgets.WidgetsMod;
-import de.shiewk.widgets.client.WidgetRenderer;
+import de.shiewk.widgets.WidgetRenderer;
 import de.shiewk.widgets.platform.PlatformAccessors;
 import de.shiewk.widgets.platform.PlatformInterface;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;

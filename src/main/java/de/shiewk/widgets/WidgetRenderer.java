@@ -1,9 +1,7 @@
-package de.shiewk.widgets.client;
+package de.shiewk.widgets;
 
-import de.shiewk.widgets.ModWidget;
-import de.shiewk.widgets.WidgetsMod;
-import de.shiewk.widgets.client.screen.WidgetVisibilityToggle;
-import de.shiewk.widgets.client.screen.WidgetConfigScreen;
+import de.shiewk.widgets.screen.WidgetVisibilityToggle;
+import de.shiewk.widgets.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

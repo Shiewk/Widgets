@@ -124,16 +124,6 @@ public class DirectionWidget extends BasicTextWidget {
     }
 
     @Override
-    public Component getName() {
-        return translatable("widgets.widgets.direction");
-    }
-
-    @Override
-    public Component getDescription() {
-        return translatable("widgets.widgets.direction.description");
-    }
-
-    @Override
     public void onSettingsChanged(WidgetSettings settings) {
         super.onSettingsChanged(settings);
         this.displayFormat = (DisplayFormat) settings.optionById("format").getValue();
