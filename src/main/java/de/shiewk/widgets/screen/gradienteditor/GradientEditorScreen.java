@@ -7,7 +7,7 @@ import de.shiewk.widgets.color.GradientMode;
 import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
@@ -59,8 +59,8 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-        super.extractRenderState(context, mouseX, mouseY, deltaTicks);
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+        super.render(context, mouseX, mouseY, deltaTicks);
 
         Matrix3x2fStack matrices = context.pose();
         long timeNanos = Util.getNanos();
@@ -72,7 +72,7 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
         int width = font.width(topBarText);
 
         matrices.pushMatrix().translate(this.width / 2f - width, 5).scale(2);
-        context.text(font, topBarText, 0, 0, 0xff_ff_ff_ff, true);
+        context.drawString(font, topBarText, 0, 0, 0xff_ff_ff_ff, true);
         matrices.popMatrix();
     }
 
@@ -109,8 +109,8 @@ public class GradientEditorScreen extends Screen implements WidgetVisibilityTogg
     }
 
     @Override
-    public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-        super.extractBackground(context, mouseX, mouseY, deltaTicks);
+    public void renderBackground(@NonNull GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+        super.renderBackground(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override

@@ -2,7 +2,7 @@ package de.shiewk.widgets.screen;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -96,10 +96,10 @@ public class ContextMenuScreen extends Screen implements WidgetVisibilityToggle 
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-        super.extractRenderState(context, mouseX, mouseY, deltaTicks);
-        parent.extractRenderState(context, -67, -67, deltaTicks);
-        context.outline(
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+        super.render(context, mouseX, mouseY, deltaTicks);
+        parent.render(context, -67, -67, deltaTicks);
+        context.renderOutline(
                 menuX,
                 menuY,
                 menuWidth,
@@ -116,7 +116,7 @@ public class ContextMenuScreen extends Screen implements WidgetVisibilityToggle 
         renderMenu(context, mouseX, mouseY);
     }
 
-    public void renderMenu(GuiGraphicsExtractor context, int mouseX, int mouseY){
+    public void renderMenu(GuiGraphics context, int mouseX, int mouseY){
         int y = menuY + 1;
         for (Option option : options) {
             boolean hover = isInBounds(mouseX, mouseY) && mouseY >= y && mouseY < y + 15;
@@ -130,7 +130,7 @@ public class ContextMenuScreen extends Screen implements WidgetVisibilityToggle 
                 );
                 context.requestCursor(CursorTypes.POINTING_HAND);
             }
-            context.text(font, option.title, menuX + 5, y + 3, option.highlighted ? 0xff_00_ff_ff : 0xff_ff_ff_ff, false);
+            context.drawString(font, option.title, menuX + 5, y + 3, option.highlighted ? 0xff_00_ff_ff : 0xff_ff_ff_ff, false);
             y += 15;
         }
     }

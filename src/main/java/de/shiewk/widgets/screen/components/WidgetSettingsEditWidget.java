@@ -3,7 +3,7 @@ package de.shiewk.widgets.screen.components;
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
@@ -24,7 +24,7 @@ public class WidgetSettingsEditWidget extends AbstractScrollArea {
     private int contentsHeight = 10;
 
     public WidgetSettingsEditWidget(int x, int y, int width, int height, Font textRenderer, ModWidget widget, Runnable onChange) {
-        super(x, y, width, height, Component.empty(), AbstractScrollArea.defaultSettings(20));
+        super(x, y, width, height, Component.empty());
         this.widget = widget;
         this.textRenderer = textRenderer;
         this.onChange = onChange;
@@ -49,14 +49,14 @@ public class WidgetSettingsEditWidget extends AbstractScrollArea {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         context.fill(getX(), getY(), getX()+width, getY()+height, COLOR_BG);
         Matrix3x2fStack matrices = context.pose().pushMatrix();
         matrices.translate(0, (float) -scrollAmount(), matrices);
         matrices.pushMatrix();
         matrices.scale(2, 2, matrices);
         matrices.translate(0, (float) -scrollAmount(), matrices);
-        context.text(textRenderer, widget.getName(), this.width / 4 - textRenderer.width(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
+        context.drawString(textRenderer, widget.getName(), this.width / 4 - textRenderer.width(widget.getName()) / 2, this.height / 100, COLOR_FG, true);
         matrices.popMatrix();
         int y = textRenderer.lineHeight * 2 + this.height / 50 + 5;
         for (WidgetSettingOption<?> setting : widget.getSettings().getCustomSettings()) {
@@ -64,14 +64,14 @@ public class WidgetSettingsEditWidget extends AbstractScrollArea {
             if (this.width - setting.getWidth() > textRenderer.width(setting.getName()) + 20){
                 setting.setX(this.getX() + this.width - setting.getWidth() - 5);
                 setting.setY(y);
-                context.text(textRenderer, setting.getName(), getX() + 10, y + (setting.getHeight() / 2), COLOR_FG, true);
+                context.drawString(textRenderer, setting.getName(), getX() + 10, y + (setting.getHeight() / 2), COLOR_FG, true);
             } else {
                 setting.setX(this.getX() + this.width / 2 - setting.getWidth() / 2);
                 setting.setY(y + 9 + 5);
-                context.text(textRenderer, setting.getName(), getX() + getWidth() / 2 - textRenderer.width(setting.getName()) / 2, y, COLOR_FG, true);
+                context.drawString(textRenderer, setting.getName(), getX() + getWidth() / 2 - textRenderer.width(setting.getName()) / 2, y, COLOR_FG, true);
                 y += 9 + 5;
             }
-            setting.extractRenderState(context, mouseX, (int) (mouseY + scrollAmount()), delta);
+            setting.render(context, mouseX, (int) (mouseY + scrollAmount()), delta);
             y += setting.getHeight();
             y += 5;
         }
@@ -148,5 +148,10 @@ public class WidgetSettingsEditWidget extends AbstractScrollArea {
     @Override
     protected void updateWidgetNarration(@NonNull NarrationElementOutput builder) {
 
+    }
+
+    @Override
+    protected double scrollRate() {
+        return 20;
     }
 }

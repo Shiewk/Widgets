@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -114,7 +114,7 @@ public class DirectionWidget extends BasicTextWidget {
     }
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long n, Font textRenderer, int posX, int posY) {
         if (realtime) refresh();
         super.renderScaled(context, n, textRenderer, posX, posY);
     }

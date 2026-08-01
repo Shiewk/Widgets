@@ -9,7 +9,7 @@ import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.color.GradientPreset;
 import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -75,13 +75,13 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
     }
 
     @Override
-    protected void extractListBackground(GuiGraphicsExtractor context) {
+    protected void renderListBackground(GuiGraphics context) {
         context.fill(getX(), getY(), getX()+getWidth(), getY()+getHeight(), 0x20_00_00_00);
     }
 
-    @Override protected void extractListSeparators(@NonNull GuiGraphicsExtractor context) {}
-    @Override protected void extractSelection(@NonNull GuiGraphicsExtractor context, @NonNull ListEntry entry, int color) {}
-    @Override protected void extractScrollbar(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY) {}
+    @Override protected void renderListSeparators(@NonNull GuiGraphics context) {}
+    @Override protected void renderSelection(@NonNull GuiGraphics context, @NonNull ListEntry entry, int color) {}
+    @Override protected void renderScrollbar(@NonNull GuiGraphics context, int mouseX, int mouseY) {}
 
     public abstract static class ListEntry extends Entry<ListEntry> {
 
@@ -116,13 +116,13 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             int y = this.getContentY() + 2;
             int rowWidth = 110;
 
             int textWidth = minecraft.font.width(text);
             int textX = getX() + (rowWidth - textWidth) / 2;
-            context.text(minecraft.font, text, textX, y, 0xffffffff, true);
+            context.drawString(minecraft.font, text, textX, y, 0xffffffff, true);
         }
     }
 
@@ -136,10 +136,10 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             slider.active = editor.colors.size() > 1;
             slider.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            slider.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            slider.render(context, mouseX, mouseY, deltaTicks);
             if (hovered && !slider.active) {
                 context.requestCursor(CursorTypes.NOT_ALLOWED);
                 slider.setTooltip(Tooltip.create(translatable("widgets.ui.gradientEditor.gradientSettings.addMoreColors")));
@@ -210,10 +210,10 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.active = editor.colors.size() > 1;
             button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            button.render(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
@@ -256,9 +256,9 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            button.render(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
@@ -287,9 +287,9 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            button.render(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
@@ -314,7 +314,7 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             double sliderProg = getComponentValue() / 255d;
 
             GradientOptions bg = new GradientOptions(100, 0, new int[]{getBackgroundStartColor(), getBackgroundEndColor()});
@@ -325,11 +325,11 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
 
             bg.fillHorizontal(context, 0, contentX, contentY + 1, contentX + contentWidth, contentY + contentHeight - 1);
 
-            context.verticalLine((int) (contentX + (contentWidth * sliderProg)), contentY - 1, contentY + contentHeight, 0xff_ff_ff_ff);
+            context.vLine((int) (contentX + (contentWidth * sliderProg)), contentY - 1, contentY + contentHeight, 0xff_ff_ff_ff);
             if (showLabel){
                 String label = getLabelWithValue();
                 int w = minecraft.font.width(label);
-                context.text(minecraft.font, label, contentX + (contentWidth - w) / 2, contentY + 5, 0xffffffff, true);
+                context.drawString(minecraft.font, label, contentX + (contentWidth - w) / 2, contentY + 5, 0xffffffff, true);
             }
             if (hovered){
                 context.requestCursor(CursorTypes.RESIZE_EW);
@@ -426,10 +426,10 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             button.active = editor.colors.size() > 1;
             button.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            button.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            button.render(context, mouseX, mouseY, deltaTicks);
         }
 
         @Override
@@ -472,13 +472,13 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             inputField.setRectangle(getContentWidth(), getContentHeight(), getContentX(), getContentY());
-            inputField.extractRenderState(context, mouseX, mouseY, deltaTicks);
+            inputField.render(context, mouseX, mouseY, deltaTicks);
         }
 
         public void refreshText(){
-            inputField.setResponder(_ -> {});
+            inputField.setResponder(v -> {});
             inputField.setValue('#' + colorARGBToHexRGBA(editor.getCurrentColor()));
             inputField.moveCursorToStart(false);
             inputField.setTextColor(0xffffffff);
@@ -503,7 +503,7 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
     private class ColorPickerEntry extends ListEntry {
 
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             context.fill(
                     getContentX(),
                     getContentY(),
@@ -610,9 +610,9 @@ public class GradientEditorSettingsSection extends ObjectSelectionList<GradientE
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             sliderGradient.fillHorizontal(context, 0, getContentX(), getContentY() + 1, getContentX() + getContentWidth(), getContentY() + getContentHeight() - 1);
-            context.verticalLine( (int) (getContentX() + (getContentWidth() * sliderProgress)), getContentY() - 1, getContentY() + getContentHeight(), 0xff_ff_ff_ff);
+            context.vLine( (int) (getContentX() + (getContentWidth() * sliderProgress)), getContentY() - 1, getContentY() + getContentHeight(), 0xff_ff_ff_ff);
 
             if (hovered){
                 context.requestCursor(CursorTypes.RESIZE_EW);

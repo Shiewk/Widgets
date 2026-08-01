@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -47,7 +47,7 @@ public class ToggleWidgetSetting extends WidgetSettingOption<Boolean> {
                             COLOR_DISABLED_THUMB = new Color(255, 200, 200, 255).getRGB();
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         int col = value ? COLOR_ENABLED : COLOR_DISABLED;
         int thumb = value ? COLOR_ENABLED_THUMB : COLOR_DISABLED_THUMB;
         int thumbLoc = (Util.getNanos() - toggleTime) < 300000000f ?

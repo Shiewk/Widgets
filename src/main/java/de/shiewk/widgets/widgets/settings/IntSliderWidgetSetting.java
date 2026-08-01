@@ -5,7 +5,7 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -60,14 +60,14 @@ public class IntSliderWidgetSetting extends WidgetSettingOption<Integer> {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         int xp = valueToXPos(getValue());
-        context.horizontalLine(getX() + 5, getX() + 155, getY() + 6, 0xffffffff);
-        context.verticalLine(getX() + 4, getY() + 3, getY() + 10, 0xffffffff);
-        context.verticalLine(getX() + 155, getY() + 3, getY() + 10, 0xffffffff);
+        context.hLine(getX() + 5, getX() + 155, getY() + 6, 0xffffffff);
+        context.vLine(getX() + 4, getY() + 3, getY() + 10, 0xffffffff);
+        context.vLine(getX() + 155, getY() + 3, getY() + 10, 0xffffffff);
         context.fill(xp-2, getY() + 3, xp+2, getY() + 10, 0xffffffff);
         final Font textRenderer = Minecraft.getInstance().font;
-        context.text(textRenderer, String.valueOf(getValue()), getX() + 160, getY() + 3, 0xffffffff, true);
+        context.drawString(textRenderer, String.valueOf(getValue()), getX() + 160, getY() + 3, 0xffffffff, true);
         if (clicked){
             this.changed = true;
             this.value = Mth.clamp(xPosToValue(mouseX), minValue, maxValue);

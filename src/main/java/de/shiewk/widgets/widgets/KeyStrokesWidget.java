@@ -7,7 +7,7 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -53,7 +53,7 @@ public class KeyStrokesWidget extends ResizableWidget {
     private Key KEY_JUMP;
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         if (KEY_JUMP == null) return;
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX + 22, posY, KEY_FWD);
         renderKeyStroke(context, textRenderer, measuringTimeNano, posX, posY + 22, KEY_LEFT);
@@ -62,7 +62,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         if (showJumpKey) renderSpaceBar(context, measuringTimeNano, posX, posY + 44, KEY_JUMP);
     }
 
-    protected void renderSpaceBar(final GuiGraphicsExtractor context, long mt, int posX, int posY, Key key){
+    protected void renderSpaceBar(final GuiGraphics context, long mt, int posX, int posY, Key key){
         long l = mt - key.lastChanged;
         if (l < 100000000){
             double alpha = 0.00000001d * l;
@@ -74,7 +74,7 @@ public class KeyStrokesWidget extends ResizableWidget {
         (key.isPressed ? colorKeyPressed : colorKeyUnpressed).fillHorizontal(context, mt, posX + 5, posY + 4, posX + 59, posY + 5);
     }
 
-    protected void renderKeyStroke(GuiGraphicsExtractor context, Font textRenderer, long mt, int posX, int posY, KeyLarge key){
+    protected void renderKeyStroke(GuiGraphics context, Font textRenderer, long mt, int posX, int posY, KeyLarge key){
         long l = mt - key.lastChanged;
         if (l < 100000000){
             double alpha = 0.00000001d * l;

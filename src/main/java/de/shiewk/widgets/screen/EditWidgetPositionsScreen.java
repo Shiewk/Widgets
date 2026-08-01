@@ -7,7 +7,7 @@ import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.WidgetManager;
 import de.shiewk.widgets.utils.WidgetUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -57,7 +57,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
     private int scaledWindowHeight = 1080;
 
     @Override
-    public void renderScreenContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void renderScreenContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
         this.scaledWindowWidth = context.guiWidth();
         this.scaledWindowHeight = context.guiHeight();
         long mt = Util.getNanos();
@@ -71,7 +71,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
             if (selectedWidget == widget){
                 AlignResult alignedX = alignX(widget);
                 if (alignedX != null){
-                    context.verticalLine(
+                    context.vLine(
                             (int) Math.round(alignedX.result),
                             0,
                             scaledWindowHeight,
@@ -80,7 +80,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                 }
                 AlignResult alignedY = alignY(widget);
                 if (alignedY != null){
-                    context.horizontalLine(
+                    context.hLine(
                             0,
                             scaledWindowWidth,
                             (int) Math.round(alignedY.result),
@@ -98,8 +98,8 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
                 }
             }
             if (selectedWidget == null ? hoveredWidget == widget : selectedWidget == widget){
-                context.outline(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
-                context.outline(wx, wy, ww, wh, SELECT_COLOR);
+                context.renderOutline(wx-1,wy-1, ww+2, wh+2, SELECT_COLOR);
+                context.renderOutline(wx, wy, ww, wh, SELECT_COLOR);
             }
             widget.render(context, mt, font, wx, wy);
         }
@@ -205,7 +205,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
         return null;
     }
 
-    private void renderAnchorArea(GuiGraphicsExtractor context, int mouseX, int mouseY) {
+    private void renderAnchorArea(GuiGraphics context, int mouseX, int mouseY) {
         Anchor anchor = Anchor.getAnchor(
                 scaledWindowWidth,
                 scaledWindowHeight,

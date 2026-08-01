@@ -8,7 +8,7 @@ import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -42,7 +42,7 @@ public class EffectsWidget extends ResizableWidget {
     }
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long timeNanos, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long timeNanos, Font textRenderer, int posX, int posY) {
         if (visible){
             Minecraft client = Minecraft.getInstance();
             this.backgroundColor.fillHorizontal(context, timeNanos, posX, posY, posX + width(), posY + height());

@@ -4,7 +4,7 @@ import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -32,7 +32,7 @@ public abstract class ModWidget {
     public final WidgetSettings getSettings() {
         return settings;
     }
-    public abstract void render(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY);
+    public abstract void render(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY);
     public abstract void tick();
 
     public Component getName() {

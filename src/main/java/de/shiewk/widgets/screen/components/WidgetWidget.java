@@ -6,7 +6,7 @@ import de.shiewk.widgets.screen.WidgetSettingsScreen;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -52,19 +52,19 @@ public class WidgetWidget extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         boolean hover = this.isMouseOver(mouseX, mouseY);
         boolean widgetEnabled = widget.getSettings().isEnabled();
         context.fill(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight(), hover ? COLOR_BG_HOVER : COLOR_BG);
         Matrix3x2fStack stack = context.pose().pushMatrix();
         stack.scale(2, 2, stack);
         int titleSize = textRenderer.width(widget.getName());
-        context.text(textRenderer, widget.getName(), getX() / 2 + getWidth() / 4 - titleSize / 2, getY() / 2 + 4, COLOR_FG, false);
+        context.drawString(textRenderer, widget.getName(), getX() / 2 + getWidth() / 4 - titleSize / 2, getY() / 2 + 4, COLOR_FG, false);
         stack.popMatrix();
         int y = this.getY() + 12 + textRenderer.lineHeight * 2;
         for (Iterator<FormattedCharSequence> it = textRenderer.split(widget.getDescription(), this.getWidth() - 10).iterator(); it.hasNext(); y += 9) {
             FormattedCharSequence t = it.next();
-            context.text(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.width(t) / 2), y, COLOR_FG, false);
+            context.drawString(textRenderer, t, getX() + 5 + ((getWidth() - 5) / 2) - (textRenderer.width(t) / 2), y, COLOR_FG, false);
         }
         this.renderToggleButton(context, mouseX, mouseY, widgetEnabled);
 
@@ -72,10 +72,10 @@ public class WidgetWidget extends AbstractWidget {
             context.requestCursor(CursorTypes.POINTING_HAND);
         }
 
-        context.horizontalLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
-        context.horizontalLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
-        context.verticalLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
-        context.verticalLine(getX() + getWidth() - 1, getY(), getY() + getHeight() - 1, COLOR_BORDER);
+        context.hLine(getX(), getX() + getWidth() - 1, getY(), COLOR_BORDER);
+        context.hLine(getX() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, COLOR_BORDER);
+        context.vLine(getX(), getY(), getY() + getHeight(), COLOR_BORDER);
+        context.vLine(getX() + getWidth() - 1, getY(), getY() + getHeight() - 1, COLOR_BORDER);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class WidgetWidget extends AbstractWidget {
         onEdit.accept(widget);
     }
 
-    private void renderToggleButton(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean widgetEnabled){
+    private void renderToggleButton(GuiGraphics context, int mouseX, int mouseY, boolean widgetEnabled){
         boolean hoverToggle = this.isMouseOverToggle(mouseX, mouseY);
         final int toggleColor;
         final int toggleColorInvert;
@@ -123,7 +123,7 @@ public class WidgetWidget extends AbstractWidget {
         } else {
             context.fill(this.getX(), this.getY() + this.getHeight() - 24, this.getX() + this.getWidth(), this.getY() + this.getHeight(), toggleColor);
         }
-        context.centeredText(textRenderer, Component.translatable(widgetEnabled ? "widgets.ui.enabled" : "widgets.ui.disabled"), this.getX() + (this.getWidth() / 2), this.getY() + this.getHeight() - 16, COLOR_FG);
+        context.drawCenteredString(textRenderer, Component.translatable(widgetEnabled ? "widgets.ui.enabled" : "widgets.ui.disabled"), this.getX() + (this.getWidth() / 2), this.getY() + this.getHeight() - 16, COLOR_FG);
     }
 
     private boolean isMouseOverToggle(double mouseX, double mouseY) {

@@ -7,7 +7,7 @@ import de.shiewk.widgets.widgets.settings.GradientWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -66,7 +66,7 @@ public class InventoryWidget extends ResizableWidget {
     private boolean showHotbar = false;
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         drawBackground(context, measuringTimeNano, posX, posY);
         if (inventory != null){
             drawItems(context, textRenderer, switch (mode){
@@ -81,7 +81,7 @@ public class InventoryWidget extends ResizableWidget {
         }
     }
 
-    private void drawBackground(GuiGraphicsExtractor context, long mt, int posX, int posY) {
+    private void drawBackground(GuiGraphics context, long mt, int posX, int posY) {
         switch (mode){
             case VANILLA -> context.blit(RenderPipelines.GUI_TEXTURED, VANILLA_INVENTORY, posX, posY, 0, 0, 176, 91, 176, 91);
             case TEXTURE_PACK -> {
@@ -129,7 +129,7 @@ public class InventoryWidget extends ResizableWidget {
         }
     }
 
-    private void drawItems(GuiGraphicsExtractor context, Font textRenderer, int posX, int posY) {
+    private void drawItems(GuiGraphics context, Font textRenderer, int posX, int posY) {
         for (int ry = 0; ry < 4; ry++) {
             if (ry == 0 && !showHotbar) continue;
             for (int rx = 0; rx < 9; rx++) {
@@ -141,8 +141,8 @@ public class InventoryWidget extends ResizableWidget {
                 int itemY = ry == 0 ? posY + 58 : posY + (ry-1) * 18;
                 int itemX = posX + rx * 18;
 
-                context.item(stack, itemX, itemY);
-                context.itemDecorations(textRenderer, stack, itemX, itemY);
+                context.renderFakeItem(stack, itemX, itemY);
+                context.renderItemDecorations(textRenderer, stack, itemX, itemY);
             }
         }
     }

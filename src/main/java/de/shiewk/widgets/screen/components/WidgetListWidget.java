@@ -4,7 +4,7 @@ import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.WidgetManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.FrameLayout;
@@ -39,7 +39,7 @@ public class WidgetListWidget extends AbstractScrollArea {
     }
 
     public WidgetListWidget(int x, int y, int width, int height, Minecraft client, Font textRenderer, Consumer<ModWidget> onEdit) {
-        super(x, y, width, height, Component.empty(), AbstractScrollArea.defaultSettings(35));
+        super(x, y, width, height, Component.empty());
         this.client = client;
         this.widgets = loadWidgets(null);
         this.textRenderer = textRenderer;
@@ -88,12 +88,12 @@ public class WidgetListWidget extends AbstractScrollArea {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(), getY(), getX()+width, getY()+height);
         Matrix3x2fStack stack = context.pose().pushMatrix();
         stack.translate(0, (float) -scrollAmount(), stack);
         for (WidgetWidget element : elements) {
-            element.extractRenderState(context, mouseX, (int) (mouseY + scrollAmount()), delta);
+            element.render(context, mouseX, (int) (mouseY + scrollAmount()), delta);
         }
         stack.popMatrix();
         context.disableScissor();
@@ -125,5 +125,10 @@ public class WidgetListWidget extends AbstractScrollArea {
         widgets = this.loadWidgets(query);
         setScrollAmount(0);
         init();
+    }
+
+    @Override
+    protected double scrollRate() {
+        return 35;
     }
 }

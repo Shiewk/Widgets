@@ -4,12 +4,12 @@ import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.widgets.settings.WidgetSettingOption;
 import de.shiewk.widgets.WidgetSettings;
 import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -28,7 +28,7 @@ public abstract class ResizableWidget extends ModWidget {
     protected float size = 1f;
 
     @Override
-    public final void render(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
+    public final void render(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         if (size != 1f){
             Matrix3x2fStack matrices = context.pose();
             matrices.pushMatrix();
@@ -39,7 +39,7 @@ public abstract class ResizableWidget extends ModWidget {
         if (size != 1f) context.pose().popMatrix();
     }
 
-    public abstract void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY);
+    public abstract void renderScaled(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY);
 
     @Override
     public void onSettingsChanged(WidgetSettings settings) {

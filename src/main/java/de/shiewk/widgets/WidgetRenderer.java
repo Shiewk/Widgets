@@ -5,7 +5,7 @@ import de.shiewk.widgets.screen.WidgetConfigScreen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiling.Profiler;
@@ -18,7 +18,7 @@ public class WidgetRenderer {
     public static int guiScale = 1;
 
     // Should be registered as a hud layer
-	public void renderWidgets(GuiGraphicsExtractor drawContext) {
+	public void renderWidgets(GuiGraphics drawContext) {
         if (client.options.hideGui) return;
         if (client.debugEntries.isOverlayVisible()) return;
         if (client.screen instanceof WidgetVisibilityToggle vt && !vt.shouldRenderWidgets()) return;

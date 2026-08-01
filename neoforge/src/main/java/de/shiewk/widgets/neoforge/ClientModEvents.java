@@ -51,7 +51,7 @@ public final class ClientModEvents {
     public static void onRegisterGuiLayers(RegisterGuiLayersEvent event){
         event.registerAboveAll(
                 WidgetRenderer.LAYER_ID,
-                (ctx, _) -> NeoPlatformInterface.getInstance().getWidgets().getRenderer().renderWidgets(ctx)
+                (ctx, t) -> NeoPlatformInterface.getInstance().getWidgets().getRenderer().renderWidgets(ctx)
         );
     }
 
@@ -59,7 +59,7 @@ public final class ClientModEvents {
     public static void onRegisterClientCommands(RegisterClientCommandsEvent event){
         event.getDispatcher().register(
                 Commands.literal("widgetsmod")
-                        .executes(_ -> NeoPlatformInterface.getInstance().getWidgets().runSettingsCommand())
+                        .executes(s -> NeoPlatformInterface.getInstance().getWidgets().runSettingsCommand())
         );
     }
 

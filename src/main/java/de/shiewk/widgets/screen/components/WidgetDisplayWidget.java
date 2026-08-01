@@ -2,7 +2,7 @@ package de.shiewk.widgets.screen.components;
 
 import de.shiewk.widgets.ModWidget;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -45,7 +45,7 @@ public class WidgetDisplayWidget extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(@NonNull GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         widget.render(context, Util.getNanos(), textRenderer, getX(), getY());
     }
 

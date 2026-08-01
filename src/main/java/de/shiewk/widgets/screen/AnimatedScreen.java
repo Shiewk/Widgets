@@ -1,7 +1,7 @@
 package de.shiewk.widgets.screen;
 
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
@@ -19,7 +19,7 @@ public abstract class AnimatedScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         double timeMs = (Util.getNanos() - creationTime) / 1000000d;
         final boolean shouldAnimate = timeMs < animationDurationMs;
         if (shouldAnimate){
@@ -27,16 +27,16 @@ public abstract class AnimatedScreen extends Screen {
             Matrix3x2fStack stack = context.pose().pushMatrix();
 
             stack.translate((float) -translation, 0, stack);
-            parent.extractRenderState(context, -67, -67, delta);
+            parent.render(context, -67, -67, delta);
             stack.translate(this.width, 0, stack);
             mouseX -= (int) translation;
         }
-        super.extractRenderState(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
         this.renderScreenContents(context, mouseX, mouseY, delta);
         if (shouldAnimate){
             context.pose().popMatrix();
         }
     }
 
-    public abstract void renderScreenContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta);
+    public abstract void renderScreenContents(GuiGraphics context, int mouseX, int mouseY, float delta);
 }

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 
 import static net.minecraft.network.chat.Component.translatable;
@@ -23,7 +23,7 @@ public class FPSWidget extends BasicTextWidget {
     }
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long n, Font textRenderer, int posX, int posY) {
         if (realtime){
             timedFrames.add(n);
             while (timedFrames.getFirst() < n - 500_000_100L){

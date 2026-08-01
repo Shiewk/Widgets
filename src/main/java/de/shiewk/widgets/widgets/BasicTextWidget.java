@@ -6,7 +6,7 @@ import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.widgets.settings.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
@@ -101,7 +101,7 @@ public abstract class BasicTextWidget extends ResizableWidget {
     }
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long n, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long n, Font textRenderer, int posX, int posY) {
         if (!shouldRender) return;
         renderer = textRenderer;
         this.backgroundColor.fillHorizontal(context, n, posX, posY, posX + width(), posY + height());

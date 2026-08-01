@@ -1,7 +1,7 @@
 package de.shiewk.widgets.screen.components;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -26,10 +26,10 @@ public class ScaledTextWidget extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         Matrix3x2fStack stack = context.pose().pushMatrix();
         stack.scale(scale);
-        context.text(textRenderer, getMessage(), (int) (getX() / scale), (int) (getY() / scale), 0xffffffff, true);
+        context.drawString(textRenderer, getMessage(), (int) (getX() / scale), (int) (getY() / scale), 0xffffffff, true);
         stack.popMatrix();
     }
 

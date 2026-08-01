@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -58,18 +58,18 @@ public class GradientEditorColorSection extends ObjectSelectionList<GradientEdit
     }
 
     @Override
-    protected void extractSelection(@NonNull GuiGraphicsExtractor context, @NonNull ListEntry entry, int color) {}
+    protected void renderSelection(@NonNull GuiGraphics context, @NonNull ListEntry entry, int color) {}
 
     @Override
-    protected void extractListBackground(GuiGraphicsExtractor context) {
+    protected void renderListBackground(GuiGraphics context) {
         context.fill(getX(), getY(), getX()+getWidth(), getY()+getHeight(), 0x50_00_00_00);
     }
 
     @Override
-    protected void extractListSeparators(@NonNull GuiGraphicsExtractor context) {}
+    protected void renderListSeparators(@NonNull GuiGraphics context) {}
 
     @Override
-    protected void extractScrollbar(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY) {}
+    protected void renderScrollbar(@NonNull GuiGraphics context, int mouseX, int mouseY) {}
 
     @Override
     public void setFocused(@Nullable GuiEventListener focused) {
@@ -110,7 +110,7 @@ public class GradientEditorColorSection extends ObjectSelectionList<GradientEdit
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(@NonNull GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             int color = this.color.getAsInt();
             int x = this.getX();
             int y = this.getContentY();
@@ -145,7 +145,7 @@ public class GradientEditorColorSection extends ObjectSelectionList<GradientEdit
     private static class ArrowDownEntry extends ListEntry {
 
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             context.blit(
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE_ARROW_DOWN,
@@ -171,7 +171,7 @@ public class GradientEditorColorSection extends ObjectSelectionList<GradientEdit
         }
 
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             Component text = translatable("widgets.ui.gradientEditor.colors");
 
             int y = this.getContentY() + 2;
@@ -179,13 +179,13 @@ public class GradientEditorColorSection extends ObjectSelectionList<GradientEdit
 
             int textWidth = textRenderer.width(text);
             int textX = getX() + (rowWidth - textWidth) / 2;
-            context.text(textRenderer, text, textX, y, 0xffffffff, true);
+            context.drawString(textRenderer, text, textX, y, 0xffffffff, true);
         }
     }
 
     private class AddButtonEntry extends ListEntry {
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             context.blit(
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE_BUTTON_PLUS,

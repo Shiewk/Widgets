@@ -6,7 +6,7 @@ import de.shiewk.widgets.widgets.settings.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -123,7 +123,7 @@ public class CoordinatesWidget extends ResizableWidget {
     protected List<Line> lines = new ObjectArrayList<>(0);
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long mt, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long mt, Font textRenderer, int posX, int posY) {
         this.backgroundColor.fillHorizontal(context, mt, posX, posY, posX + width(), posY + height());
         int y = this.paddingY + 1;
         for (Line line : lines) {

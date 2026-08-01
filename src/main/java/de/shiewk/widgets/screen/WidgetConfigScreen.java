@@ -5,7 +5,7 @@ import de.shiewk.widgets.WidgetManager;
 import de.shiewk.widgets.screen.components.ScaledTextWidget;
 import de.shiewk.widgets.screen.components.WidgetListWidget;
 import de.shiewk.widgets.utils.WidgetUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.layouts.FrameLayout;
@@ -89,7 +89,7 @@ public class WidgetConfigScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         final double time = getScreenTimeMs();
         if (time < 400){
             Matrix3x2fStack stack = context.pose().pushMatrix();
@@ -97,7 +97,7 @@ public class WidgetConfigScreen extends Screen {
             stack.translate((float) (width / 2d - (width * v / 2d)), (float) (height / 2d - (height * v / 2d)), stack);
             stack.scale(v, v, stack);
         }
-        super.extractRenderState(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
 
         if (time < 400){
             context.pose().popMatrix();

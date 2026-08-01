@@ -5,7 +5,7 @@ import com.google.gson.JsonPrimitive;
 import de.shiewk.widgets.WidgetsMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -90,9 +90,9 @@ public class TextFieldWidgetSettingOption extends WidgetSettingOption<String> {
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         initializeTextField();
-        textField.extractRenderState(context, mouseX, mouseY, delta);
+        textField.render(context, mouseX, mouseY, delta);
     }
 
     @Override

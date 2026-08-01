@@ -5,13 +5,13 @@ import de.shiewk.widgets.WidgetsMod;
 import de.shiewk.widgets.WidgetRenderer;
 import de.shiewk.widgets.platform.PlatformAccessors;
 import de.shiewk.widgets.platform.PlatformInterface;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.KeyMapping;
@@ -52,9 +52,9 @@ public final class FabricPlatformInterface
 
         HudElementRegistry.addLast(
                 WidgetRenderer.LAYER_ID,
-                (ctx, _) -> widgets.getRenderer().renderWidgets(ctx)
+                (ctx, t) -> widgets.getRenderer().renderWidgets(ctx)
         );
-        KeyMappingHelper.registerKeyMapping(
+        KeyBindingHelper.registerKeyBinding(
                 this.settingsMapping = widgets.createSettingsKeyMapping()
         );
     }
@@ -113,8 +113,8 @@ public final class FabricPlatformInterface
     public void register(CommandDispatcher<FabricClientCommandSource> d, @NonNull CommandBuildContext c) {
         // in-game /widgetsmod command
         d.register(
-                ClientCommands.literal("widgetsmod")
-                        .executes(_ -> widgets.runSettingsCommand())
+                ClientCommandManager.literal("widgetsmod")
+                        .executes(cc -> widgets.runSettingsCommand())
         );
     }
 }

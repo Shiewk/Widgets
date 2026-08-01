@@ -8,7 +8,7 @@ import de.shiewk.widgets.widgets.settings.IntSliderWidgetSetting;
 import de.shiewk.widgets.widgets.settings.ToggleWidgetSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -59,7 +59,7 @@ public class ArmorHudWidget extends ResizableWidget {
     protected GradientOptions backgroundColor, textColor;
 
     @Override
-    public void renderScaled(GuiGraphicsExtractor context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
+    public void renderScaled(GuiGraphics context, long measuringTimeNano, Font textRenderer, int posX, int posY) {
         backgroundColor.fillHorizontal(
                 context,
                 measuringTimeNano,
@@ -80,15 +80,15 @@ public class ArmorHudWidget extends ResizableWidget {
         }
     }
 
-    private void renderItem(GuiGraphicsExtractor context, long mt, Font textRenderer, ItemStack stack, int posX, int posY){
-        context.fakeItem(stack, posX, posY);
-        context.itemDecorations(textRenderer, stack, posX, posY);
+    private void renderItem(GuiGraphics context, long mt, Font textRenderer, ItemStack stack, int posX, int posY){
+        context.renderFakeItem(stack, posX, posY);
+        context.renderItemDecorations(textRenderer, stack, posX, posY);
         if (showDurability){
             renderDurability(context, mt, textRenderer, stack, posX, posY);
         }
     }
 
-    private void renderDurability(GuiGraphicsExtractor context, long mt, Font textRenderer, ItemStack stack, int posX, int posY) {
+    private void renderDurability(GuiGraphics context, long mt, Font textRenderer, ItemStack stack, int posX, int posY) {
         Integer maxDamage = stack.get(DataComponents.MAX_DAMAGE);
         if (maxDamage != null) {
             int damage = stack.getOrDefault(DataComponents.DAMAGE, 0);

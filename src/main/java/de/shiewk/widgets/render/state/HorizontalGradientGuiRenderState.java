@@ -3,10 +3,10 @@ package de.shiewk.widgets.render.state;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.shiewk.widgets.WidgetsMod;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
@@ -86,7 +86,7 @@ public final class HorizontalGradientGuiRenderState implements GuiElementRenderS
         return bounds;
     }
 
-    public static void draw(GuiGraphicsExtractor context, int x, int y, int endX, int endY, int colorLeft, int colorRight) {
+    public static void draw(GuiGraphics context, int x, int y, int endX, int endY, int colorLeft, int colorRight) {
         WidgetsMod.platform().accessors().addGuiElement(
                 context,
                 new HorizontalGradientGuiRenderState(

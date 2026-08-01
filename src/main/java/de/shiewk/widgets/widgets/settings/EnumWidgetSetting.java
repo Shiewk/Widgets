@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -59,7 +59,7 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T>
             COLOR_TEXT = new Color(255, 255, 255, 255).getRGB();
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         final Font textRenderer = Minecraft.getInstance().font;
         int y = 0;
         int nx = 5;
@@ -73,7 +73,7 @@ public class EnumWidgetSetting<T extends Enum<T>> extends WidgetSettingOption<T>
             }
             final boolean hover = mouseX <= bx - nx && mouseX >= bx - nx - 10 - textRendererWidth && mouseY <= y + 19 + getY() && mouseY >= y + getY();
             context.fill(bx - 10 - textRendererWidth - nx, y + getY(), bx - nx, y + 19 + getY(), constant == value ? COLOR_SELECTED : hover ? COLOR_UNSELECTED_HOVER : COLOR_UNSELECTED);
-            context.text(textRenderer, name, bx - nx - 5 - textRendererWidth, y + 5 + getY(), COLOR_TEXT, true);
+            context.drawString(textRenderer, name, bx - nx - 5 - textRendererWidth, y + 5 + getY(), COLOR_TEXT, true);
             if (hover && mouseClick){
                 this.value = constant;
                 this.changed = true;

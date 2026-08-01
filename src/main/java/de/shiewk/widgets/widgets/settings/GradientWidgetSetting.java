@@ -9,7 +9,7 @@ import de.shiewk.widgets.color.GradientOptions;
 import de.shiewk.widgets.utils.WidgetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -62,7 +62,7 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         final Font textRenderer = Minecraft.getInstance().font;
         final long n = Util.getNanos();
         GradientOptions gradient = this.getValue();
@@ -84,13 +84,13 @@ public class GradientWidgetSetting extends WidgetSettingOption<GradientOptions> 
             outlineColor = 0xff_ff_ff_ff;
             displayText = Component.translatable("widgets.ui.widgetSettings.colors", colors.length).getString();
         }
-        context.horizontalLine(getX(), getX()+getWidth(), getY(), outlineColor);
-        context.horizontalLine(getX(), getX()+getWidth(), getY()+getHeight(), outlineColor);
-        context.verticalLine(getX(), getY(), getY() + getHeight(), outlineColor);
-        context.verticalLine(getX() + getWidth(), getY(), getY() + getHeight(), outlineColor);
+        context.hLine(getX(), getX()+getWidth(), getY(), outlineColor);
+        context.hLine(getX(), getX()+getWidth(), getY()+getHeight(), outlineColor);
+        context.vLine(getX(), getY(), getY() + getHeight(), outlineColor);
+        context.vLine(getX() + getWidth(), getY(), getY() + getHeight(), outlineColor);
 
         int width = textRenderer.width(displayText);
-        context.text(
+        context.drawString(
                 textRenderer,
                 displayText,
                 getX() + (getWidth() / 2 - (width / 2)),

@@ -2,7 +2,7 @@ package de.shiewk.widgets.screen;
 
 import de.shiewk.widgets.ModWidget;
 import de.shiewk.widgets.screen.components.WidgetSettingsEditWidget;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -33,8 +33,8 @@ public class WidgetSettingsScreen extends AnimatedScreen implements WidgetVisibi
     }
 
     @Override
-    public void renderScreenContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        context.text(font, previewText, this.width * 3 / 4 - font.width(previewText) / 2, this.height / 50, 0xffffffff, false);
+    public void renderScreenContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        context.drawString(font, previewText, this.width * 3 / 4 - font.width(previewText) / 2, this.height / 50, 0xffffffff, false);
         widget.render(context, Util.getNanos(), font, (int) ((float) (this.width * 3) / 4 - (widget.width() * widget.getScaleFactor()) / 2), (int) ((float) this.height / 2 - (widget.height() * widget.getScaleFactor()) / 2));
     }
 
