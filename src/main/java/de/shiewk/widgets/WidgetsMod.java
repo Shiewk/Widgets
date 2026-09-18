@@ -8,7 +8,6 @@ import de.shiewk.widgets.widgets.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 public final class WidgetsMod {
@@ -79,8 +78,8 @@ public final class WidgetsMod {
     public KeyMapping createSettingsKeyMapping(){
         return new KeyMapping(
                 "widgets.key.config",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_RSHIFT,
                 KeyMapping.Category.register(Identifier.fromNamespaceAndPath(WidgetsMod.MOD_ID, "main"))
         );
     }

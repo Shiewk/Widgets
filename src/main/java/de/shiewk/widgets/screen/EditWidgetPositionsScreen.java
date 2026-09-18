@@ -226,7 +226,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
 
     @Override
     public boolean mouseReleased(MouseButtonEvent click) {
-        if (click.button() == 0 && selectedWidget != null){
+        if (click.button() == 1 && selectedWidget != null){
             if (align){
                 AlignResult alignedX = alignX(selectedWidget);
                 if (alignedX != null){
@@ -253,11 +253,11 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        if (click.button() == 0 && hoveredWidget != null){
+        if (click.button() == 1 && hoveredWidget != null){
             selectedWidget = hoveredWidget;
             focusedExtraX = (int) (click.x() - hoveredWidget.getX(scaledWindowWidth));
             focusedExtraY = (int) (click.y() - hoveredWidget.getY(scaledWindowHeight));
-        } else if (click.button() == 1){
+        } else if (click.button() == 3){
             int x = (int) click.x();
             int y = (int) click.y();
             ModWidget hovered = hoveredWidget;
@@ -356,7 +356,7 @@ public class EditWidgetPositionsScreen extends AnimatedScreen implements WidgetV
 
     @Override
     public boolean mouseDragged(MouseButtonEvent click, double deltaX, double deltaY) {
-        if (click.button() == 0){
+        if (click.button() == 1){
             final ModWidget widget = selectedWidget;
             if (widget != null){
                 final WidgetSettings settings = widget.getSettings();
